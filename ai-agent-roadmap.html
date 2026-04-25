@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent 知识地图 · Day 1-4</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans SC', -apple-system, sans-serif;
+    background: #0a0a0f;
+    color: #d4d4d4;
+    line-height: 1.8;
+  }
+  .header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .header h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 900;
+    background: linear-gradient(135deg, #66ffbb, #00ccff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header p { margin-top: 12px; color: #888; font-size: 16px; }
+  .badge {
+    display: inline-block; margin-top: 16px;
+    padding: 4px 16px; border-radius: 20px;
+    background: rgba(102,255,187,0.1);
+    border: 1px solid rgba(102,255,187,0.25);
+    color: #66ffbb; font-size: 13px; font-weight: 500;
+  }
+
+  .nav {
+    display: flex; justify-content: center; gap: 8px;
+    padding: 20px; flex-wrap: wrap; position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .nav-btn {
+    padding: 8px 20px; border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: transparent; color: #666;
+    font-size: 14px; cursor: pointer; font-family: inherit;
+    transition: 0.2s;
+  }
+  .nav-btn:hover { border-color: #66ffbb55; color: #aaa; }
+  .nav-btn.active {
+    background: rgba(102,255,187,0.12);
+    border: 1px solid #66ffbb; color: #66ffbb;
+  }
+
+  .container { max-width: 800px; margin: 0 auto; padding: 40px 24px 80px; }
+  .day { display: none; }
+  .day.active { display: block; }
+
+  /* ===== TIMELINE ===== */
+  .day-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 30px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(102,255,187,0.12);
+  }
+  .day-dot {
+    flex-shrink: 0;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #66ffbb;
+    box-shadow: 0 0 12px rgba(102,255,187,0.35);
+  }
+  .day-header .day-label {
+    font-size: 14px; font-weight: 700; color: #66ffbb;
+    letter-spacing: 2px;
+  }
+  .day-header h2 {
+    font-size: clamp(22px, 3.5vw, 32px);
+    font-weight: 900; color: #fff;
+  }
+
+  .day-subtitle {
+    font-size: 14px; color: #888;
+    padding-left: 14px; margin-bottom: 28px;
+    border-left: 2px solid rgba(102,255,187,0.2);
+    padding-left: 12px;
+  }
+
+  /* ===== KP ===== */
+  .kp { margin-bottom: 32px; }
+  .kp:last-child { margin-bottom: 0; }
+
+  .kp-title {
+    font-size: 20px; font-weight: 800;
+    color: #66ffbb; margin-bottom: 6px;
+    text-shadow: 0 0 12px rgba(102,255,187,0.3);
+  }
+  .kp-title .icon { margin-right: 8px; font-size: 21px; }
+
+  .kp-summary {
+    font-size: 14px; color: #888; margin-bottom: 12px;
+  }
+
+  .kp-body { font-size: 15px; color: #d4d4d4; }
+  .kp-body p { margin-bottom: 10px; }
+  .kp-body ul, .kp-body ol { padding-left: 20px; margin: 8px 0; }
+  .kp-body li { margin-bottom: 4px; }
+
+  .highlight {
+    background: linear-gradient(135deg, rgba(102,255,187,0.06), rgba(0,204,255,0.03));
+    border-left: 3px solid #66ffbb;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px; margin: 14px 0;
+    color: #d4d4d4; font-size: 14.5px;
+  }
+  .mini-table {
+    width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px;
+  }
+  .mini-table th, .mini-table td {
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 10px 14px; text-align: left;
+  }
+  .mini-table th {
+    background: rgba(102,255,187,0.08); color: #66ffbb; font-weight: 600; font-size: 13px;
+  }
+  .mini-table td { background: rgba(255,255,255,0.02); }
+  .code-block {
+    background: #111; border: 1px solid #222;
+    border-radius: 8px; padding: 16px 20px; margin: 14px 0;
+    font-family: 'Menlo','Consolas',monospace; font-size: 13px;
+    color: #66ffbb; overflow-x: auto;
+  }
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 4px;
+    font-size: 12px; font-weight: 500; margin: 0 3px;
+  }
+  .tag-green { background: rgba(102,255,187,0.12); color: #66ffbb; }
+  .tag-red { background: rgba(255,80,80,0.12); color: #ff5050; }
+  .tag-yellow { background: rgba(255,200,0,0.12); color: #ffc800; }
+
+  @media (max-width: 600px) {
+    .container { padding: 24px 16px 60px; }
+    .kp-title { font-size: 18px; }
+    .kp-title .icon { font-size: 19px; }
+    .kp-body { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1>🤖 AI Agent 知识地图</h1>
+  <p>每天一个知识点 · 理论 + 实战 · 说人话</p>
+  <div class="badge">🔥 Day 1-4</div>
+</header>
+
+<nav class="nav">
+  <button class="nav-btn active" data-day="1">Day 1</button>
+  <button class="nav-btn" data-day="2">Day 2</button>
+  <button class="nav-btn" data-day="3">Day 3</button>
+  <button class="nav-btn" data-day="4">Day 4</button>
+</nav>
+
+<div class="container">
+
+<div class="day active" id="day-1">
+  <div class="day-header">
+    <div class="day-dot"></div>
+    <span class="day-label">DAY 1</span>
+    <h2>Agent 到底是什么？</h2>
+  </div>
+  <div class="day-subtitle">从"会说话的 AI"到"会干活的 AI"——最基础的概念分水岭</div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❶</span>Agent ≠ 套壳聊天框</div>
+    <div class="kp-summary">LLM 只会回答问题，Agent 有"手和脚"可以主动干活。</div>
+    <div class="kp-body">
+      <p>你用的 ChatGPT、Claude、文心一言——都是 <strong>大模型（LLM）</strong>。只能回答问题、生成文本，不会主动干活。</p>
+      <div class="highlight">
+        <strong>Agent = LLM + 工具 + 自主决策</strong><br>
+        简单说：LLM 是脑子，Agent 是长了手和脚的脑子。
+      </div>
+    </div>
+  </div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❷</span>Agent 的三件套</div>
+    <div class="kp-summary">感知→思考→行动，三个环节构成 Agent 的最小工作循环。</div>
+    <div class="kp-body">
+      <p><strong>👁️ 感知 → 🧠 思考 → 🦾 行动</strong></p>
+      <div class="highlight">
+        <strong>感知</strong>：收到指令和环境信息<br>
+        <strong>思考</strong>：LLM 推理，决定"现在该干啥"<br>
+        <strong>行动</strong>：调用工具执行（查数据库、发邮件、写文件……）
+      </div>
+      <p>💡 <strong>例子：你让我查天气</strong></p>
+      <ul>
+        <li>① 感知：你说"深圳今天会不会下雨"</li>
+        <li>② 思考：我需要调用天气工具查深圳</li>
+        <li>③ 行动：我用工具查了，把结果回给你</li>
+      </ul>
+      <p>这是最简单的 Agent 循环。</p>
+    </div>
+  </div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❸</span>不是所有 Agent 都要有 UI</div>
+    <div class="kp-summary">Agent 可以没有对话框，后台默默干活，主动找你而不是等你去问。</div>
+    <div class="kp-body">
+      <ul>
+        <li>🌙 凌晨 3 点爬起来检查服务器磁盘 → <span class="tag tag-green">Agent</span></li>
+        <li>📬 收到新邮件自动归档回复 → <span class="tag tag-green">Agent</span></li>
+        <li>📰 每天 9 点推行业日报 → <span class="tag tag-green">Agent</span></li>
+      </ul>
+      <div class="highlight"><strong>关键区别：</strong>LLM 等你去问它；Agent 会主动来找你。</div>
+    </div>
+  </div>
+</div>
+
+<div class="day" id="day-2">
+  <div class="day-header">
+    <div class="day-dot"></div>
+    <span class="day-label">DAY 2</span>
+    <h2>LLM 是怎么"思考"的？</h2>
+  </div>
+  <div class="day-subtitle">别怕术语——超级自动补全 + 打草稿就是真相</div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❶</span>LLM 本质上是超级自动补全</div>
+    <div class="kp-summary">核心原理：输入词块，预测下一个最可能出现的词，仅此而已。</div>
+    <div class="kp-body">
+      <div class="highlight">输入一串 token（词块），预测下一个最可能的词</div>
+      <div class="code-block">输入：床前明____<br>预测：月（高概率）→ 光（高概率）→ ...</div>
+      <p>"床前明月光" → LLM 不是在"理解"诗，是在算概率。</p>
+      <div class="highlight">LLM 不是真的"会思考"，它是在做排列组合的概率游戏。</div>
+    </div>
+  </div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❷</span>为什么 LLM 看起来像会思考？</div>
+    <div class="kp-summary">量变到质变，参数暴涨后概率组合产生了"语感"。</div>
+    <div class="kp-body">
+      <table class="mini-table">
+        <tr><th>模型</th><th>参数规模</th><th>能力阶段</th></tr>
+        <tr><td>GPT-2</td><td>15 亿</td><td>写句子都卡顿</td></tr>
+        <tr><td>GPT-3</td><td>1750 亿</td><td>能写文章了</td></tr>
+        <tr><td>GPT-4</td><td>~1.8 万亿</td><td>能写代码、过律师考试</td></tr>
+      </table>
+      <div class="highlight">就像你从只在中文里学概率 → 突然有了"语感"。</div>
+    </div>
+  </div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❸</span>"推理"= 把中间步骤写下来</div>
+    <div class="kp-summary">Chain-of-Thought：让 LLM 打草稿，一步步写过程，正确率翻倍。</div>
+    <div class="kp-body">
+      <p><strong>例子：17 × 24</strong></p>
+      <p>普通 LLM：</p>
+      <div class="code-block" style="color:#888;">"17 × 24 = 408"</div>
+      <p>带推理（Chain-of-Thought）：</p>
+      <div class="code-block">17 × 24 = 17 × 20 + 17 × 4<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 340 + 68<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 408</div>
+      <div class="highlight">这就是所有"推理模型"（o1、DeepSeek-R1 等）的基本原理——不是换了更好的大脑，只是让它"先想清楚再写答案"。</div>
+    </div>
+  </div>
+</div>
+
+<div class="day" id="day-3">
+  <div class="day-header">
+    <div class="day-dot"></div>
+    <span class="day-label">DAY 3</span>
+    <h2>工具调用（Function Calling）</h2>
+  </div>
+  <div class="day-subtitle">Agent 怎么用工具干活？LLM 每次只做二选一：说话还是动手</div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❶</span>LLM 交互是"二选一"</div>
+    <div class="kp-summary">每次回复要么说人话，要么返回工具调用请求，由系统执行。</div>
+    <div class="kp-body">
+      <ul>
+        <li>💬 <strong>直接回复文本</strong>（像普通聊天）</li>
+        <li>🛠️ <strong>请求调用工具</strong>（告诉系统：我要用这个工具，参数是这些）</li>
+      </ul>
+      <p><strong>例子：你问"深圳天气怎么样？"</strong></p>
+      <p>没有工具 → "抱歉，我没有实时数据。"</p>
+      <p>有工具 → LLM 返回：</p>
+      <div class="code-block">{<br>&nbsp;&nbsp;"function": "get_weather",<br>&nbsp;&nbsp;"params": {"city": "深圳"}<br>}</div>
+      <p>系统执行后把结果塞回去给 LLM，组织成自然语言回复你。</p>
+    </div>
+  </div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❷</span>例子：点外卖的完整流程</div>
+    <div class="kp-summary">从"帮我点个披萨"到下单成功，背后跑了搜索和下单两轮工具调用。</div>
+    <div class="kp-body">
+      <ol>
+        <li>Agent 收到 → 调用 <span class="tag tag-green">search_pizza_nearby</span></li>
+        <li>工具返回：「必胜客 + 超级至尊 ¥79」</li>
+        <li>Agent 确认 → 调用 <span class="tag tag-green">place_order</span></li>
+        <li>LLM 告诉你下单成功</li>
+      </ol>
+      <div class="highlight">你全程感觉就是在聊天。实际上背后跑了一堆工具调用。</div>
+    </div>
+  </div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❸</span>工具是 Agent 的能力边界</div>
+    <div class="kp-summary">Agent 能做什么，取决于配了什么工具。</div>
+    <div class="kp-body">
+      <table class="mini-table">
+        <tr><th>没有的工具</th><th>Agent 就做不到</th></tr>
+        <tr><td>🌤️ 天气工具</td><td>不会查天气</td></tr>
+        <tr><td>📧 邮件工具</td><td>不会发邮件</td></tr>
+        <tr><td>🗄️ 数据库工具</td><td>不会查用户信息</td></tr>
+        <tr><td>💳 支付工具</td><td>不会付款</td></tr>
+      </table>
+      <div class="highlight"><strong>Agent 能做什么，取决于你给它配了什么工具。</strong></div>
+    </div>
+  </div>
+</div>
+
+<div class="day" id="day-4">
+  <div class="day-header">
+    <div class="day-dot"></div>
+    <span class="day-label">DAY 4</span>
+    <h2>Memory：Agent 怎么"记住"你？</h2>
+  </div>
+  <div class="day-subtitle">LLM 天生没有记忆——Agent 的"记住"是存储 + 检索的伪装技巧</div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❶</span>LLM 天生没有记忆</div>
+    <div class="kp-summary">每次对话是把历史重新塞给 LLM，不是"记住"，是"重读一遍"。</div>
+    <div class="kp-body">
+      <ul>
+        <li>💬 10 条消息 ≈ 3000 字</li>
+        <li>🗣️ 1000 条消息 ≈ 30 万字</li>
+        <li>⚠️ 上下文窗口有限，超了就忘了</li>
+      </ul>
+      <div class="highlight"><strong>Agent 的"记忆"本质是存储 + 检索策略。</strong>不是真的记得你，只是每次帮你把回忆整理好再拿出来。</div>
+    </div>
+  </div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❷</span>三种记忆层级</div>
+    <div class="kp-summary">短期靠上下文，中期靠文件/向量库，长期靠数据库存用户画像。</div>
+    <div class="kp-body">
+      <table class="mini-table">
+        <tr><th>层级</th><th>存什么</th><th>怎么存</th></tr>
+        <tr><td><span class="tag tag-yellow">短期</span></td><td>当前对话</td><td>上下文窗口</td></tr>
+        <tr><td><span class="tag tag-green">中期</span></td><td>关键信息</td><td>总结 + 文件/向量库</td></tr>
+        <tr><td><span class="tag tag-red">长期</span></td><td>用户画像</td><td>结构化数据库</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="kp">
+    <div class="kp-title"><span class="icon">❸</span>记忆技巧：存什么比怎么存重要</div>
+    <div class="kp-summary">好的记忆要筛选——只存有价值信息，不存废话和完整日志。</div>
+    <div class="kp-body">
+      <table class="mini-table">
+        <tr><th>判断</th><th>内容</th><th>理由</th></tr>
+        <tr><td><span class="tag tag-red">✗</span></td><td>"今天巴黎下雨了"</td><td>一次性，没价值</td></tr>
+        <tr><td><span class="tag tag-green">✓</span></td><td>"用户下周要去巴黎出差"</td><td>安排日程用</td></tr>
+        <tr><td><span class="tag tag-red">✗</span></td><td>完整对话日志</td><td>太占上下文</td></tr>
+        <tr><td><span class="tag tag-green">✓</span></td><td>对话摘要一天一总结</td><td>够用不占地方</td></tr>
+      </table>
+      <div class="highlight">一个"记住你是谁"的 Agent 和一个每次都要重新自我介绍的 Agent，体验天差地别。</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+  const btns = document.querySelectorAll('.nav-btn');
+  const days = document.querySelectorAll('.day');
+  btns.forEach(b => b.addEventListener('click', () => {
+    const day = b.dataset.day;
+    btns.forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    days.forEach(d => d.classList.remove('active'));
+    document.getElementById('day-' + day).classList.add('active');
+  }));
+</script>
+
+</body>
+</html>
