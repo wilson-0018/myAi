@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>达利欧全天候 · 配置策略</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<!-- Tailwind CSS (CDN) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'Noto Sans SC', 'sans-serif'] },
+      colors: {
+        fg: '#66ffbb',
+        'fg-dim': 'rgba(102,255,187,0.12)',
+        dark: '#0a0a0f',
+        'dark-2': '#0f0f18',
+        'dark-3': '#16162a',
+      }
+    }
+  }
+}
+</script>
+<style>
+  body { background: #0a0a0f; font-family: 'Inter', 'Noto Sans SC', sans-serif; }
+  .glow { text-shadow: 0 0 20px rgba(102,255,187,0.3); }
+  .glow-sm { text-shadow: 0 0 8px rgba(102,255,187,0.2); }
+  .card-gradient { background: linear-gradient(135deg, #0f0f18, #15152a); }
+  .highlight-box { border-left: 3px solid #66ffbb; background: linear-gradient(135deg, rgba(102,255,187,0.06), rgba(0,204,255,0.03)); }
+  .tag { @apply inline-block px-2.5 py-0.5 rounded text-xs font-medium; }
+  .tag-green { @apply tag; background: rgba(102,255,187,0.12); color: #66ffbb; }
+  .tag-red { @apply tag; background: rgba(255,80,80,0.12); color: #ff5050; }
+  .tag-yellow { @apply tag; background: rgba(255,200,0,0.12); color: #ffc800; }
+  .tag-blue { @apply tag; background: rgba(0,150,255,0.12); color: #0096ff; }
+  .progress-bar { @apply h-2.5 rounded-full; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0a0f; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+</style>
+</head>
+<body class="text-gray-300 antialiased">
+
+<!-- ===== HEADER ===== -->
+<header class="text-center py-14 px-6 border-b border-white/5">
+  <h1 class="text-4xl md:text-5xl font-black bg-gradient-to-r from-[#66ffbb] to-blue-400 bg-clip-text text-transparent glow">
+    🏛️ 达利欧全天候组合
+  </h1>
+  <p class="mt-3 text-gray-500 text-base">风险平价 · 四宫格理论 · 当前市场配置策略</p>
+</header>
+
+<!-- ===== CONTAINER ===== -->
+<div class="max-w-4xl mx-auto px-5 py-10 md:py-14">
+
+<!-- ============ 理论 + 四宫格 ============ -->
+<section class="mb-16">
+  <div class="flex items-center gap-3 mb-2">
+    <i data-lucide="brain" class="w-5 h-5 text-[#66ffbb]"></i>
+    <h2 class="text-2xl font-bold text-white glow-sm">核心理论：四宫格</h2>
+  </div>
+  <p class="text-sm text-gray-500 mb-6 ml-8 border-l-2 border-[#66ffbb]/20 pl-3">经济增长 + 通胀 → 四种宏观环境 → 配置不同的资产</p>
+
+  <!-- 4 Quadrants -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- 增长↑ 通胀↑ -->
+    <div class="card-gradient rounded-xl p-5 border border-yellow-500/20">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-yellow-400 font-bold text-lg">📈</span>
+        <span class="text-yellow-300 font-bold">增长 ↑ 通胀 ↑</span>
+      </div>
+      <div class="text-sm text-gray-400">经济过热</div>
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        <span class="tag-yellow">股票</span>
+        <span class="tag-yellow">商品</span>
+        <span class="tag-yellow">黄金</span>
+        <span class="tag-yellow">TIPS</span>
+      </div>
+    </div>
+
+    <!-- 增长↓ 通胀↑ -->
+    <div class="card-gradient rounded-xl p-5 border border-red-500/20">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-red-400 font-bold text-lg">📉</span>
+        <span class="text-red-300 font-bold">增长 ↓ 通胀 ↑</span>
+      </div>
+      <div class="text-sm text-gray-400">滞胀 — 最差组合</div>
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        <span class="tag-yellow">TIPS</span>
+        <span class="tag-yellow">黄金</span>
+        <span class="tag-yellow">现金</span>
+        <span class="tag-red">✗ 股票</span>
+        <span class="tag-red">✗ 长债</span>
+      </div>
+    </div>
+
+    <!-- 增长↑ 通胀↓ -->
+    <div class="card-gradient rounded-xl p-5 border border-green-500/20">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-green-400 font-bold text-lg">🚀</span>
+        <span class="text-green-300 font-bold">增长 ↑ 通胀 ↓</span>
+      </div>
+      <div class="text-sm text-gray-400">黄金时代</div>
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        <span class="tag-green">股票</span>
+        <span class="tag-green">长债</span>
+        <span class="tag-green">TIPS</span>
+      </div>
+    </div>
+
+    <!-- 增长↓ 通胀↓ -->
+    <div class="card-gradient rounded-xl p-5 border border-blue-500/20">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-blue-400 font-bold text-lg">❄️</span>
+        <span class="text-blue-300 font-bold">增长 ↓ 通胀 ↓</span>
+      </div>
+      <div class="text-sm text-gray-400">通缩衰退</div>
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        <span class="tag-blue">长债</span>
+        <span class="tag-blue">TIPS</span>
+        <span class="tag-blue">现金</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心原理 -->
+  <div class="mt-6 highlight-box rounded-xl p-5 text-sm">
+    <div class="flex items-center gap-2 mb-2">
+      <i data-lucide="target" class="w-4 h-4 text-[#66ffbb]"></i>
+      <span class="font-semibold text-[#66ffbb]">核心原理</span>
+    </div>
+    <p class="text-gray-400">不是赌哪个象限会赢，而是<strong class="text-gray-200">每个象限配 25% 的风险</strong>，无论经济走向如何你都不会被干死。</p>
+  </div>
+
+  <!-- 经典 vs 当前 -->
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card-gradient rounded-xl p-5 border border-white/5">
+      <div class="flex items-center gap-2 mb-3">
+        <i data-lucide="book-open" class="w-4 h-4 text-gray-500"></i>
+        <span class="font-semibold text-gray-300 text-sm">达利欧经典配置</span>
+      </div>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-gray-400">股票</span><span class="text-gray-200 font-medium">30%</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">长债</span><span class="text-gray-200 font-medium">40%</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">TIPS+黄金</span><span class="text-gray-200 font-medium">15%</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">商品</span><span class="text-gray-200 font-medium">7.5%</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">现金</span><span class="text-gray-200 font-medium">7.5%</span></div>
+      </div>
+    </div>
+    <div class="card-gradient rounded-xl p-5 border border-[#66ffbb]/15">
+      <div class="flex items-center gap-2 mb-3">
+        <i data-lucide="trending-up" class="w-4 h-4 text-[#66ffbb]"></i>
+        <span class="font-semibold text-[#66ffbb] text-sm">当前建议调整</span>
+      </div>
+      <p class="text-xs text-gray-500 mb-3">→ 滞胀风险加大，硬通胀资产翻倍</p>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-gray-400">股票</span><span class="text-gray-200 font-medium">25%</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">长债</span><span class="text-gray-200 font-medium">25%</span></div>
+        <div class="flex justify-between"><span class="text-gray-200 font-medium">TIPS+黄金</span><span class="text-[#66ffbb] font-bold">30%</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">商品</span><span class="text-gray-200 font-medium">10%</span></div>
+        <div class="flex justify-between"><span class="text-gray-400">现金</span><span class="text-gray-200 font-medium">10%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 美股配置 ============ -->
+<section class="mb-16">
+  <div class="flex items-center gap-3 mb-6">
+    <i data-lucide="flag" class="w-5 h-5 text-blue-400"></i>
+    <h2 class="text-2xl font-bold text-white glow-sm">🇺🇸 当前美股市场配置</h2>
+  </div>
+
+  <div class="highlight-box rounded-xl p-4 mb-6 text-sm">
+    <span class="text-gray-400">当前环境判断：</span>
+    <span class="text-gray-200">关税战不确定性 · 通胀粘性 ~3% · AI 投资热 · 财政赤字扩大 · 滞胀风险 ↑</span>
+  </div>
+
+  <!-- Progress bars -->
+  <div class="card-gradient rounded-xl p-5 border border-white/5 mb-6">
+    <div class="text-sm font-semibold text-gray-200 mb-4">建议配置比例</div>
+    <div class="space-y-3.5">
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">📈 美国大盘股</span><span class="text-gray-400">15%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-blue-500 w-[15%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">🌍 海外发达市场</span><span class="text-gray-400">5%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-blue-400 w-[5%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">🌏 新兴市场</span><span class="text-gray-400">5%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-yellow-500 w-[5%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">📜 长期美债</span><span class="text-gray-400">15%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-purple-500 w-[15%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">📜 中期美债</span><span class="text-gray-400">10%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-purple-400 w-[10%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-[#66ffbb] font-medium">💰 TIPS</span><span class="text-[#66ffbb]">15%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-[#66ffbb] w-[15%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-yellow-300 font-medium">🥇 黄金</span><span class="text-yellow-300">15%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-yellow-400 w-[15%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">🛢️ 大宗商品</span><span class="text-gray-400">10%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-orange-500 w-[10%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">💵 短期国债/现金</span><span class="text-gray-400">10%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-gray-500 w-[10%]"></div></div></div>
+    </div>
+  </div>
+
+  <!-- 具体标的 -->
+  <div class="card-gradient rounded-xl p-5 border border-white/5">
+    <div class="flex items-center gap-2 mb-3">
+      <i data-lucide="list" class="w-4 h-4 text-gray-500"></i>
+      <span class="text-sm font-semibold text-gray-300">推荐 ETF 标的</span>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">VOO / IVV</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">VEA</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">EEM</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">TLT / EDV</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">IEF</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-[#66ffbb]">TIP ✓</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-yellow-300">GLD ✓</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">DBC</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">BIL / SGOV</span>
+    </div>
+  </div>
+
+  <!-- 策略 -->
+  <div class="mt-4 highlight-box rounded-xl p-4 text-sm">
+    <div class="flex items-center gap-2 mb-1">
+      <i data-lucide="lightbulb" class="w-4 h-4 text-[#66ffbb]"></i>
+      <span class="font-semibold text-[#66ffbb]">策略要点</span>
+    </div>
+    <ul class="text-gray-400 space-y-1 ml-2 list-disc list-inside">
+      <li>黄金 + TIPS 翻倍到 30% → 对冲滞胀 + 去美元化</li>
+      <li>股票减配但不清仓 → AI 赛道基本面强，跌了再补</li>
+      <li>每季度再平衡 → 90% 收益来自纪律，不是方向判断</li>
+      <li>小资金直接 <span class="text-gray-200">AOR 做底仓 + 额外 10-15% GLD</span></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ============ A股/国内配置 ============ -->
+<section class="mb-16">
+  <div class="flex items-center gap-3 mb-6">
+    <i data-lucide="flag" class="w-5 h-5 text-red-400"></i>
+    <h2 class="text-2xl font-bold text-white glow-sm">🇨🇳 当前中国市场配置</h2>
+  </div>
+
+  <div class="highlight-box rounded-xl p-4 mb-6 text-sm">
+    <span class="text-gray-400">当前环境判断：</span>
+    <span class="text-gray-200">经济复苏偏弱 · 通缩压力仍在 · 政策持续托底 · 地产还没触底 · 人民币贬值压力</span>
+  </div>
+
+  <!-- Progress bars -->
+  <div class="card-gradient rounded-xl p-5 border border-white/5 mb-6">
+    <div class="text-sm font-semibold text-gray-200 mb-4">建议配置比例</div>
+    <div class="space-y-3.5">
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">📈 A股大盘</span><span class="text-gray-400">15%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-red-500 w-[15%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">🏭 中特估/红利</span><span class="text-gray-400">10%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-orange-500 w-[10%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-yellow-300 font-medium">🥇 黄金</span><span class="text-yellow-300">20%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-yellow-400 w-[20%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">📜 国债/政金债</span><span class="text-gray-400">25%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-purple-500 w-[25%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">🏠 地产债/REITs</span><span class="text-gray-400">5%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-blue-400 w-[5%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">💵 美元存款/理财</span><span class="text-gray-400">15%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-blue-500 w-[15%]"></div></div></div>
+      <div><div class="flex justify-between text-xs mb-1"><span class="text-gray-300">💰 短期理财/货基</span><span class="text-gray-400">10%</span></div><div class="progress-bar bg-gray-800"><div class="progress-bar bg-gray-500 w-[10%]"></div></div></div>
+    </div>
+  </div>
+
+  <!-- 具体标的 -->
+  <div class="card-gradient rounded-xl p-5 border border-white/5">
+    <div class="flex items-center gap-2 mb-3">
+      <i data-lucide="list" class="w-4 h-4 text-gray-500"></i>
+      <span class="text-sm font-semibold text-gray-300">推荐工具</span>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">沪深300 ETF</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">中证红利 ETF</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-yellow-300">黄金ETF ✦</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">国债ETF</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">政金债ETF</span>
+      <span class="px-3 py-1.5 rounded-lg bg-white/5 text-gray-300">美元理财</span>
+    </div>
+  </div>
+
+  <!-- 策略 -->
+  <div class="mt-4 highlight-box rounded-xl p-4 text-sm">
+    <div class="flex items-center gap-2 mb-1">
+      <i data-lucide="lightbulb" class="w-4 h-4 text-[#66ffbb]"></i>
+      <span class="font-semibold text-[#66ffbb]">策略要点</span>
+    </div>
+    <ul class="text-gray-400 space-y-1 ml-2 list-disc list-inside">
+      <li><strong class="text-yellow-300">黄金 20%</strong> → 人民币贬值 + 全球避险，国内黄金ETF流动性够用</li>
+      <li>债券配 25% → 经济弱、通缩环境下债市表现最好</li>
+      <li>A股仅 15% → 不作为主要进攻方向，等右侧信号</li>
+      <li><strong class="text-blue-300">美元资产 15%</strong> → 对冲人民币贬值风险（年中可能到 7.4-7.5）</li>
+      <li>红利策略代替纯股 → 防守为主，赚分红的钱</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ============ 对比总结 ============ -->
+<section class="mb-10">
+  <div class="flex items-center gap-3 mb-6">
+    <i data-lucide="git-compare" class="w-5 h-5 text-[#66ffbb]"></i>
+    <h2 class="text-2xl font-bold text-white glow-sm">中美配置对比</h2>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-gray-500 border-b border-white/5">
+          <th class="text-left py-3 pr-4 font-medium">资产</th>
+          <th class="text-left py-3 pr-4 font-medium">🇺🇸 美股</th>
+          <th class="text-left py-3 pr-4 font-medium">🇨🇳 中国</th>
+          <th class="text-left py-3 font-medium">差异原因</th>
+        </tr>
+      </thead>
+      <tbody class="text-gray-300">
+        <tr class="border-b border-white/5"><td class="py-3 pr-4">股票</td><td class="py-3 pr-4">25%</td><td class="py-3 pr-4">25%</td><td class="py-3 text-gray-500">比例接近但结构不同</td></tr>
+        <tr class="border-b border-white/5"><td class="py-3 pr-4">债券</td><td class="py-3 pr-4">25%</td><td class="py-3 pr-4">25%</td><td class="py-3 text-gray-500">美债利率高，中债防御</td></tr>
+        <tr class="border-b border-white/5"><td class="py-3 pr-4 text-yellow-300 font-medium">黄金</td><td class="py-3 pr-4">15%</td><td class="py-3 pr-4 text-yellow-300 font-medium">20%</td><td class="py-3 text-gray-500">人民币贬值 + 全球避险需求更高</td></tr>
+        <tr class="border-b border-white/5"><td class="py-3 pr-4">通胀保护</td><td class="py-3 pr-4 text-[#66ffbb]">15% TIPS</td><td class="py-3 pr-4 text-gray-500">—</td><td class="py-3 text-gray-500">中国目前通缩环境，不需要TIPS</td></tr>
+        <tr class="border-b border-white/5"><td class="py-3 pr-4">商品</td><td class="py-3 pr-4">10%</td><td class="py-3 pr-4">—</td><td class="py-3 text-gray-500">国内缺少便利的大宗商品ETF</td></tr>
+        <tr class="border-b border-white/5"><td class="py-3 pr-4">现金/货币</td><td class="py-3 pr-4">10%</td><td class="py-3 pr-4">10%</td><td class="py-3 text-gray-500">保持一致</td></tr>
+        <tr><td class="py-3 pr-4 font-medium text-gray-200">美元资产</td><td class="py-3 pr-4 text-gray-500">—</td><td class="py-3 pr-4 text-blue-300 font-medium">15%</td><td class="py-3 text-gray-500">🇨🇳 独有的汇率对冲需求</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="mt-6 highlight-box rounded-xl p-5 text-sm">
+    <div class="flex items-center gap-2 mb-2">
+      <i data-lucide="message-square" class="w-4 h-4 text-[#66ffbb]"></i>
+      <span class="font-semibold text-[#66ffbb]">小结</span>
+    </div>
+    <p class="text-gray-400">两个市场都采用了<strong class="text-gray-200">防御性配置</strong>，但原因不同：</p>
+    <ul class="text-gray-400 mt-2 space-y-1 ml-2 list-disc list-inside">
+      <li>🇺🇸 <strong>防滞胀</strong> → TIPS + 黄金 + 商品 是主角</li>
+      <li>🇨🇳 <strong>防通缩 + 汇率风险</strong> → 黄金 + 债券 + 美元资产 是主角</li>
+      <li>两边的股票都不作为主要进攻方向，但逻辑不一样：美股怕估值回调，A股怕经济继续弱</li>
+    </ul>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="text-center text-gray-600 text-xs pt-8 border-t border-white/5">
+  <p>基于全天候风险平价框架 · 仅供参考，不构成投资建议</p>
+  <p class="mt-1">投资有风险，仓位管理需结合个人情况</p>
+</footer>
+
+</div>
+
+<script>
+  lucide.createIcons();
+</script>
+
+</body>
+</html>
