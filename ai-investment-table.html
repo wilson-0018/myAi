@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI算力硬件 · 产业链估值全景</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'Noto Sans SC', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+      colors: { fg: '#66ffbb', 'd1': '#0a0a0f', 'd2': '#0f0f18', 'd3': '#15152a' }
+    }
+  }
+}
+</script>
+<style>
+  body { background: #0a0a0f; }
+  .glow-text { text-shadow: 0 0 20px rgba(102,255,187,0.2); }
+  .gcard { background: linear-gradient(135deg, #0f0f18, #15152a); border: 1px solid rgba(255,255,255,0.05); }
+  .hbox { border-left: 3px solid #66ffbb; background: linear-gradient(135deg, rgba(102,255,187,0.06), rgba(0,204,255,0.03)); }
+  .grid-bg { background-image: linear-gradient(rgba(102,255,187,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(102,255,187,0.02) 1px, transparent 1px); background-size: 30px 30px; }
+  th { @apply text-xs font-semibold uppercase tracking-wider text-gray-500 py-3 px-3; }
+  td { @apply py-3 px-3 text-sm; }
+  tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: 0.15s; }
+  tbody tr:hover { background: rgba(102,255,187,0.04); }
+  .v-up { @apply text-green-400 font-mono font-semibold; }
+  .v-down { @apply text-red-400 font-mono font-semibold; }
+  .v-flat { @apply text-gray-400 font-mono; }
+  .v-fg { @apply text-[#66ffbb] font-mono font-semibold; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0a0f; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+</style>
+</head>
+<body class="text-gray-300 antialiased">
+
+<div class="max-w-6xl mx-auto px-5 pt-14 pb-6 text-center border-b border-white/5 grid-bg">
+  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#66ffbb]/5 border border-[#66ffbb]/15 text-[#66ffbb] text-xs mb-4">
+    <span class="w-1.5 h-1.5 rounded-full bg-[#66ffbb] animate-pulse"></span>
+    2026年4月27日 · 数据基于公开信息
+  </div>
+  <h1 class="text-4xl md:text-5xl font-black bg-gradient-to-r from-[#66ffbb] to-blue-400 bg-clip-text text-transparent glow-text">
+    ⚡ AI 算力硬件估值全景
+  </h1>
+  <p class="mt-2 text-gray-500 text-sm">7大赛道 · 32个标的 · PE / 涨幅 / 毛利率 / 核心竞争力</p>
+</div>
+
+<div class="max-w-6xl mx-auto px-5 py-8">
+
+<!-- 统计卡片 -->
+<div class="grid grid-cols-2 md:grid-cols-7 gap-3 mb-8">
+  <div class="gcard rounded-xl p-3.5 text-center"><div class="text-2xl font-bold text-blue-300">7</div><div class="text-xs text-gray-500 mt-0.5">赛道</div></div>
+  <div class="gcard rounded-xl p-3.5 text-center"><div class="text-2xl font-bold text-[#66ffbb]">32</div><div class="text-xs text-gray-500 mt-0.5">标的</div></div>
+  <div class="gcard rounded-xl p-3.5 text-center"><div class="text-2xl font-bold text-yellow-300">78.5</div><div class="text-xs text-gray-500 mt-0.5">平均PE</div></div>
+  <div class="gcard rounded-xl p-3.5 text-center"><div class="text-2xl font-bold text-green-400">+18.6%</div><div class="text-xs text-gray-500 mt-0.5">年内涨幅均值</div></div>
+  <div class="gcard rounded-xl p-3.5 text-center"><div class="text-2xl font-bold text-purple-300">15.2%</div><div class="text-xs text-gray-500 mt-0.5">平均净利率</div></div>
+  <div class="gcard rounded-xl p-3.5 text-center"><div class="text-2xl font-bold text-orange-300">31.6%</div><div class="text-xs text-gray-500 mt-0.5">平均毛利率</div></div>
+  <div class="gcard rounded-xl p-3.5 text-center"><div class="text-2xl font-bold text-cyan-300">🔥</div><div class="text-xs text-gray-500 mt-0.5">市场情绪</div></div>
+</div>
+
+<!-- ===== 主表格 ===== -->
+<div class="gcard rounded-2xl overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-white/5 bg-d2/50">
+          <th class="text-left">赛道</th>
+          <th class="text-left">股票</th>
+          <th class="text-right">代码</th>
+          <th class="text-right">PE</th>
+          <th class="text-right">年内涨幅</th>
+          <th class="text-right">净利率</th>
+          <th class="text-right">毛利率</th>
+          <th class="text-left min-w-[180px]">核心竞争力</th>
+          <th class="text-center">评级</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- GPU/ASIC -->
+        <tr class="bg-blue-500/[0.02]"><td class="font-bold text-blue-300 py-4" rowspan="4">🔵 GPU/<br>ASIC</td></tr>
+        <tr class="bg-blue-500/[0.02]"><td>寒武纪</td><td class="text-right font-mono text-gray-500">688256</td><td class="text-right v-flat">—</td><td class="text-right v-up">+42.3%</td><td class="text-right v-down">-38.2%</td><td class="text-right v-fg">62.1%</td><td class="text-gray-500 text-xs">国产AI芯片第一股，思元系列，对标CUDA</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-300">弹性</span></td></tr>
+        <tr class="bg-blue-500/[0.02]"><td>海光信息</td><td class="text-right font-mono text-gray-500">688041</td><td class="text-right v-up">92.5</td><td class="text-right v-up">+28.7%</td><td class="text-right v-up">22.3%</td><td class="text-right v-fg">65.8%</td><td class="text-gray-500 text-xs">DCU国产替代，信创+AI双驱动，x86生态</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">核心</span></td></tr>
+        <tr class="bg-blue-500/[0.02]"><td>景嘉微</td><td class="text-right font-mono text-gray-500">300474</td><td class="text-right v-up">135.2</td><td class="text-right v-up">+15.4%</td><td class="text-right v-up">18.5%</td><td class="text-right v-fg">58.3%</td><td class="text-gray-500 text-xs">军用GPU转民用，体量小弹性大，军工概念</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-300">弹性</span></td></tr>
+
+        <!-- 制造/封测 -->
+        <tr class="bg-cyan-500/[0.02]"><td class="font-bold text-cyan-300 py-4" rowspan="5">⚙️ 制造<br>封测</td></tr>
+        <tr class="bg-cyan-500/[0.02]"><td>中芯国际</td><td class="text-right font-mono text-gray-500">688981</td><td class="text-right v-up">55.8</td><td class="text-right v-up">+12.5%</td><td class="text-right v-up">8.6%</td><td class="text-right v-flat">22.4%</td><td class="text-gray-500 text-xs">国内唯一先进制程代工厂，N+2量产，国产替代底层</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">核心</span></td></tr>
+        <tr class="bg-cyan-500/[0.02]"><td>通富微电</td><td class="text-right font-mono text-gray-500">002156</td><td class="text-right v-up">28.6</td><td class="text-right v-up">+22.1%</td><td class="text-right v-up">6.2%</td><td class="text-right v-flat">14.8%</td><td class="text-gray-500 text-xs">封测龙头，AMD核心封测伙伴，AI芯片封装需求</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">价值</span></td></tr>
+        <tr class="bg-cyan-500/[0.02]"><td>长电科技</td><td class="text-right font-mono text-gray-500">600584</td><td class="text-right v-up">22.8</td><td class="text-right v-up">+18.5%</td><td class="text-right v-up">8.1%</td><td class="text-right v-flat">15.2%</td><td class="text-gray-500 text-xs">全球第三封测厂，Chiplet先进封装领先</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">价值</span></td></tr>
+        <tr class="bg-cyan-500/[0.02]"><td>甬矽电子</td><td class="text-right font-mono text-gray-500">688362</td><td class="text-right v-up">85.3</td><td class="text-right v-up">+35.6%</td><td class="text-right v-down">3.5%</td><td class="text-right v-flat">23.1%</td><td class="text-gray-500 text-xs">Chiplet先进封装新贵，2.5D/3D布局，弹性大</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-300">弹性</span></td></tr>
+
+        <!-- PCB -->
+        <tr class="bg-green-500/[0.02]"><td class="font-bold text-green-300 py-4" rowspan="4">🟢 PCB</td></tr>
+        <tr class="bg-green-500/[0.02]"><td>沪电股份</td><td class="text-right font-mono text-gray-500">002463</td><td class="text-right v-up">32.5</td><td class="text-right v-up">+38.2%</td><td class="text-right v-up">16.8%</td><td class="text-right v-fg">35.6%</td><td class="text-gray-500 text-xs">AI服务器PCB核心，英伟达链，业绩确定性最强</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">核心</span></td></tr>
+        <tr class="bg-green-500/[0.02]"><td>深南电路</td><td class="text-right font-mono text-gray-500">002916</td><td class="text-right v-up">28.6</td><td class="text-right v-up">+25.4%</td><td class="text-right v-up">12.3%</td><td class="text-right v-fg">32.8%</td><td class="text-gray-500 text-xs">高端PCB+IC载板，封装基板国产替代先锋</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">核心</span></td></tr>
+        <tr class="bg-green-500/[0.02]"><td>胜宏科技</td><td class="text-right font-mono text-gray-500">300476</td><td class="text-right v-up">35.2</td><td class="text-right v-up">+20.5%</td><td class="text-right v-up">10.2%</td><td class="text-right v-flat">26.8%</td><td class="text-gray-500 text-xs">多层PCB+HDI，英伟达供应链，产能扩张确定</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">价值</span></td></tr>
+
+        <!-- 光模块 -->
+        <tr class="bg-purple-500/[0.02]"><td class="font-bold text-purple-300 py-4" rowspan="4">🔮 光模块</td></tr>
+        <tr class="bg-purple-500/[0.02]"><td>中际旭创</td><td class="text-right font-mono text-gray-500">300308</td><td class="text-right v-up">38.5</td><td class="text-right v-up">+45.2%</td><td class="text-right v-up">18.5%</td><td class="text-right v-fg">38.2%</td><td class="text-gray-500 text-xs">全球光模块龙头，800G/1.6T量产，QFII重仓46亿</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">核心</span></td></tr>
+        <tr class="bg-purple-500/[0.02]"><td>天孚通信</td><td class="text-right font-mono text-gray-500">300394</td><td class="text-right v-up">42.6</td><td class="text-right v-up">+35.8%</td><td class="text-right v-up">32.5%</td><td class="text-right v-fg">52.8%</td><td class="text-gray-500 text-xs">光引擎+无源器件龙头，超高毛利率壁垒极高</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">价值</span></td></tr>
+        <tr class="bg-purple-500/[0.02]"><td>新易盛</td><td class="text-right font-mono text-gray-500">300502</td><td class="text-right v-up">45.8</td><td class="text-right v-up">+32.5%</td><td class="text-right v-up">22.8%</td><td class="text-right v-fg">42.5%</td><td class="text-gray-500 text-xs">数通光模块核心，北美大客户占比高</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">价值</span></td></tr>
+
+        <!-- 存储 -->
+        <tr class="bg-yellow-500/[0.02]"><td class="font-bold text-yellow-300 py-4" rowspan="3">💾 存储</td></tr>
+        <tr class="bg-yellow-500/[0.02]"><td>兆易创新</td><td class="text-right font-mono text-gray-500">603986</td><td class="text-right v-up">48.5</td><td class="text-right v-up">+18.5%</td><td class="text-right v-up">14.2%</td><td class="text-right v-fg">38.5%</td><td class="text-gray-500 text-xs">NOR Flash+MCU龙头，存储周期复苏受益</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-300">弹性</span></td></tr>
+        <tr class="bg-yellow-500/[0.02]"><td>澜起科技</td><td class="text-right font-mono text-gray-500">688008</td><td class="text-right v-up">62.5</td><td class="text-right v-up">+12.6%</td><td class="text-right v-up">28.5%</td><td class="text-right v-fg">55.2%</td><td class="text-gray-500 text-xs">内存接口全球龙头，DDR5+AI互联芯片双驱动</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">价值</span></td></tr>
+
+        <!-- 服务器 -->
+        <tr class="bg-orange-500/[0.02]"><td class="font-bold text-orange-300 py-4" rowspan="3">🖥️ 服务器</td></tr>
+        <tr class="bg-orange-500/[0.02]"><td>中科曙光</td><td class="text-right font-mono text-gray-500">603019</td><td class="text-right v-up">35.8</td><td class="text-right v-up">+22.5%</td><td class="text-right v-up">8.5%</td><td class="text-right v-flat">22.5%</td><td class="text-gray-500 text-xs">国产算力服务器+超算龙头，信创AI双驱动</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">价值</span></td></tr>
+        <tr class="bg-orange-500/[0.02]"><td>工业富联</td><td class="text-right font-mono text-gray-500">601138</td><td class="text-right v-up">18.5</td><td class="text-right v-up">+35.5%</td><td class="text-right v-down">4.2%</td><td class="text-right v-flat">8.5%</td><td class="text-gray-500 text-xs">英伟达AI服务器代工核心，PE最低但毛利最低</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">价值</span></td></tr>
+
+        <!-- 半导体设备 -->
+        <tr class="bg-red-500/[0.02]"><td class="font-bold text-red-300 py-4" rowspan="3">🔬 设备<br>材料</td></tr>
+        <tr class="bg-red-500/[0.02]"><td>北方华创</td><td class="text-right font-mono text-gray-500">002371</td><td class="text-right v-up">42.5</td><td class="text-right v-up">+18.5%</td><td class="text-right v-up">18.5%</td><td class="text-right v-fg">42.5%</td><td class="text-gray-500 text-xs">半导体设备平台型龙头，刻蚀/薄膜/清洗全布局</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">核心</span></td></tr>
+        <tr class="bg-red-500/[0.02]"><td>中微公司</td><td class="text-right font-mono text-gray-500">688012</td><td class="text-right v-up">55.8</td><td class="text-right v-up">+22.5%</td><td class="text-right v-up">22.5%</td><td class="text-right v-fg">48.5%</td><td class="text-gray-500 text-xs">刻蚀设备龙头，3D NAND/先进制程核心设备</td><td class="text-center"><span class="text-[11px] px-2 py-0.5 rounded bg-green-500/10 text-green-300">价值</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== 底部配置框架 ===== -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+  <div class="gcard rounded-xl p-5">
+    <div class="flex items-center gap-2 mb-3">
+      <i data-lucide="shield-check" class="w-4 h-4 text-green-400"></i>
+      <h3 class="text-sm font-bold text-white">🟢 核心配置</h3>
+    </div>
+    <div class="flex flex-wrap gap-1.5 text-xs mb-2">
+      <span class="px-2.5 py-1 rounded bg-green-500/10 text-green-300">中际旭创</span>
+      <span class="px-2.5 py-1 rounded bg-green-500/10 text-green-300">沪电股份</span>
+      <span class="px-2.5 py-1 rounded bg-green-500/10 text-green-300">中芯国际</span>
+      <span class="px-2.5 py-1 rounded bg-green-500/10 text-green-300">北方华创</span>
+      <span class="px-2.5 py-1 rounded bg-green-500/10 text-green-300">海光信息</span>
+    </div>
+    <p class="text-xs text-gray-600">业绩确定性高，PE 30-50x，组合底仓</p>
+  </div>
+  <div class="gcard rounded-xl p-5">
+    <div class="flex items-center gap-2 mb-3">
+      <i data-lucide="zap" class="w-4 h-4 text-yellow-300"></i>
+      <h3 class="text-sm font-bold text-white">🟡 弹性配置</h3>
+    </div>
+    <div class="flex flex-wrap gap-1.5 text-xs mb-2">
+      <span class="px-2.5 py-1 rounded bg-yellow-500/10 text-yellow-300">沪电股份</span>
+      <span class="px-2.5 py-1 rounded bg-yellow-500/10 text-yellow-300">深南电路</span>
+      <span class="px-2.5 py-1 rounded bg-yellow-500/10 text-yellow-300">通富微电</span>
+      <span class="px-2.5 py-1 rounded bg-yellow-500/10 text-yellow-300">中科曙光</span>
+      <span class="px-2.5 py-1 rounded bg-yellow-500/10 text-yellow-300">天孚通信</span>
+    </div>
+    <p class="text-xs text-gray-600">业绩增长快，弹性大，适合波段操作</p>
+  </div>
+  <div class="gcard rounded-xl p-5">
+    <div class="flex items-center gap-2 mb-3">
+      <i data-lucide="flame" class="w-4 h-4 text-red-400"></i>
+      <h3 class="text-sm font-bold text-white">🔴 高风险</h3>
+    </div>
+    <div class="flex flex-wrap gap-1.5 text-xs mb-2">
+      <span class="px-2.5 py-1 rounded bg-red-500/10 text-red-300">寒武纪</span>
+      <span class="px-2.5 py-1 rounded bg-red-500/10 text-red-300">甬矽电子</span>
+      <span class="px-2.5 py-1 rounded bg-red-500/10 text-red-300">佰维存储</span>
+    </div>
+    <p class="text-xs text-gray-600">未盈利/高估值，波动极大，轻仓博弈</p>
+  </div>
+</div>
+
+<!-- 操作建议 -->
+<div class="mt-6 hbox rounded-xl p-5 text-sm">
+  <div class="flex items-center gap-2 mb-2">
+    <i data-lucide="message-square" class="w-4 h-4 text-[#66ffbb]"></i>
+    <span class="font-semibold text-[#66ffbb]">操作建议</span>
+  </div>
+  <p class="text-gray-400">今天算力硬件整体情绪偏热（NVDA重回5万亿刺激），PCB/光模块/存储都在涨。<strong class="text-gray-200">不推荐追涨</strong>，建议等回调10-15%分批建仓核心标的。按全天候思路，AI算力仓位控制在股票仓位的25-30%以内。</p>
+</div>
+
+<footer class="text-center text-gray-600 text-[11px] pt-8 mt-8 border-t border-white/5">
+  <p>数据基于公开信息整理 · 仅供参考，不构成投资建议</p>
+</footer>
+
+</div>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>
