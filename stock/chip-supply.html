@@ -16,10 +16,11 @@ tr:hover td{background:rgba(68,204,255,.03)}
 .tag{font-size:10px;padding:1px 6px;border-radius:4px;font-weight:600;display:inline-block;line-height:1.4}
 .kr{background:linear-gradient(135deg,rgba(255,77,77,.07),rgba(255,77,77,.01))}
 .hl{color:#44ccff;font-weight:600}
-.hint{font-size:10px;color:rgba(255,255,255,.3)}
 .bg-d2{background:#0f0f18}
 ::-webkit-scrollbar{width:5px;background:#0a0a0f}
 ::-webkit-scrollbar-thumb{background:#222;border-radius:3px}
+.spinner{border:2px solid rgba(68,204,255,.2);border-top:2px solid #44ccff;border-radius:50%;width:13px;height:13px;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -28,11 +29,12 @@ tr:hover td{background:rgba(68,204,255,.03)}
   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#44ccff]/5 border border-[#44ccff]/15 text-[#44ccff] text-[11px] mb-3">
     <span id="sd" class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
     <span id="st">加载中...</span>
+    <button onclick="reloadData()" class="ml-2 px-2 py-0.5 rounded bg-[#44ccff]/10 border border-[#44ccff]/30 text-[10px] hover:bg-[#44ccff]/20 transition-all">🔄 刷新</button>
   </div>
   <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-[#44ccff] via-blue-400 to-purple-400 bg-clip-text text-transparent leading-snug">
     🔬 存储 & 芯片上游 · 供应链稀缺价值
   </h1>
-  <p class="text-[11px] text-gray-500 mt-0.5">精选龙头中长期配置 · 战略资源 · 美韩替代 · TTM/YTD</p>
+  <p class="text-[11px] text-gray-500 mt-0.5">精选龙头中长期配置 · 战略资源 · 美韩替代 · TTM/YTD · <span id="dataSrc">数据由 GitHub Action 自动更新</span></p>
 </div>
 
 <div class="max-w-6xl mx-auto px-3 sm:px-5 py-3">
@@ -45,11 +47,7 @@ tr:hover td{background:rgba(68,204,255,.03)}
   <span class="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300">📈 增长预期</span>
 </div>
 
-<div id="app"><div class="text-center py-10 text-gray-500">加载中...</div></div>
-
-<div class="text-center mt-4 mb-6" id="errMsg" style="display:none">
-  <div class="text-red-400 text-[11px]">⚠️ 数据获取失败</div>
-</div>
+<div id="app"><div class="text-center py-10 text-gray-500">加载数据中...</div></div>
 
 <footer class="text-center text-gray-600 text-[11px] pt-4 mt-2 border-t border-white/5">
   <p>数据基于公开信息整理 · 仅供参考不构成投资建议</p>
@@ -87,7 +85,15 @@ const M = [
   {c:"000021",n:"深科技",g:"~12%",p:"25.8",y:"+18.5%",k:"<span class=hl>沛顿存储</span>，长鑫深度绑定；存储封测+模组，受益国产存储扩产周期",t:"📈"},
 ];
 
-const CM = {"000426":"sz000426","601600":"sh601600","002428":"sz002428","600549":"sh600549","002155":"sz002155","000960":"sz000960","000831":"sz000831","688126":"sh688126","603650":"sh603650","688268":"sh688268","300666":"sz300666","688019":"sh688019","002409":"sz002409","300395":"sz300395","688012":"sh688012","002371":"sz002371","688072":"sh688072","688082":"sh688082","688361":"sh688361","600641":"sh600641","603986":"sh603986","688008":"sh688008","688037":"sh688037","002156":"sz002156","000021":"sz000021"};
+const CM = {
+  "000426":"sz000426","601600":"sh601600","002428":"sz002428","600549":"sh600549",
+  "002155":"sz002155","000960":"sz000960","000831":"sz000831","688126":"sh688126",
+  "603650":"sh603650","688268":"sh688268","300666":"sz300666","688019":"sh688019",
+  "002409":"sz002409","300395":"sz300395","688012":"sh688012","002371":"sz002371",
+  "688072":"sh688072","688082":"sh688082","688361":"sh688361","600641":"sh600641",
+  "603986":"sh603986","688008":"sh688008","688037":"sh688037","002156":"sz002156",
+  "000021":"sz000021"
+};
 
 const G = [
   {t:"☢️ 一、稀缺贵金属 · 中国优势", s:M.slice(0,7)},
@@ -146,30 +152,40 @@ function render() {
   document.getElementById('app').innerHTML = h;
 }
 
+// 备用离线数据 (5/15 收盘)
+const SD = {"000426":{price:44.14,change_pct:-8.35},"601600":{price:10.93,change_pct:-5.86},"002428":{price:90.33,change_pct:-7.07},"600549":{price:53.41,change_pct:-3.09},"002155":{price:26.33,change_pct:-5.12},"000960":{price:36.53,change_pct:-6.14},"000831":{price:55.89,change_pct:3.02},"688126":{price:24.07,change_pct:-3.60},"603650":{price:57.59,change_pct:1.66},"688268":{price:191.21,change_pct:6.82},"300666":{price:189.87,change_pct:4.46},"688019":{price:276.80,change_pct:2.14},"002409":{price:107.46,change_pct:0.56},"300395":{price:133.84,change_pct:-4.54},"688012":{price:432.90,change_pct:11.78},"002371":{price:592.12,change_pct:4.91},"688072":{price:529.94,change_pct:7.49},"688082":{price:175.20,change_pct:0.06},"688361":{price:207.50,change_pct:1.80},"600641":{price:28.88,change_pct:0.35},"603986":{price:375.34,change_pct:6.20},"688008":{price:247.98,change_pct:2.70},"688037":{price:277.00,change_pct:7.23},"002156":{price:57.03,change_pct:-0.66},"000021":{price:33.67,change_pct:4.14}};
+
 function loadData() {
   const st = document.getElementById('st');
   const sd = document.getElementById('sd');
+  st.textContent = '加载数据...';
+  if (sd) sd.className = 'w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse';
 
   fetch('./stock-data.json?t=' + Date.now())
     .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(d => {
       liveData = {};
-      for (const [short, info] of Object.entries(d.stocks)) {
-        liveData[short] = info;
+      for (const [code, info] of Object.entries(d.stocks)) {
+        for (const [short, sinaCode] of Object.entries(CM)) {
+          if (sinaCode === code) { liveData[short] = info; break; }
+        }
       }
       const count = Object.keys(liveData).length;
-      const t = d.update_time;
-      st.textContent = t + ' · ' + count + '只' + (count >= 25 ? ' ✅' : '');
-      sd.className = 'w-1.5 h-1.5 rounded-full bg-green-400';
-      document.getElementById('errMsg').style.display = 'none';
+      st.textContent = d.update_time + ' · ' + count + '只' + (count >= 25 ? ' ✅' : '');
+      if (sd) sd.className = 'w-1.5 h-1.5 rounded-full bg-green-400';
       render();
     })
-    .catch(e => {
-      st.textContent = '数据获取失败';
-      sd.className = 'w-1.5 h-1.5 rounded-full bg-red-400';
-      document.getElementById('errMsg').style.display = 'block';
-      console.error(e);
+    .catch(() => {
+      st.textContent = '离线数据 (5/15收盘)';
+      if (sd) sd.className = 'w-1.5 h-1.5 rounded-full bg-yellow-400';
+      liveData = SD;
+      render();
     });
+}
+
+function reloadData() {
+  document.getElementById('st').textContent = '刷新中...';
+  loadData();
 }
 
 loadData();
