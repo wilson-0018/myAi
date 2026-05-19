@@ -2,8 +2,10 @@ name: Update Stock Data
 
 on:
   schedule:
-    # 周一到周五，A股收盘后15:35 UTC (北京时间23:35) 和 16:05 UTC (北京时间00:05)
-    - cron: '35 7,12 * * 1-5'
+    # UTC 7:30 = 北京时间 15:30 (A股收盘后30分钟)
+    # UTC 12:00 = 北京时间 20:00 (晚间补充)
+    - cron: '30 7 * * 1-5'
+    - cron: '0 12 * * 1-5'
   workflow_dispatch:
 
 jobs:
@@ -11,63 +13,65 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Fetch stock data from Sina
-        run: |
-          codes="sh601600,sz002428,sh600549,sz002155,sz000960,sz000831,sh688126,sh603650,sh688268,sz300666,sh688019,sz002409,sz300395,sh688012,sz002371,sh688072,sh688082,sh688361,sh600641,sh603986,sh688008,sh688037,sz002156,sz000021,sz000426"
-          curl -s "https://hq.sinajs.cn/list=$codes" \
-            -H "Referer: https://finance.sina.com.cn" \
-            -H "User-Agent: Mozilla/5.0" \
-            | iconv -f GBK -t UTF-8 > /tmp/raw_data.txt
-          
-          echo "Raw data fetched: $(wc -c < /tmp/raw_data.txt) bytes"
-      
+
       - name: Generate stock-data.json
         run: |
           python3 -c "
-import json, re, datetime
+import json, re
+from datetime import datetime, timezone
+from urllib.request import Request, urlopen
 
-with open('/tmp/raw_data.txt', 'r') as f:
-    raw = f.read()
+CODES = 'sh601600,sz002428,sh600549,sz002155,sz000960,sz000831,sh688126,sh603650,sh688268,sz300666,sh688019,sz002409,sz300395,sh688012,sz002371,sh688072,sh688082,sh688361,sh600641,sh603986,sh688008,sh688037,sz002156,sz000021,sz000426,sh600584,sz002185,sz300223,sz300054,sz301308'
 
-# Parse: var hq_str_CODE='...name,open,prev_close,price,...';
+req = Request(
+    f'https://hq.sinajs.cn/list={CODES}',
+    headers={
+        'Referer': 'https://finance.sina.com.cn',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+    },
+)
+resp = urlopen(req, timeout=15)
+raw = resp.read().decode('gbk')
+
 stocks = {}
-for m in re.finditer(r\"hq_str_(\w+)='([^']+)'\", raw):
-    code = m.group(1)
-    parts = m.group(2).split(',')
-    if len(parts) < 4:
+trade_date = None
+for line in raw.strip().split(chr(10)):
+    if '=' not in line:
         continue
-    name = parts[0]
-    price = float(parts[3]) if parts[3] else 0
-    prev_close = float(parts[2]) if parts[2] else price
-    change_pct = round((price - prev_close) / prev_close * 100, 2) if prev_close > 0 else 0.0
-    date_str = parts[30] if len(parts) > 30 else ''
-    stocks[code] = {
-        'name': name,
-        'price': price,
-        'change_pct': change_pct,
-        'date': date_str
-    }
+    m = re.search(r'hq_str_(\w+)=\"([^\"]+)\"', line)
+    if not m:
+        continue
+    code = m.group(1)
+    vals = m.group(2).split(',')
+    if len(vals) < 4:
+        continue
+    name = vals[0]
+    price = float(vals[3]) if vals[3] else 0
+    prev = float(vals[2]) if vals[2] else price
+    change_pct = round((price - prev) / prev * 100, 2) if prev > 0 else 0.0
+    stocks[code] = {'name': name, 'price': price, 'change_pct': change_pct}
+    if len(vals) >= 31 and vals[30]:
+        trade_date = vals[30]
 
-output = {
-    'update_time': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M UTC'),
-    'stocks': stocks
-}
+if not trade_date:
+    print('No trade date - non-trading day, skipping')
+    exit(0)
 
 with open('stock/stock-data.json', 'w', encoding='utf-8') as f:
-    json.dump(output, f, ensure_ascii=False, indent=2)
+    json.dump({
+        'update_time': f'{trade_date} 15:00 (A股收盘)',
+        'stocks': stocks
+    }, f, ensure_ascii=False, indent=2)
 
-print(f'Generated stock-data.json with {len(stocks)} stocks')
-for k, v in stocks.items():
-    c = '+' if v['change_pct'] >= 0 else ''
-    print(f'  {v[\"name\"]}: {v[\"price\"]} ({c}{v[\"change_pct\"]}%)')
+print(f'Generated stock-data.json: {len(stocks)} stocks for {trade_date}')
 "
-      
+
       - name: Commit and push
         run: |
           git config user.name 'Stock Bot'
           git config user.email 'bot@github.com'
           git add stock/stock-data.json
-          git diff --quiet && git diff --staged --quiet || \
-            git commit -m "Update stock data: $(date -u '+%Y-%m-%d %H:%M')"
-          git push
+          git diff --quiet && git diff --staged --quiet || (
+            git commit -m 'Update stock data: $(date -u "+%Y-%m-%d %H:%M")' &&
+            git push
+          )
