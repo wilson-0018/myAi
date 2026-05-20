@@ -138,7 +138,7 @@ function render() {
       if (x.t.includes('📈')) tl += '<span class="tag bg-blue-500/10 text-blue-300">📈 增长</span> ';
       if (x.t.includes('唯一')) tl += '<span class="tag bg-blue-500/10 text-blue-300">唯一标的</span> ';
       h += `<tr class="${kr?'kr':''}">
-        <td><span class="text-gray-500 font-mono text-[11px]">${x.c}</span><br><span class="font-medium text-[12px] text-white">${x.n}</span></td>
+        <td><span style="color:#44ccff" class="font-mono text-[11px] font-semibold">${x.c}</span><br><span style="color:#44ccff" class="font-medium text-[12px]">${x.n}</span></td>
         <td class="text-center">${priceDisplay}</td>
         <td class="text-center font-mono text-[11px]">${x.p}</td>
         <td class="text-center font-mono text-[11px] text-green-400">${x.y}</td>
