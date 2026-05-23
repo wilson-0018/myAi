@@ -158,9 +158,9 @@ function loadData() {
   const ds = document.getElementById('dataSrc');
   st.textContent = '加载数据...';
   sd.className = 'w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse';
-  if (ds) ds.textContent = '数据实时拉取';
+  if (ds) ds.textContent = '实时数据';
 
-  // 直接通过 <script> 标签加载新浪数据，绕过 CORS
+  // 实时从新浪拉数据（通过 script 标签绕过 CORS）
   const codes = Object.values(CM).join(',');
   const scr = document.createElement('script');
   scr.src = 'https://hq.sinajs.cn/list=' + codes;
@@ -181,45 +181,34 @@ function loadData() {
     }
     if (n > 0) {
       const now = new Date();
-      const t = now.toLocaleString('zh-CN', { hour12: false });
-      st.textContent = (tradeDate || '') + ' · ' + n + '只 ✅ ' + t;
+      st.textContent = (tradeDate || '') + ' · ' + n + '只 ✅ ' + now.toLocaleTimeString('zh-CN', {hour12:false});
       sd.className = 'w-1.5 h-1.5 rounded-full bg-green-400';
       render();
     } else {
-      // 拉到了但解析失败，用 stock-data.json
-      fetchJson();
+      loadJson();
     }
     try { document.body.removeChild(scr); } catch(e) {}
   };
-  scr.onerror = function() {
-    fetchJson();
-    try { document.body.removeChild(scr); } catch(e) {}
-  };
+  scr.onerror = function() { loadJson(); try { document.body.removeChild(scr); } catch(e) {} };
   document.body.appendChild(scr);
 }
 
-function fetchJson() {
-  const st = document.getElementById('st');
-  const sd = document.getElementById('sd');
-  const ds = document.getElementById('dataSrc');
+function loadJson() {
   fetch('./stock-data.json?t=' + Date.now())
-    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(r => r.ok ? r.json() : Promise.reject())
     .then(d => {
       liveData = {};
-      for (const [code, info] of Object.entries(d.stocks)) {
-        for (const [short, sinaCode] of Object.entries(CM)) {
-          if (sinaCode === code) { liveData[short] = info; break; }
-        }
-      }
-      const count = Object.keys(liveData).length;
-      st.textContent = d.update_time + ' · ' + count + '只' + (count >= 25 ? ' ✅' : '');
-      if (ds) ds.textContent = '数据由GitHub Action自动更新';
-      sd.className = 'w-1.5 h-1.5 rounded-full bg-green-400';
+      for (const [code, info] of Object.entries(d.stocks))
+        for (const [short, sc] of Object.entries(CM))
+          if (sc === code) { liveData[short] = info; break; }
+      const n = Object.keys(liveData).length;
+      document.getElementById('st').textContent = d.update_time + ' · ' + n + '只' + (n >= 25 ? ' ✅' : '');
+      document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
       render();
     })
     .catch(() => {
-      st.textContent = '数据加载失败';
-      sd.className = 'w-1.5 h-1.5 rounded-full bg-red-400';
+      document.getElementById('st').textContent = '数据加载失败';
+      document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-red-400';
     });
 }
 
