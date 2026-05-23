@@ -17,6 +17,7 @@ tr:hover td{background:rgba(68,204,255,.03)}
 .kr{background:linear-gradient(135deg,rgba(255,77,77,.07),rgba(255,77,77,.01))}
 .hl{color:#44ccff;font-weight:600}
 .bg-d2{background:#0f0f18}
+.hint{font-size:10px;color:rgba(255,255,255,.3);font-weight:400}
 ::-webkit-scrollbar{width:5px;background:#0a0a0f}
 ::-webkit-scrollbar-thumb{background:#222;border-radius:3px}
 .spinner{border:2px solid rgba(68,204,255,.2);border-top:2px solid #44ccff;border-radius:50%;width:13px;height:13px;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
@@ -109,8 +110,8 @@ function render() {
   for (const g of G) {
     h += `<div class="mb-1 mt-5"><h2 class="text-sm font-bold text-white">${g.t}</h2></div>
     <div class="gcard mb-3"><table class="w-full"><thead><tr class="border-b border-white/5 bg-d2">
-      <th class="text-left w-16">股票</th>
-      <th class="text-center w-24">股价/涨跌</th>
+      <th class="text-left w-24 whitespace-nowrap">股票</th>
+      <th class="text-center w-16">价格<br><span class="hint">涨跌幅</span></th>
       <th class="text-center w-9">PE</th>
       <th class="text-center w-9">YTD</th>
       <th class="text-center w-10">毛利率</th>
@@ -126,7 +127,7 @@ function render() {
         const c = ld.change_pct;
         const cs = c >= 0 ? 'text-green-400' : 'text-red-400';
         const sign = c >= 0 ? '+' : '';
-        priceDisplay = `<span class="font-mono font-semibold text-white text-[12px]">${p}</span><span class="ml-1 font-mono text-[11px] ${cs}">(${sign}${c.toFixed(2)}%)</span>`;
+        priceDisplay = `<span class="font-mono font-semibold text-white text-[12px] block">${p}</span><span class="font-mono text-[10px] ${cs} block">${sign}${c.toFixed(2)}%</span>`;
       } else {
         priceDisplay = '<span class="text-gray-500">—</span>';
       }
@@ -138,7 +139,7 @@ function render() {
       if (x.t.includes('📈')) tl += '<span class="tag bg-blue-500/10 text-blue-300">📈 增长</span> ';
       if (x.t.includes('唯一')) tl += '<span class="tag bg-blue-500/10 text-blue-300">唯一标的</span> ';
       h += `<tr class="${kr?'kr':''}">
-        <td><span style="color:#44ccff" class="font-mono text-[11px] font-semibold">${x.c}</span><br><span style="color:#44ccff" class="font-medium text-[12px]">${x.n}</span></td>
+        <td><span style="color:#44ccff" class="font-mono text-[11px] font-semibold whitespace-nowrap">${x.c}</span> <span style="color:#44ccff" class="font-medium text-[12px]">${x.n}</span></td>
         <td class="text-center">${priceDisplay}</td>
         <td class="text-center font-mono text-[11px]">${x.p}</td>
         <td class="text-center font-mono text-[11px] text-green-400">${x.y}</td>
