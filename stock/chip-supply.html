@@ -127,7 +127,7 @@ function render() {
         const c = ld.change_pct;
         const cs = c >= 0 ? 'text-red-400' : 'text-green-400';
         const sign = c >= 0 ? '+' : '';
-        priceDisplay = `<span class="font-mono font-semibold text-white text-[12px] block">${p}</span><span class="font-mono text-[10px] ${cs} block">${sign}${c.toFixed(2)}%</span>`;
+        priceDisplay = `<span class="font-mono font-semibold text-white text-[12px]">${p}</span><br><span class="font-mono text-[10px] ${cs}">${sign}${c.toFixed(2)}%</span>`;
       } else {
         priceDisplay = '<span class="text-gray-500">—</span>';
       }
@@ -139,7 +139,7 @@ function render() {
       if (x.t.includes('📈')) tl += '<span class="tag bg-blue-500/10 text-blue-300">📈 增长</span> ';
       if (x.t.includes('唯一')) tl += '<span class="tag bg-blue-500/10 text-blue-300">唯一标的</span> ';
       h += `<tr class="${kr?'kr':''}">
-        <td><span style="color:#44ccff" class="font-mono text-[11px] font-semibold whitespace-nowrap">${x.c}</span> <span style="color:#44ccff" class="font-medium text-[12px]">${x.n}</span></td>
+        <td><span style="color:#44ccff" class="font-mono text-[11px] font-semibold">${x.c}</span><br><span style="color:#44ccff" class="font-medium text-[12px]">${x.n}</span></td>
         <td class="text-center">${priceDisplay}</td>
         <td class="text-center font-mono text-[11px]">${x.p}</td>
         <td class="text-center font-mono text-[11px] text-green-400">${x.y}</td>
