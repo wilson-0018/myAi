@@ -125,7 +125,7 @@ function render() {
       if (ld && ld.price) {
         const p = ld.price.toFixed(2);
         const c = ld.change_pct;
-        const cs = c >= 0 ? 'text-green-400' : 'text-red-400';
+        const cs = c >= 0 ? 'text-red-400' : 'text-green-400';
         const sign = c >= 0 ? '+' : '';
         priceDisplay = `<span class="font-mono font-semibold text-white text-[12px] block">${p}</span><span class="font-mono text-[10px] ${cs} block">${sign}${c.toFixed(2)}%</span>`;
       } else {
