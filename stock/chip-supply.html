@@ -125,9 +125,9 @@ function render() {
       if (ld && ld.price) {
         const p = ld.price.toFixed(2);
         const c = ld.change_pct;
-        const cs = c >= 0 ? 'text-red-400' : 'text-green-400';
         const sign = c >= 0 ? '+' : '';
-        priceDisplay = `<span class="font-mono font-semibold text-white text-[12px]">${p}</span><br><span class="font-mono text-[10px] ${cs}">${sign}${c.toFixed(2)}%</span>`;
+        const color = c >= 0 ? '#ef4444' : '#22c55e';
+        priceDisplay = `<span class="font-mono font-semibold text-white text-[12px]">${p}</span><br><span class="font-mono text-[10px]" style="color:${color}">${sign}${c.toFixed(2)}%</span>`;
       } else {
         priceDisplay = '<span class="text-gray-500">—</span>';
       }
