@@ -195,7 +195,7 @@ function loadData() {
 }
 
 function loadJson() {
-  fetch('./stock-data.json?t=' + Date.now())
+  fetch('https://raw.githubusercontent.com/wilson-0018/stock/main/stock-data.json?t=' + Date.now())
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(d => {
       liveData = {};
