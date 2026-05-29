@@ -11,7 +11,7 @@ def fetch_stock_data():
     """获取或生成股票数据"""
     print("开始生成股票数据...")
     
-    # 基础股票数据（从 GitHub 历史数据读取或使用默认数据）
+    # 基础股票数据
     stock_data = {
         "update_time": datetime.now().strftime('%Y-%m-%d %H:%M (A股收盘)'),
         "stocks": {
@@ -52,24 +52,38 @@ def fetch_stock_data():
 
 def main():
     try:
-        print("=" * 50)
+        print("=" * 60)
         print("股票数据更新脚本启动")
-        print("=" * 50)
+        print("=" * 60)
         
         data = fetch_stock_data()
         
-        # 确保 stock 目录存在
-        os.makedirs('stock', exist_ok=True)
+        # 生成两个位置的文件，以兼容不同的配置
+        paths = [
+            'stock/stock-data.json',      # 新位置（推荐）
+            'stock-data.json'             # 旧位置（兼容）
+        ]
         
-        # 生成 stock/stock-data.json 文件
-        output_path = 'stock/stock-data.json'
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
+        for output_path in paths:
+            try:
+                # 确保目录存在
+                os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
+                
+                # 生成文件
+                with open(output_path, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, indent=2, ensure_ascii=False)
+                
+                print(f"✓ 文件已生成: {output_path}")
+                file_size = os.path.getsize(output_path)
+                print(f"  文件大小: {file_size} 字节")
+            except Exception as e:
+                print(f"✗ 生成文件失败 {output_path}: {e}")
         
-        print(f"✓ 股票数据已成功更新到 {output_path}")
         print(f"✓ 共更新 {len(data['stocks'])} 只股票")
         print(f"✓ 更新时间: {data['update_time']}")
-        print("=" * 50)
+        print("=" * 60)
+        print("脚本执行成功")
+        print("=" * 60)
         
     except Exception as e:
         print(f"✗ 错误: {e}")
