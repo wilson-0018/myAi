@@ -1,54 +1,113 @@
 #!/usr/bin/env python3
 """
-更新股票数据并生成 stock-data.json
+从新浪财经获取股票实时行情，生成 stock-data.json
+盘中拉实时数据，收盘后拉收盘数据
 """
 
 import json
 import os
-from datetime import datetime
+import re
+import urllib.request
+
+# 28+2只精选标的（新浪代码格式）
+CODES = {
+    "sh601600": "中国铝业", "sz002428": "云南锗业", "sh600549": "厦门钨业",
+    "sz002155": "湖南黄金", "sz000960": "锡业股份", "sz000831": "中国稀土",
+    "sh688126": "沪硅产业", "sh603650": "彤程新材", "sh688268": "华特气体",
+    "sz300666": "江丰电子", "sh688019": "安集科技", "sz002409": "雅克科技",
+    "sz300395": "菲利华", "sh688012": "中微公司", "sz002371": "北方华创",
+    "sh688072": "拓荆科技", "sh688082": "盛美上海", "sh688361": "中科飞测",
+    "sh600641": "先导基电", "sh603986": "兆易创新", "sh688008": "澜起科技",
+    "sh688037": "芯源微", "sz002156": "通富微电", "sz000021": "深科技",
+    "sz000426": "兴业银锡", "sh600584": "长电科技", "sz002185": "华天科技",
+    "sz300223": "北京君正", "sz300054": "鼎龙股份", "sz301308": "江波龙",
+}
+
+def fetch_from_sina():
+    """从新浪财经拉实时行情"""
+    code_str = ','.join(CODES.keys())
+    url = f'https://hq.sinajs.cn/list={code_str}'
+    req = urllib.request.Request(url, headers={
+        'Referer': 'https://finance.sina.com.cn',
+        'User-Agent': 'Mozilla/5.0'
+    })
+    resp = urllib.request.urlopen(req, timeout=15)
+    raw = resp.read().decode('gbk')
+    return raw
+
+def parse_sina_data(text):
+    """解析新浪返回的行情数据"""
+    stocks = {}
+    trade_date = None
+    
+    for line in text.strip().split('\n'):
+        m = re.search(r'hq_str_(\w+)="([^"]+)"', line)
+        if not m:
+            continue
+        code = m.group(1)
+        vals = m.group(2).split(',')
+        if len(vals) < 8:
+            continue
+        
+        name = vals[0]
+        price = float(vals[3]) if vals[3] else 0
+        prev_close = float(vals[2]) if vals[2] else price
+        change_pct = round((price - prev_close) / prev_close * 100, 2) if prev_close > 0 else 0.0
+        date_str = vals[30] if len(vals) > 30 else ''
+        
+        stocks[code] = {
+            "name": name,
+            "price": price,
+            "change_pct": change_pct,
+            "date": date_str
+        }
+        if not trade_date and date_str:
+            trade_date = date_str
+    
+    return stocks, trade_date
 
 def fetch_stock_data():
-    """获取或生成股票数据"""
-    print("开始生成股票数据...")
+    """获取股票数据"""
+    print("从新浪财经拉取实时行情...")
     
-    # 基础股票数据
-    stock_data = {
-        "update_time": datetime.now().strftime('%Y-%m-%d %H:%M (A股收盘)'),
-        "stocks": {
-            "sh601600": {"name": "中国铝业", "price": 11.15, "change_pct": 2.86, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz002428": {"name": "云南锗业", "price": 87.1, "change_pct": 3.94, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh600549": {"name": "厦门钨业", "price": 52.04, "change_pct": 3.75, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz002155": {"name": "湖南黄金", "price": 25.19, "change_pct": 2.03, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz000960": {"name": "锡业股份", "price": 38.01, "change_pct": 4.74, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz000831": {"name": "中国稀土", "price": 51.51, "change_pct": 0.68, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh688126": {"name": "沪硅产业", "price": 27.81, "change_pct": 0.47, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh603650": {"name": "彤程新材", "price": 58.84, "change_pct": 2.22, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh688268": {"name": "华特气体", "price": 163.88, "change_pct": 3.25, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz300666": {"name": "江丰电子", "price": 196.6, "change_pct": 3.13, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh688019": {"name": "安集科技", "price": 311.19, "change_pct": 2.1, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz002409": {"name": "雅克科技", "price": 116.5, "change_pct": 2.28, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz300395": {"name": "菲利华", "price": 140.15, "change_pct": 9.15, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh688012": {"name": "中微公司", "price": 469.6, "change_pct": -1.3, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz002371": {"name": "北方华创", "price": 669.0, "change_pct": 0.91, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh688072": {"name": "拓荆科技", "price": 616.98, "change_pct": 1.78, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh688082": {"name": "盛美上海", "price": 213.17, "change_pct": 0.21, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh688361": {"name": "中科飞测", "price": 245.45, "change_pct": 1.59, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh600641": {"name": "先导基电", "price": 27.93, "change_pct": 4.76, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh603986": {"name": "兆易创新", "price": 468.74, "change_pct": 8.53, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh688008": {"name": "澜起科技", "price": 271.83, "change_pct": 3.68, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh688037": {"name": "芯源微", "price": 288.74, "change_pct": 1.26, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz002156": {"name": "通富微电", "price": 63.44, "change_pct": 2.72, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz000021": {"name": "深科技", "price": 37.73, "change_pct": 3.74, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz000426": {"name": "兴业银锡", "price": 41.47, "change_pct": 4.04, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sh600584": {"name": "长电科技", "price": 72.88, "change_pct": 9.04, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz002185": {"name": "华天科技", "price": 15.43, "change_pct": 1.58, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz300223": {"name": "北京君正", "price": 138.4, "change_pct": 5.88, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz300054": {"name": "鼎龙股份", "price": 73.0, "change_pct": 0.03, "date": datetime.now().strftime('%Y-%m-%d')},
-            "sz301308": {"name": "江波龙", "price": 549.5, "change_pct": 1.95, "date": datetime.now().strftime('%Y-%m-%d')},
-        }
+    raw = fetch_from_sina()
+    stocks, trade_date = parse_sina_data(raw)
+    
+    # 判断交易时段
+    from datetime import datetime, timezone, timedelta
+    bj_now = datetime.now(timezone(timedelta(hours=8)))
+    hour = bj_now.hour
+    minute = bj_now.minute
+    weekday = bj_now.weekday()
+    
+    # 非交易日标记
+    if weekday >= 5:
+        time_label = "非交易日"
+    elif hour < 9 or (hour == 9 and minute < 30):
+        time_label = "盘前"
+    elif hour < 11 or (hour == 11 and minute <= 30):
+        time_label = "盘中实时"
+    elif hour < 13:
+        time_label = "午休 · 盘中实时"
+    elif hour < 15:
+        time_label = "盘中实时"
+    else:
+        time_label = "收盘"
+    
+    update_time = f"{bj_now.strftime('%Y-%m-%d %H:%M')} ({time_label})"
+    
+    if not stocks:
+        print("⚠️ 未获取到数据，使用备选逻辑")
+        raise Exception("未能从新浪获取数据")
+    
+    print(f"✓ 成功获取 {len(stocks)} 只股票数据")
+    print(f"  交易日期: {trade_date}")
+    print(f"  更新类型: {time_label}")
+    
+    return {
+        "update_time": update_time,
+        "stocks": stocks
     }
-    
-    return stock_data
 
 def main():
     try:
