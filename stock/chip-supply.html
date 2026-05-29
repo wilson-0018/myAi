@@ -5,11 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>存储芯片上游 · 供应链稀缺价值</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','Noto Sans SC','sans-serif'],mono:['JetBrains Mono','monospace']}}}}
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box}
 body{background:#0a0a0f;font-family:'Inter','Noto Sans SC',sans-serif;font-size:12px;color:#c0c0c8;-webkit-font-smoothing:antialiased}
@@ -20,12 +16,12 @@ tr:hover td{background:rgba(68,204,255,.03)}
 .tag{font-size:10px;padding:1px 6px;border-radius:4px;font-weight:600;display:inline-block;line-height:1.4}
 .kr{background:linear-gradient(135deg,rgba(255,77,77,.07),rgba(255,77,77,.01))}
 .hl{color:#44ccff;font-weight:600}
-.hint{font-size:10px;color:rgba(255,255,255,.3)}
 .bg-d2{background:#0f0f18}
+.hint{font-size:10px;color:rgba(255,255,255,.3);font-weight:400}
 ::-webkit-scrollbar{width:5px;background:#0a0a0f}
 ::-webkit-scrollbar-thumb{background:#222;border-radius:3px}
+.spinner{border:2px solid rgba(68,204,255,.2);border-top:2px solid #44ccff;border-radius:50%;width:13px;height:13px;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
-.sp{border:2px solid rgba(68,204,255,.2);border-top:2px solid #44ccff;border-radius:50%;width:13px;height:13px;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:4px}
 </style>
 </head>
 <body>
@@ -33,12 +29,13 @@ tr:hover td{background:rgba(68,204,255,.03)}
 <div class="max-w-6xl mx-auto px-3 sm:px-5 pt-8 pb-3 text-center border-b border-white/5">
   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#44ccff]/5 border border-[#44ccff]/15 text-[#44ccff] text-[11px] mb-3">
     <span id="sd" class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-    <span id="st">加载中...</span>
+    <span id="st">加载中... (v2)</span>
+    <button onclick="reloadData()" class="ml-2 px-2 py-0.5 rounded bg-[#44ccff]/10 border border-[#44ccff]/30 text-[10px] hover:bg-[#44ccff]/20 transition-all">🔄 刷新</button>
   </div>
   <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-[#44ccff] via-blue-400 to-purple-400 bg-clip-text text-transparent leading-snug">
     🔬 存储 & 芯片上游 · 供应链稀缺价值
   </h1>
-  <p class="text-[11px] text-gray-500 mt-0.5">精选龙头中长期配置 · 战略资源 · 美韩替代 · TTM/YTD</p>
+  <p class="text-[11px] text-gray-500 mt-0.5">精选龙头中长期配置 · 战略资源 · 美韩替代 · TTM/YTD · <span id="dataSrc">数据由 GitHub Action 自动更新</span></p>
 </div>
 
 <div class="max-w-6xl mx-auto px-3 sm:px-5 py-3">
@@ -51,15 +48,7 @@ tr:hover td{background:rgba(68,204,255,.03)}
   <span class="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300">📈 增长预期</span>
 </div>
 
-<div id="app"></div>
-
-<div class="text-center mt-4 mb-6">
-  <button onclick="ld()" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#44ccff]/10 border border-[#44ccff]/30 text-[#44ccff] text-xs hover:bg-[#44ccff]/20 transition-all">
-    <i data-lucide="refresh-cw" class="w-3 h-3" id="rI"></i>
-    <span id="rL">更新行情</span>
-  </button>
-  <div id="upMsg" class="text-[11px] text-gray-500 mt-2 opacity-0 transition-opacity">—</div>
-</div>
+<div id="app"><div class="text-center py-10 text-gray-500">加载数据中...</div></div>
 
 <footer class="text-center text-gray-600 text-[11px] pt-4 mt-2 border-t border-white/5">
   <p>数据基于公开信息整理 · 仅供参考不构成投资建议</p>
@@ -67,9 +56,8 @@ tr:hover td{background:rgba(68,204,255,.03)}
 
 </div>
 
-<script src="https://unpkg.com/lucide@latest"></script>
 <script>
-// 28个精选标的
+// 28只精选标的
 const M = [
   {c:"000426",n:"兴业银锡",g:"~28%",p:"35.2",y:"+42.5%",k:"银锡伴生矿龙头，<span class=hl>2025年净利+89%</span>；美韩银浆供应链高度依赖；受益贵金属牛市+半导体封装焊料需求",t:"💰"},
   {c:"601600",n:"中国铝业",g:"~15%",p:"18.5",y:"+15.2%",k:"<span class=hl>全球>90%镓产能</span>，出口管制直击美韩GaAs/GaN芯片供应链；铝土矿龙头估值低",t:"🎯|⚠️"},
@@ -96,26 +84,36 @@ const M = [
   {c:"688037",n:"芯源微",g:"~42%",p:"68.5",y:"+28.5%",k:"<span class=hl>国产唯一涂胶显影</span> → 替代TEL(日系)；国产化率<5%",t:"唯一|⚠️|📈"},
   {c:"002156",n:"通富微电",g:"~15%",p:"28.6",y:"+22.5%",k:"长鑫/长存<span class=hl>存储封测+AMD核心伙伴</span>；AI芯片封装需求爆发",t:"🏆|💰"},
   {c:"000021",n:"深科技",g:"~12%",p:"25.8",y:"+18.5%",k:"<span class=hl>沛顿存储</span>，长鑫深度绑定；存储封测+模组，受益国产存储扩产周期",t:"📈"},
+  {c:"600584",n:"长电科技",g:"~20%",p:"42.8",y:"+15.2%",k:"<span class=hl>全球封测前三</span>，存储封测核心供应商；Chiplet先进封装AI驱动；长鑫/长存深度绑定",t:"🏆|💰"},
+  {c:"513310",n:"中韩半导ETF",g:"",p:"—",y:"+12.5%",k:"<span class=hl>中韩半导体ETF</span>，一键配置海力士/SK/三星+中国存储芯片链；T+0交易",t:"🎯"},
 ];
 
-const CM = {"000426":"sz000426","601600":"sh601600","002428":"sz002428","600549":"sh600549","002155":"sz002155","000960":"sz000960","000831":"sz000831","688126":"sh688126","603650":"sh603650","688268":"sh688268","300666":"sz300666","688019":"sh688019","002409":"sz002409","300395":"sz300395","688012":"sh688012","002371":"sz002371","688072":"sh688072","688082":"sh688082","688361":"sh688361","600641":"sh600641","603986":"sh603986","688008":"sh688008","688037":"sh688037","002156":"sz002156","000021":"sz000021"};
-
-let Pd = {};
+const CM = {
+  "000426":"sz000426","601600":"sh601600","002428":"sz002428","600549":"sh600549",
+  "002155":"sz002155","000960":"sz000960","000831":"sz000831","688126":"sh688126",
+  "603650":"sh603650","688268":"sh688268","300666":"sz300666","688019":"sh688019",
+  "002409":"sz002409","300395":"sz300395","688012":"sh688012","002371":"sz002371",
+  "688072":"sh688072","688082":"sh688082","688361":"sh688361","600641":"sh600641",
+  "603986":"sh603986","688008":"sh688008","688037":"sh688037","002156":"sz002156",
+  "000021":"sz000021","600584":"sh600584","513310":"sh513310"
+};
 
 const G = [
-  {t:"☢️ 一、稀缺贵金属 · 中国优势", s:M.slice(0,7)},
-  {t:"🧪 二、上游核心材料 · 龙头精选", s:M.slice(7,14)},
-  {t:"⚙️ 三、精密工艺设备 · 龙头稀缺", s:M.slice(14,20)},
-  {t:"💾 四、存储芯片 & 封测 · 龙头", s:M.slice(20)},
+  {t:"💾 一、存储芯片 & 封测 · 龙头", s:M.slice(20)},
+  {t:"⚙️ 二、精密工艺设备 · 龙头稀缺", s:M.slice(14,20)},
+  {t:"🧪 三、上游核心材料 · 龙头精选", s:M.slice(7,14)},
+  {t:"☢️ 四、稀缺贵金属 · 中国优势", s:M.slice(0,7)},
 ];
 
-function rdr() {
+let liveData = {};
+
+function render() {
   let h = '';
   for (const g of G) {
     h += `<div class="mb-1 mt-5"><h2 class="text-sm font-bold text-white">${g.t}</h2></div>
     <div class="gcard mb-3"><table class="w-full"><thead><tr class="border-b border-white/5 bg-d2">
-      <th class="text-left w-16">股票</th>
-      <th class="text-center w-24">股价/涨跌</th>
+      <th class="text-left w-24 whitespace-nowrap">股票</th>
+      <th class="text-center w-16">价格<br><span class="hint">涨跌幅</span></th>
       <th class="text-center w-9">PE</th>
       <th class="text-center w-9">YTD</th>
       <th class="text-center w-10">毛利率</th>
@@ -124,9 +122,17 @@ function rdr() {
     </tr></thead><tbody>`;
     for (const x of g.s) {
       const kr = x.t.includes('⚠️');
-      const d = Pd[x.c] || {p:0,c:0};
-      const p = d.p>0?d.p.toFixed(2):'—';
-      const cp = d.c===0?'<span class="text-gray-500">—</span>':(d.c>0?`<span class="text-green-400">+${d.c.toFixed(2)}%</span>`:`<span class="text-red-400">${d.c.toFixed(2)}%</span>`);
+      const ld = liveData[x.c];
+      let priceDisplay;
+      if (ld && ld.price) {
+        const p = ld.price.toFixed(2);
+        const c = ld.change_pct;
+        const sign = c >= 0 ? '+' : '';
+        const color = c >= 0 ? '#ef4444' : '#22c55e';
+        priceDisplay = `<span class="font-mono font-semibold text-white text-[12px]">${p}</span><br><span class="font-mono text-[10px]" style="color:${color}">${sign}${c.toFixed(2)}%</span>`;
+      } else {
+        priceDisplay = '<span class="text-gray-500">—</span>';
+      }
       let tl = '';
       if (x.t.includes('🏆')) tl += '<span class="tag bg-green-500/10 text-green-300">🏆 龙头</span> ';
       if (x.t.includes('💰')) tl += '<span class="tag bg-yellow-500/10 text-yellow-300">💰 业绩</span> ';
@@ -135,8 +141,8 @@ function rdr() {
       if (x.t.includes('📈')) tl += '<span class="tag bg-blue-500/10 text-blue-300">📈 增长</span> ';
       if (x.t.includes('唯一')) tl += '<span class="tag bg-blue-500/10 text-blue-300">唯一标的</span> ';
       h += `<tr class="${kr?'kr':''}">
-        <td><span class="text-gray-500 font-mono text-[11px]">${x.c}</span><br><span class="font-medium text-[12px] text-white">${x.n}</span></td>
-        <td class="text-center"><span class="font-mono font-semibold text-white text-[12px]">${p}</span><span class="ml-1 font-mono text-[11px]">${cp}</span></td>
+        <td><span style="color:#44ccff" class="font-mono text-[11px] font-semibold">${x.c}</span><br><span style="color:#44ccff" class="font-medium text-[12px]">${x.n}</span></td>
+        <td class="text-center">${priceDisplay}</td>
         <td class="text-center font-mono text-[11px]">${x.p}</td>
         <td class="text-center font-mono text-[11px] text-green-400">${x.y}</td>
         <td class="text-center font-mono text-[11px] text-yellow-300">${x.g}</td>
@@ -147,50 +153,75 @@ function rdr() {
     h += '</tbody></table></div>';
   }
   document.getElementById('app').innerHTML = h;
-  try{typeof lucide!=='undefined'&&lucide.createIcons()}catch(e){}
 }
 
-function ld() {
-  const btn = document.getElementById('rL'), icon = document.getElementById('rI');
-  btn.innerHTML = '<span class="sp"></span>更新中...';
-  if (icon) icon.classList.add('animate-spin');
-  loadFromJSON().finally(() => {
-    btn.innerHTML = '更新行情';
-    if (icon) icon.classList.remove('animate-spin');
-  });
-}
+function loadData() {
+  const st = document.getElementById('st');
+  const sd = document.getElementById('sd');
+  const ds = document.getElementById('dataSrc');
+  st.textContent = '加载数据...';
+  sd.className = 'w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse';
+  if (ds) ds.textContent = '实时数据';
 
-function setSt(t, c) {
-  const el = document.getElementById('st'); if (el) el.textContent = t ? t : '加载失败';
-  const dot = document.getElementById('sd'); if (dot) dot.className = `w-1.5 h-1.5 rounded-full bg-${c}-400`;
-  const msg = document.getElementById('upMsg');
-  if (msg) { msg.textContent = c === 'green' ? '✅ ' + new Date().toLocaleString('zh-CN') + ' 已更新' : '⚠️ ' + t; msg.className = 'text-[11px] mt-2 transition-opacity opacity-100'; }
-}
-
-async function loadFromJSON() {
-  try {
-    const r = await fetch('/stock/stock-data.json?t=' + Date.now());
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const d = await r.json();
-    let n = 0;
-    for (const [code, info] of Object.entries(d.stocks)) {
-      const short = code.replace(/^(sh|sz)/,'');
-      Pd[short] = { p: info.price, c: info.change_pct };
-      n++;
+  // 实时从新浪拉数据（通过 script 标签绕过 CORS）
+  const codes = Object.values(CM).join(',');
+  const scr = document.createElement('script');
+  scr.src = 'https://hq.sinajs.cn/list=' + codes;
+  scr.onload = function() {
+    let n = 0, tradeDate = '';
+    for (const [short, sinaCode] of Object.entries(CM)) {
+      const v = window['hq_str_' + sinaCode];
+      if (!v) continue;
+      const a = v.split(',');
+      if (a.length < 6) continue;
+      const price = parseFloat(a[3]), prev = parseFloat(a[2]);
+      if (price > 0) {
+        const cg = prev > 0 ? Math.round((price - prev) / prev * 10000) / 100 : 0;
+        liveData[short] = { price: Math.round(price * 100) / 100, change_pct: cg };
+        n++;
+      }
+      if (a.length > 30 && a[30] && !tradeDate) tradeDate = a[30];
     }
-    const timeStr = d.update_time || '未知';
-    setSt(timeStr + ' · ' + n + '只 ✅', 'green');
-    rdr();
-    try{typeof lucide!=='undefined'&&lucide.createIcons()}catch(e){}
-  } catch(e) {
-    console.error('loadFromJSON error:', e);
-    setSt('数据加载失败，显示缓存', 'red');
-    rdr();
-    try{typeof lucide!=='undefined'&&lucide.createIcons()}catch(e){}
-  }
+    if (n > 0) {
+      const now = new Date();
+      st.textContent = (tradeDate || '') + ' · ' + n + '只 ✅ ' + now.toLocaleTimeString('zh-CN', {hour12:false});
+      sd.className = 'w-1.5 h-1.5 rounded-full bg-green-400';
+      render();
+    } else {
+      loadJson();
+    }
+    try { document.body.removeChild(scr); } catch(e) {}
+  };
+  scr.onerror = function() { loadJson(); try { document.body.removeChild(scr); } catch(e) {} };
+  document.body.appendChild(scr);
 }
 
-document.addEventListener('DOMContentLoaded', loadFromJSON);
+function loadJson() {
+  fetch('https://raw.githubusercontent.com/wilson-0018/stock/main/stock-data.json?t=' + Date.now())
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(d => {
+      liveData = {};
+      for (const [code, info] of Object.entries(d.stocks))
+        for (const [short, sc] of Object.entries(CM))
+          if (sc === code) { liveData[short] = info; break; }
+      const n = Object.keys(liveData).length;
+      document.getElementById('st').textContent = d.update_time + ' · ' + n + '只' + (n >= 25 ? ' ✅' : '');
+      document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
+      render();
+    })
+    .catch(() => {
+      document.getElementById('st').textContent = '数据加载失败';
+      document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-red-400';
+    });
+}
+
+function reloadData() {
+  document.getElementById('st').textContent = '刷新中...';
+  liveData = {};
+  loadData();
+}
+
+loadData();
 </script>
 </body>
 </html>
