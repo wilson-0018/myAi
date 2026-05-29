@@ -197,13 +197,14 @@ function loadData() {
 }
 
 function loadJson() {
-  fetch('/stock-data.json?t=' + Date.now())
+  fetch('/myAi/stock-data.json?t=' + Date.now())
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(d => {
       liveData = {};
-      for (const [code, info] of Object.entries(d.stocks))
-        for (const [short, sc] of Object.entries(CM))
-          if (sc === code) { liveData[short] = info; break; }
+      for (const [short, sinaCode] of Object.entries(CM)) {
+        const info = d.stocks[sinaCode];
+        if (info) liveData[short] = { price: info.price, change_pct: info.change_pct };
+      }
       const n = Object.keys(liveData).length;
       document.getElementById('st').textContent = d.update_time + ' · ' + n + '只' + (n >= 25 ? ' ✅' : '');
       document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
