@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+<title>圣经答疑 Q&amp;A</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, 'PingFang SC', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+    background: #f5f0e8;
+    color: #2c2c2c;
+    min-height: 100vh;
+    padding: 16px;
+  }
+  .container { max-width: 780px; margin: 0 auto; text-align: center; }
+
+  .nav-bar {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .nav-btn {
+    padding: 6px 16px; border-radius: 20px; border: 1px solid #d4b896;
+    background: #fff; font-size: 13px; cursor: pointer;
+    color: #8b5e3c; text-decoration: none; transition: all 0.2s;
+  }
+  .nav-btn:hover { background: #f0e8dc; }
+  .nav-btn.active { background: #8b5e3c; color: #fff; border-color: #8b5e3c; }
+
+  h1 { font-size: 26px; color: #5b3a1a; letter-spacing: 2px; margin-bottom: 2px; }
+  .subtitle { color: #aaa; font-size: 13px; margin-bottom: 24px; }
+
+  .qa-list { text-align: left; margin-bottom: 30px; }
+
+  .qa-item {
+    background: #fff;
+    border: 2px solid #ede8e0;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .qa-item:hover { border-color: #d4b896; }
+
+  .qa-q {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .qa-q-icon {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: #8b5e3c;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .qa-q-text {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 600;
+    color: #3a2a1a;
+    line-height: 1.4;
+  }
+  .qa-arrow {
+    font-size: 18px;
+    color: #bbb;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .qa-item.open .qa-arrow {
+    transform: rotate(180deg);
+  }
+
+  .qa-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 20px;
+    background: #fcf9f5;
+  }
+  .qa-item.open .qa-a {
+    max-height: 1200px;
+    padding: 16px 20px 20px;
+  }
+
+  .qa-a-content {
+    font-size: 15px;
+    color: #444;
+    line-height: 1.9;
+  }
+  .qa-a-content p {
+    margin-bottom: 10px;
+  }
+  .qa-a-content .verse-ref {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: #8b5e3c;
+    font-weight: 600;
+    font-style: normal;
+  }
+  .qa-a-content .highlight {
+    background: #f5ede4;
+    border-left: 4px solid #8b5e3c;
+    padding: 10px 14px;
+    margin: 12px 0;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: #3a2a1a;
+  }
+
+  .input-area {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #d4b896;
+    text-align: left;
+  }
+  .input-area h3 {
+    font-size: 16px;
+    color: #8b5e3c;
+    margin-bottom: 10px;
+  }
+  .input-row {
+    display: flex;
+    gap: 10px;
+  }
+  .input-row input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    background: #faf8f5;
+  }
+  .input-row input:focus {
+    border-color: #b8926c;
+    background: #fff;
+  }
+  .input-row button {
+    padding: 10px 20px;
+    background: #8b5e3c;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .input-row button:hover { background: #6a4528; }
+
+  .footer {
+    font-size: 12px; color: #ccc;
+    margin-top: 20px; padding-bottom: 20px;
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 10px; }
+    h1 { font-size: 20px; }
+    .qa-q { padding: 12px 14px; }
+    .qa-q-text { font-size: 14px; }
+    .qa-a-content { font-size: 14px; }
+    .input-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="nav-bar">
+    <a class="nav-btn" href="index.html">🏠 主页</a>
+    <a class="nav-btn" href="bible-genealogy.html">图谱1</a>
+    <a class="nav-btn" href="bible-genealogy2.html">图谱2</a>
+    <a class="nav-btn" href="bible-genealogy3.html">图谱3</a>
+    <a class="nav-btn active" href="bible-qa.html">圣经答疑</a>
+  </div>
+
+  <h1>🙏 圣经答疑</h1>
+  <p class="subtitle">一问一答 · 探索圣经真理</p>
+
+  <div class="qa-list" id="qaList">
+
+    <!-- ====== Q1 ====== -->
+    <div class="qa-item open" onclick="toggleQA(this)">
+      <div class="qa-q">
+        <div class="qa-q-icon">Q</div>
+        <div class="qa-q-text">人为什么有罪？</div>
+        <div class="qa-arrow">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-a-content">
+          <p>圣经告诉我们，罪不是人类被造时本来有的，而是从人类始祖亚当和夏娃的悖逆进入世界的。</p>
+
+          <p>神造人本是"甚好"的（创1:31），并赐给人自由意志。但始祖在伊甸园中选择了违背神的命令，吃了分别善恶树上的果子（创3:6）。这个行为就是"罪"——人不再以神为中心，而是以自我为中心，想要"如神能知道善恶"。</p>
+
+          <div class="highlight">
+            "这就如罪是从一人入了世界，死又是从罪来的，于是死就临到众人，因为众人都犯了罪。"
+            <span class="verse-ref">—— 罗马书 5:12</span>
+          </div>
+
+          <p>从那时起，罪性就像DNA一样遗传给了全人类。我们不是因为犯了罪才成为罪人，而是生来就有罪性，所以会犯罪。大卫在诗篇中说："我是在罪孽里生的，在我母亲怀胎的时候就有了罪。"（诗51:5）</p>
+
+          <p><strong>简单说：</strong>人之所以有罪，是因为始祖亚当的悖逆将罪性带入了人类，而每一个人都继承了这种倾向，并且在实际生活中选择了犯罪。这就是圣经所说的"原罪"与"本罪"。</p>
+
+          <p>但好消息是——神没有把人类丢在罪中。耶稣基督来，正是要解决罪的问题："因为罪的工价乃是死，惟有神的恩赐，在我们的主基督耶稣里，乃是永生。"（罗6:23）</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== Q2 ====== -->
+    <div class="qa-item" onclick="toggleQA(this)">
+      <div class="qa-q">
+        <div class="qa-q-icon">Q</div>
+        <div class="qa-q-text">什么是"原罪"？它和"本罪"有什么区别？</div>
+        <div class="qa-arrow">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-a-content">
+          <p><strong>原罪（Original Sin）</strong>是指从亚当继承而来的罪性——一种与生俱来的、倾向犯罪的败坏本性。它不是我们自己做的某件错事，而是一种内在的状态。</p>
+          <p><strong>本罪（Actual Sin）</strong>是指每个人在实际生活中，因着自由意志选择犯下的具体罪行——说谎、偷窃、嫉妒、恨人等。</p>
+          <p>打个比方：原罪就像一棵树的"坏根"，本罪就是这棵树结出的"坏果子"。根坏了，自然会结出坏果子。</p>
+          <div class="highlight">
+            "我是在罪孽里生的，在我母亲怀胎的时候就有了罪。"<br>
+            <span class="verse-ref">—— 诗篇 51:5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== Q3 ====== -->
+    <div class="qa-item" onclick="toggleQA(this)">
+      <div class="qa-q">
+        <div class="qa-q-icon">Q</div>
+        <div class="qa-q-text">神既然是慈爱的，为什么不直接赦免罪，而要耶稣钉十字架？</div>
+        <div class="qa-arrow">▼</div>
+      </div>
+      <div class="qa-a">
+        <div class="qa-a-content">
+          <p>这是一个很好的问题。圣经表明神既是慈爱的，也是公义的。公义意味着罪必须受到审判——如果神只是"算了"，他就不是公义的神了。</p>
+          <p>但神也爱世人，不愿人灭亡。所以神想出了一个既满足公义又彰显慈爱的办法：让无罪的耶稣代替有罪的人承受罪的刑罚（死亡）。这就是"代赎"——以无罪的代替有罪的。</p>
+          <div class="highlight">
+            "神爱世人，甚至将他的独生子赐给他们，叫一切信他的，不致灭亡，反得永生。"<br>
+            <span class="verse-ref">—— 约翰福音 3:16</span>
+          </div>
+          <p>十字架同时展示了神的公义（罪必须被惩罚）和神的爱（神自己承担了这个惩罚）。</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== 提交新问题 ===== -->
+  <div class="input-area">
+    <h3>💬 提交你的问题</h3>
+    <div class="input-row">
+      <input type="text" id="newQuestion" placeholder="输入你想了解的圣经问题..." onkeydown="if(event.key==='Enter')addQuestion()">
+      <button onclick="addQuestion()">提交</button>
+    </div>
+    <p style="font-size:12px;color:#bbb;margin-top:6px;">提交的问题将添加到列表（仅本地临时保存，刷新后恢复）</p>
+  </div>
+
+  <div class="footer">
+    依据圣经 ｜ 持续更新
+  </div>
+</div>
+
+<script>
+function toggleQA(el) {
+  // 如果不是点击卡片本身，而是里面的内容，仍然执行
+  el.classList.toggle('open');
+}
+
+function addQuestion() {
+  const input = document.getElementById('newQuestion');
+  const q = input.value.trim();
+  if (!q) return;
+
+  const list = document.getElementById('qaList');
+  const item = document.createElement('div');
+  item.className = 'qa-item open';
+  item.onclick = function() { toggleQA(this); };
+  item.innerHTML = `
+    <div class="qa-q">
+      <div class="qa-q-icon">Q</div>
+      <div class="qa-q-text">${escapeHtml(q)}</div>
+      <div class="qa-arrow">▼</div>
+    </div>
+    <div class="qa-a">
+      <div class="qa-a-content">
+        <p style="color:#b8926c;font-style:italic;">🤖 问题已收到，我们会尽快补充答案。</p>
+      </div>
+    </div>
+  `;
+  list.appendChild(item);
+  input.value = '';
+  // 滚动到新问题
+  item.scrollIntoView({ behavior: 'smooth' });
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+</script>
+</body>
+</html>
