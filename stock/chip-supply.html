@@ -16,12 +16,10 @@ tr:hover td{background:rgba(68,204,255,.03)}
 .tag{font-size:10px;padding:1px 6px;border-radius:4px;font-weight:600;display:inline-block;line-height:1.4}
 .kr{background:linear-gradient(135deg,rgba(255,77,77,.07),rgba(255,77,77,.01))}
 .hl{color:#44ccff;font-weight:600}
+.hint{font-size:10px;color:rgba(255,255,255,.3)}
 .bg-d2{background:#0f0f18}
-.hint{font-size:10px;color:rgba(255,255,255,.3);font-weight:400}
 ::-webkit-scrollbar{width:5px;background:#0a0a0f}
 ::-webkit-scrollbar-thumb{background:#222;border-radius:3px}
-.spinner{border:2px solid rgba(68,204,255,.2);border-top:2px solid #44ccff;border-radius:50%;width:13px;height:13px;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -29,13 +27,12 @@ tr:hover td{background:rgba(68,204,255,.03)}
 <div class="max-w-6xl mx-auto px-3 sm:px-5 pt-8 pb-3 text-center border-b border-white/5">
   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#44ccff]/5 border border-[#44ccff]/15 text-[#44ccff] text-[11px] mb-3">
     <span id="sd" class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-    <span id="st">加载中... (v2)</span>
-    <button onclick="reloadData()" class="ml-2 px-2 py-0.5 rounded bg-[#44ccff]/10 border border-[#44ccff]/30 text-[10px] hover:bg-[#44ccff]/20 transition-all">🔄 刷新</button>
+    <span id="st">加载中...</span>
   </div>
   <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-[#44ccff] via-blue-400 to-purple-400 bg-clip-text text-transparent leading-snug">
     🔬 存储 & 芯片上游 · 供应链稀缺价值
   </h1>
-  <p class="text-[11px] text-gray-500 mt-0.5">精选龙头中长期配置 · 战略资源 · 美韩替代 · TTM/YTD · <span id="dataSrc">数据由 GitHub Action 自动更新</span></p>
+  <p class="text-[11px] text-gray-500 mt-0.5">精选龙头中长期配置 · 战略资源 · 美韩替代 · TTM/YTD</p>
 </div>
 
 <div class="max-w-6xl mx-auto px-3 sm:px-5 py-3">
@@ -48,7 +45,11 @@ tr:hover td{background:rgba(68,204,255,.03)}
   <span class="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300">📈 增长预期</span>
 </div>
 
-<div id="app"><div class="text-center py-10 text-gray-500">加载数据中...</div></div>
+<div id="app"><div class="text-center py-10 text-gray-500">加载中...</div></div>
+
+<div class="text-center mt-4 mb-6" id="errMsg" style="display:none">
+  <div class="text-red-400 text-[11px]">⚠️ 数据获取失败</div>
+</div>
 
 <footer class="text-center text-gray-600 text-[11px] pt-4 mt-2 border-t border-white/5">
   <p>数据基于公开信息整理 · 仅供参考不构成投资建议</p>
@@ -57,52 +58,42 @@ tr:hover td{background:rgba(68,204,255,.03)}
 </div>
 
 <script>
-// 28只精选标的
+// 28只精选标的  [b:板块 0=主板 1=创业板 3=科创板]
 const M = [
-  {c:"000426",n:"兴业银锡",g:"~28%",p:"35.2",y:"+42.5%",k:"银锡伴生矿龙头，<span class=hl>2025年净利+89%</span>；美韩银浆供应链高度依赖；受益贵金属牛市+半导体封装焊料需求",t:"💰"},
-  {c:"601600",n:"中国铝业",g:"~15%",p:"18.5",y:"+15.2%",k:"<span class=hl>全球>90%镓产能</span>，出口管制直击美韩GaAs/GaN芯片供应链；铝土矿龙头估值低",t:"🎯|⚠️"},
-  {c:"002428",n:"云南锗业",g:"~22%",p:"85.6",y:"+68.3%",k:"<span class=hl>全球>70%锗产能</span>；光纤红外光学核心原料，美韩依赖度高；出口管制后价格飙升",t:"🎯|⚠️|💰"},
-  {c:"600549",n:"厦门钨业",g:"~22%",p:"22.8",y:"+18.5%",k:"<span class=hl>全球>80%钨产能</span>；钨靶材+硬质合金刻蚀喷嘴；新能源+半导体双驱动",t:"🎯|⚠️|💰"},
-  {c:"002155",n:"湖南黄金",g:"~18%",p:"28.6",y:"+35.8%",k:"<span class=hl>全球>50%锑产能</span>；半导体阻燃剂封装必需；中国战略出口管控核心标的",t:"🎯|⚠️"},
-  {c:"000960",n:"锡业股份",g:"~15%",p:"20.5",y:"+28.3%",k:"<span class=hl>全球锡业龙头</span>；无铅焊料封装不可替代；AI算力+存储扩产驱动需求增长",t:"🏆|💰"},
-  {c:"000831",n:"中国稀土",g:"~18%",p:"42.3",y:"+22.6%",k:"<span class=hl>全球>60%重稀土</span>；镝/铽永磁光刻机/刻蚀电机；央企重组+出口管制",t:"🎯|⚠️"},
-  {c:"688126",n:"沪硅产业",g:"~18%",p:"—",y:"+12.5%",k:"<span class=hl>300mm大硅片龙头</span>，年产能600万片；存储/逻辑扩产直接受益；国产化率<20%",t:"🏆|📈"},
-  {c:"603650",n:"彤程新材",g:"~32%",p:"55.2",y:"+25.8%",k:"北京科华旗下，<span class=hl>国内唯一ArF光刻胶量产</span>；替代JSR/TOK(日系)；国产化率<5%",t:"🏆|💰|📈"},
-  {c:"688268",n:"华特气体",g:"~35%",p:"42.5",y:"+18.2%",k:"<span class=hl>ASML认证</span> → 三星/海力士间接供应光刻气；电子特气量价齐升",t:"⚠️|💰"},
-  {c:"300666",n:"江丰电子",g:"~33%",p:"58.6",y:"+32.5%",k:"<span class=hl>进入三星/海力士/台积电靶材链</span>；铝钛铜钽全品类国产龙头",t:"🏆|💰|⚠️|📈"},
-  {c:"688019",n:"安集科技",g:"~52%",p:"62.5",y:"+22.8%",k:"<span class=hl>CMP液龙头</span>，3D NAND全覆盖；三星/海力士供应链验证",t:"🏆|💰|⚠️"},
-  {c:"002409",n:"雅克科技",g:"~36%",p:"35.8",y:"+15.6%",k:"韩子公司UP Chem → <span class=hl>三星/海力士/美光直接供应</span>；前驱体+靶材+特气平台型",t:"⚠️|💰|📈"},
-  {c:"300395",n:"菲利华",g:"~48%",p:"42.3",y:"+28.5%",k:"<span class=hl>AMAT/Lam认证</span>，三星/海力士间接供应；石英玻璃+刻蚀环",t:"💰|⚠️"},
-  {c:"688012",n:"中微公司",g:"~48%",p:"55.6",y:"+22.3%",k:"<span class=hl>三星/海力士产线验证中</span> → 替代Lam(美系)；CCP/ICP刻蚀5nm/3nm",t:"🏆|💰|⚠️"},
-  {c:"002371",n:"北方华创",g:"~42%",p:"40.5",y:"+18.8%",k:"<span class=hl>国内设备平台龙头</span>，品类最全；刻蚀/薄膜/清洗/炉管全线布局",t:"🏆|💰"},
-  {c:"688072",n:"拓荆科技",g:"~46%",p:"60.2",y:"+25.5%",k:"<span class=hl>3D NAND薄膜核心</span>；长存/长鑫主力 → 替代AMAT(美系)",t:"🏆|💰"},
-  {c:"688082",n:"盛美上海",g:"~45%",p:"38.5",y:"+20.2%",k:"<span class=hl>存储清洗龙头</span>；长鑫/长存主力 → 替代DNS(日系)",t:"🏆|💰"},
-  {c:"688361",n:"中科飞测",g:"~48%",p:"85.6",y:"+35.2%",k:"<span class=hl>国产唯一稀缺</span> → 替代KLA(美系)；检测设备国产化率<5%",t:"📈|⚠️"},
-  {c:"600641",n:"万业企业",g:"~35%",p:"42.8",y:"+12.5%",k:"凯世通 → <span class=hl>替代AMAT(美系)离子注入</span>；国产化率<3%，稀缺性最高",t:"⚠️|📈"},
-  {c:"603986",n:"兆易创新",g:"~38%",p:"48.5",y:"+18.2%",k:"<span class=hl>NOR Flash全球前三</span>+MCU龙头；与长鑫合作DRAM；存储周期复苏",t:"🏆|💰|📈"},
-  {c:"688008",n:"澜起科技",g:"~55%",p:"62.5",y:"+15.8%",k:"<span class=hl>三星/海力士/美光DDR5直接供应商</span>；PCIe Retimer芯片AI服务器增量",t:"🏆|💰"},
-  {c:"688037",n:"芯源微",g:"~42%",p:"68.5",y:"+28.5%",k:"<span class=hl>国产唯一涂胶显影</span> → 替代TEL(日系)；国产化率<5%",t:"唯一|⚠️|📈"},
-  {c:"002156",n:"通富微电",g:"~15%",p:"28.6",y:"+22.5%",k:"长鑫/长存<span class=hl>存储封测+AMD核心伙伴</span>；AI芯片封装需求爆发",t:"🏆|💰"},
-  {c:"000021",n:"深科技",g:"~12%",p:"25.8",y:"+18.5%",k:"<span class=hl>沛顿存储</span>，长鑫深度绑定；存储封测+模组，受益国产存储扩产周期",t:"📈"},
-  {c:"600584",n:"长电科技",g:"~20%",p:"42.8",y:"+15.2%",k:"<span class=hl>全球封测前三</span>，存储封测核心供应商；Chiplet先进封装AI驱动；长鑫/长存深度绑定",t:"🏆|💰"},
-  {c:"513310",n:"中韩半导ETF",g:"",p:"—",y:"+12.5%",k:"<span class=hl>中韩半导体ETF</span>，一键配置海力士/SK/三星+中国存储芯片链；T+0交易",t:"🎯"},
+  {c:"000426",n:"兴业银锡",g:"~28%",p:"35.2",y:"+42.5%",k:"银锡伴生矿龙头，<span class=hl>2025年净利+89%</span>；美韩银浆供应链高度依赖；受益贵金属牛市+半导体封装焊料需求",t:"💰",b:"主板"},
+  {c:"601600",n:"中国铝业",g:"~15%",p:"18.5",y:"+15.2%",k:"<span class=hl>全球>90%镓产能</span>，出口管制直击美韩GaAs/GaN芯片供应链；铝土矿龙头估值低",t:"🎯|⚠️",b:"主板"},
+  {c:"002428",n:"云南锗业",g:"~22%",p:"85.6",y:"+68.3%",k:"<span class=hl>全球>70%锗产能</span>；光纤红外光学核心原料，美韩依赖度高；出口管制后价格飙升",t:"🎯|⚠️|💰",b:"主板"},
+  {c:"600549",n:"厦门钨业",g:"~22%",p:"22.8",y:"+18.5%",k:"<span class=hl>全球>80%钨产能</span>；钨靶材+硬质合金刻蚀喷嘴；新能源+半导体双驱动",t:"🎯|⚠️|💰",b:"主板"},
+  {c:"002155",n:"湖南黄金",g:"~18%",p:"28.6",y:"+35.8%",k:"<span class=hl>全球>50%锑产能</span>；半导体阻燃剂封装必需；中国战略出口管控核心标的",t:"🎯|⚠️",b:"主板"},
+  {c:"000960",n:"锡业股份",g:"~15%",p:"20.5",y:"+28.3%",k:"<span class=hl>全球锡业龙头</span>；无铅焊料封装不可替代；AI算力+存储扩产驱动需求增长",t:"🏆|💰",b:"主板"},
+  {c:"000831",n:"中国稀土",g:"~18%",p:"42.3",y:"+22.6%",k:"<span class=hl>全球>60%重稀土</span>；镝/铽永磁光刻机/刻蚀电机；央企重组+出口管制",t:"🎯|⚠️",b:"主板"},
+  {c:"688126",n:"沪硅产业",g:"~18%",p:"—",y:"+12.5%",k:"<span class=hl>300mm大硅片龙头</span>，年产能600万片；存储/逻辑扩产直接受益；国产化率<20%",t:"🏆|📈",b:"科创板"},
+  {c:"603650",n:"彤程新材",g:"~32%",p:"55.2",y:"+25.8%",k:"北京科华旗下，<span class=hl>国内唯一ArF光刻胶量产</span>；替代JSR/TOK(日系)；国产化率<5%",t:"🏆|💰|📈",b:"主板"},
+  {c:"688268",n:"华特气体",g:"~35%",p:"42.5",y:"+18.2%",k:"<span class=hl>ASML认证</span> → 三星/海力士间接供应光刻气；电子特气量价齐升",t:"⚠️|💰",b:"科创板"},
+  {c:"300666",n:"江丰电子",g:"~33%",p:"58.6",y:"+32.5%",k:"<span class=hl>进入三星/海力士/台积电靶材链</span>；铝钛铜钽全品类国产龙头",t:"🏆|💰|⚠️|📈",b:"创业板"},
+  {c:"688019",n:"安集科技",g:"~52%",p:"62.5",y:"+22.8%",k:"<span class=hl>CMP液龙头</span>，3D NAND全覆盖；三星/海力士供应链验证",t:"🏆|💰|⚠️",b:"科创板"},
+  {c:"002409",n:"雅克科技",g:"~36%",p:"35.8",y:"+15.6%",k:"韩子公司UP Chem → <span class=hl>三星/海力士/美光直接供应</span>；前驱体+靶材+特气平台型",t:"⚠️|💰|📈",b:"主板"},
+  {c:"300395",n:"菲利华",g:"~48%",p:"42.3",y:"+28.5%",k:"<span class=hl>AMAT/Lam认证</span>，三星/海力士间接供应；石英玻璃+刻蚀环",t:"💰|⚠️",b:"创业板"},
+  {c:"688012",n:"中微公司",g:"~48%",p:"55.6",y:"+22.3%",k:"<span class=hl>三星/海力士产线验证中</span> → 替代Lam(美系)；CCP/ICP刻蚀5nm/3nm",t:"🏆|💰|⚠️",b:"科创板"},
+  {c:"002371",n:"北方华创",g:"~42%",p:"40.5",y:"+18.8%",k:"<span class=hl>国内设备平台龙头</span>，品类最全；刻蚀/薄膜/清洗/炉管全线布局",t:"🏆|💰",b:"主板"},
+  {c:"688072",n:"拓荆科技",g:"~46%",p:"60.2",y:"+25.5%",k:"<span class=hl>3D NAND薄膜核心</span>；长存/长鑫主力 → 替代AMAT(美系)",t:"🏆|💰",b:"科创板"},
+  {c:"688082",n:"盛美上海",g:"~45%",p:"38.5",y:"+20.2%",k:"<span class=hl>存储清洗龙头</span>；长鑫/长存主力 → 替代DNS(日系)",t:"🏆|💰",b:"科创板"},
+  {c:"688361",n:"中科飞测",g:"~48%",p:"85.6",y:"+35.2%",k:"<span class=hl>国产唯一稀缺</span> → 替代KLA(美系)；检测设备国产化率<5%",t:"📈|⚠️",b:"科创板"},
+  {c:"600641",n:"万业企业",g:"~35%",p:"42.8",y:"+12.5%",k:"凯世通 → <span class=hl>替代AMAT(美系)离子注入</span>；国产化率<3%，稀缺性最高",t:"⚠️|📈",b:"主板"},
+  {c:"603986",n:"兆易创新",g:"~38%",p:"48.5",y:"+18.2%",k:"<span class=hl>NOR Flash全球前三</span>+MCU龙头；与长鑫合作DRAM；存储周期复苏",t:"🏆|💰|📈",b:"主板"},
+  {c:"688008",n:"澜起科技",g:"~55%",p:"62.5",y:"+15.8%",k:"<span class=hl>三星/海力士/美光DDR5直接供应商</span>；PCIe Retimer芯片AI服务器增量",t:"🏆|💰",b:"科创板"},
+  {c:"688037",n:"芯源微",g:"~42%",p:"68.5",y:"+28.5%",k:"<span class=hl>国产唯一涂胶显影</span> → 替代TEL(日系)；国产化率<5%",t:"唯一|⚠️|📈",b:"科创板"},
+  {c:"002156",n:"通富微电",g:"~15%",p:"28.6",y:"+22.5%",k:"长鑫/长存<span class=hl>存储封测+AMD核心伙伴</span>；AI芯片封装需求爆发",t:"🏆|💰",b:"主板"},
+  {c:"000021",n:"深科技",g:"~12%",p:"25.8",y:"+18.5%",k:"<span class=hl>沛顿存储</span>，长鑫深度绑定；存储封测+模组，受益国产存储扩产周期",t:"📈",b:"主板"},
 ];
 
-const CM = {
-  "000426":"sz000426","601600":"sh601600","002428":"sz002428","600549":"sh600549",
-  "002155":"sz002155","000960":"sz000960","000831":"sz000831","688126":"sh688126",
-  "603650":"sh603650","688268":"sh688268","300666":"sz300666","688019":"sh688019",
-  "002409":"sz002409","300395":"sz300395","688012":"sh688012","002371":"sz002371",
-  "688072":"sh688072","688082":"sh688082","688361":"sh688361","600641":"sh600641",
-  "603986":"sh603986","688008":"sh688008","688037":"sh688037","002156":"sz002156",
-  "000021":"sz000021","600584":"sh600584","513310":"sh513310"
-};
+const CM = {"000426":"sz000426","601600":"sh601600","002428":"sz002428","600549":"sh600549","002155":"sz002155","000960":"sz000960","000831":"sz000831","688126":"sh688126","603650":"sh603650","688268":"sh688268","300666":"sz300666","688019":"sh688019","002409":"sz002409","300395":"sz300395","688012":"sh688012","002371":"sz002371","688072":"sh688072","688082":"sh688082","688361":"sh688361","600641":"sh600641","603986":"sh603986","688008":"sh688008","688037":"sh688037","002156":"sz002156","000021":"sz000021"};
 
 const G = [
-  {t:"💾 一、存储芯片 & 封测 · 龙头", s:M.slice(20)},
-  {t:"⚙️ 二、精密工艺设备 · 龙头稀缺", s:M.slice(14,20)},
-  {t:"🧪 三、上游核心材料 · 龙头精选", s:M.slice(7,14)},
-  {t:"☢️ 四、稀缺贵金属 · 中国优势", s:M.slice(0,7)},
+  {t:"☢️ 一、稀缺贵金属 · 中国优势", s:M.slice(0,7)},
+  {t:"🧪 二、上游核心材料 · 龙头精选", s:M.slice(7,14)},
+  {t:"⚙️ 三、精密工艺设备 · 龙头稀缺", s:M.slice(14,20)},
+  {t:"💾 四、存储芯片 & 封测 · 龙头", s:M.slice(20)},
 ];
 
 let liveData = {};
@@ -112,24 +103,30 @@ function render() {
   for (const g of G) {
     h += `<div class="mb-1 mt-5"><h2 class="text-sm font-bold text-white">${g.t}</h2></div>
     <div class="gcard mb-3"><table class="w-full"><thead><tr class="border-b border-white/5 bg-d2">
-      <th class="text-left w-24 whitespace-nowrap">股票</th>
-      <th class="text-center w-16">价格<br><span class="hint">涨跌幅</span></th>
+      <th class="text-left w-16">股票</th>
+      <th class="text-center w-24">股价/涨跌</th>
       <th class="text-center w-9">PE</th>
       <th class="text-center w-9">YTD</th>
       <th class="text-center w-10">毛利率</th>
+      <th class="text-center w-14">板块</th>
       <th class="text-left">核心看点 · 美韩替代逻辑</th>
       <th class="text-center w-12">标签</th>
     </tr></thead><tbody>`;
     for (const x of g.s) {
       const kr = x.t.includes('⚠️');
+      // 板块颜色
+      let bColor = '';
+      if (x.b === '科创板') bColor = 'bg-purple-500/10 text-purple-300 border border-purple-500/20';
+      else if (x.b === '创业板') bColor = 'bg-green-500/10 text-green-300 border border-green-500/20';
+      else bColor = 'bg-blue-500/10 text-blue-300 border border-blue-500/20';
       const ld = liveData[x.c];
       let priceDisplay;
       if (ld && ld.price) {
         const p = ld.price.toFixed(2);
         const c = ld.change_pct;
+        const cs = c >= 0 ? 'text-green-400' : 'text-red-400';
         const sign = c >= 0 ? '+' : '';
-        const color = c >= 0 ? '#ef4444' : '#22c55e';
-        priceDisplay = `<span class="font-mono font-semibold text-white text-[12px]">${p}</span><br><span class="font-mono text-[10px]" style="color:${color}">${sign}${c.toFixed(2)}%</span>`;
+        priceDisplay = `<span class="font-mono font-semibold text-white text-[12px]">${p}</span><span class="ml-1 font-mono text-[11px] ${cs}">(${sign}${c.toFixed(2)}%)</span>`;
       } else {
         priceDisplay = '<span class="text-gray-500">—</span>';
       }
@@ -141,11 +138,12 @@ function render() {
       if (x.t.includes('📈')) tl += '<span class="tag bg-blue-500/10 text-blue-300">📈 增长</span> ';
       if (x.t.includes('唯一')) tl += '<span class="tag bg-blue-500/10 text-blue-300">唯一标的</span> ';
       h += `<tr class="${kr?'kr':''}">
-        <td><span style="color:#44ccff" class="font-mono text-[11px] font-semibold">${x.c}</span><br><span style="color:#44ccff" class="font-medium text-[12px]">${x.n}</span></td>
+        <td><span class="text-gray-500 font-mono text-[11px]">${x.c}</span><br><span class="font-medium text-[12px] text-white">${x.n}</span></td>
         <td class="text-center">${priceDisplay}</td>
         <td class="text-center font-mono text-[11px]">${x.p}</td>
         <td class="text-center font-mono text-[11px] text-green-400">${x.y}</td>
         <td class="text-center font-mono text-[11px] text-yellow-300">${x.g}</td>
+        <td class="text-center font-mono text-[11px]"><span class="tag ${bColor}">${x.b}</span></td>
         <td class="text-[11px] leading-relaxed">${x.k}</td>
         <td class="text-center whitespace-nowrap">${tl}</td>
       </tr>`;
@@ -158,68 +156,27 @@ function render() {
 function loadData() {
   const st = document.getElementById('st');
   const sd = document.getElementById('sd');
-  const ds = document.getElementById('dataSrc');
-  st.textContent = '加载数据...';
-  sd.className = 'w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse';
-  if (ds) ds.textContent = '实时数据';
 
-  // 实时从新浪拉数据（通过 script 标签绕过 CORS）
-  const codes = Object.values(CM).join(',');
-  const scr = document.createElement('script');
-  scr.src = 'https://hq.sinajs.cn/list=' + codes;
-  scr.onload = function() {
-    let n = 0, tradeDate = '';
-    for (const [short, sinaCode] of Object.entries(CM)) {
-      const v = window['hq_str_' + sinaCode];
-      if (!v) continue;
-      const a = v.split(',');
-      if (a.length < 6) continue;
-      const price = parseFloat(a[3]), prev = parseFloat(a[2]);
-      if (price > 0) {
-        const cg = prev > 0 ? Math.round((price - prev) / prev * 10000) / 100 : 0;
-        liveData[short] = { price: Math.round(price * 100) / 100, change_pct: cg };
-        n++;
-      }
-      if (a.length > 30 && a[30] && !tradeDate) tradeDate = a[30];
-    }
-    if (n > 0) {
-      const now = new Date();
-      st.textContent = (tradeDate || '') + ' · ' + n + '只 ✅ ' + now.toLocaleTimeString('zh-CN', {hour12:false});
-      sd.className = 'w-1.5 h-1.5 rounded-full bg-green-400';
-      render();
-    } else {
-      loadJson();
-    }
-    try { document.body.removeChild(scr); } catch(e) {}
-  };
-  scr.onerror = function() { loadJson(); try { document.body.removeChild(scr); } catch(e) {} };
-  document.body.appendChild(scr);
-}
-
-function loadJson() {
-  fetch('/myAi/stock-data.json?t=' + Date.now())
-    .then(r => r.ok ? r.json() : Promise.reject())
+  fetch('/stock-data?t=' + Date.now())
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(d => {
       liveData = {};
-      for (const [short, sinaCode] of Object.entries(CM)) {
-        const info = d.stocks[sinaCode];
-        if (info) liveData[short] = { price: info.price, change_pct: info.change_pct };
+      for (const [short, info] of Object.entries(d.stocks)) {
+        liveData[short] = info;
       }
-      const n = Object.keys(liveData).length;
-      document.getElementById('st').textContent = d.update_time + ' · ' + n + '只' + (n >= 25 ? ' ✅' : '');
-      document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
+      const count = Object.keys(liveData).length;
+      const t = d.update_time;
+      st.textContent = t + ' · ' + count + '只' + (count >= 25 ? ' ✅' : '');
+      sd.className = 'w-1.5 h-1.5 rounded-full bg-green-400';
+      document.getElementById('errMsg').style.display = 'none';
       render();
     })
-    .catch(() => {
-      document.getElementById('st').textContent = '数据加载失败';
-      document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-red-400';
+    .catch(e => {
+      st.textContent = '数据获取失败';
+      sd.className = 'w-1.5 h-1.5 rounded-full bg-red-400';
+      document.getElementById('errMsg').style.display = 'block';
+      console.error(e);
     });
-}
-
-function reloadData() {
-  document.getElementById('st').textContent = '刷新中...';
-  liveData = {};
-  loadData();
 }
 
 loadData();
