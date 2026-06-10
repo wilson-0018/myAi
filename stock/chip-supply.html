@@ -374,33 +374,55 @@ function loadSinaData(callback) {
 // 启动
 // =====================================================
 function init() {
-  document.getElementById('st').textContent = '加载行情+K线...';
+  document.getElementById('st').textContent = '加载行情...';
 
-  // 并行拉行情和K线
+  // 先渲染表格（无K线）
   let sinaDone = false, klineDone = false;
 
-  function checkBoth() {
-    if (sinaDone && klineDone) {
-      const n = Object.keys(liveData).length;
-      document.getElementById('st').textContent = (n >= 25 ? n + '只 ✅' : n + '只') + ' · 趋势线已绘制';
-      document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
-      document.getElementById('refreshBtn').disabled = false;
-    }
+  function renderTable() {
+    render();  // 绘制表格
+    const n = Object.keys(liveData).length;
+    document.getElementById('st').textContent = (n >= 25 ? n + '只 ✅' : n + '只') + ' · ' + (klineDone ? '趋势线已绘制' : '加载趋势线...');
+    document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
   }
 
+  function finishLoad() {
+    const n = Object.keys(liveData).length;
+    document.getElementById('st').textContent = (n >= 25 ? n + '只 ✅' : n + '只') + ' · 趋势线已绘制';
+    document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
+    document.getElementById('refreshBtn').disabled = false;
+  }
+
+  // 1) 先拉行情数据 —— 完成后立刻渲染表格
   loadSinaData(function(n, tradeDate) {
     sinaDone = true;
     if (n > 0) {
-      document.getElementById('st').textContent = (tradeDate || '') + ' · ' + n + '只行情 ✅ 趋势线加载中...';
+      document.getElementById('st').textContent = (tradeDate || '') + ' · ' + n + '只行情 ✅ 加载趋势线...';
     }
-    checkBoth();
+    renderTable();
   });
 
+  // 2) 并行拉K线（允许失败，不影响表格显示）
   loadKlines(function() {
     klineDone = true;
-    render();  // 绘制表格+趋势线
-    checkBoth();
+    // 重新绘制所有趋势线canvas
+    for (const x of M) {
+      const prices = klineData[x.c];
+      if (prices && prices.length >= 2) {
+        const isUp = prices[prices.length-1] >= prices[0];
+        drawSparkline('spk_' + x.c, prices, isUp);
+      }
+    }
+    finishLoad();
   });
+
+  // 3) K线加载超时保护：8秒后不管K线有没有都结束loading状态
+  setTimeout(function() {
+    if (!klineDone) {
+      klineDone = true;
+      finishLoad();
+    }
+  }, 10000);
 }
 
 function reloadData() {
