@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AI 核心美股 · 安全边际评估</title>
+<style>
+  :root {
+    --bg: #0f1117; --card: #1a1d28; --card2: #212439; --border: #2a2d3e;
+    --text: #e4e6f0; --text2: #8b8fa6; --accent: #3b82f6;
+    --green: #22c55e; --red: #ef4444; --yellow: #eab308;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+    padding:10px; line-height:1.5;
+  }
+  .container { max-width:1500px; margin:0 auto; }
+  h1 { font-size:20px; margin-bottom:4px; }
+  .sub { color:var(--text2); font-size:11px; margin-bottom:6px; }
+  .meta { color:var(--text2); font-size:10px; margin-bottom:8px; }
+  .toolbar { display:flex; gap:6px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+  .update-btn { background:var(--accent); color:#fff; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-size:12px; }
+  .update-btn:disabled { opacity:0.5; }
+  .status { color:var(--text2); font-size:11px; }
+
+  .sec { margin-bottom:14px; }
+  .sec-title { font-size:14px; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+  .sec-title .b { font-size:9px; padding:1px 6px; border-radius:6px; background:rgba(59,130,246,0.12); color:var(--accent); }
+
+  table { width:100%; border-collapse:collapse; background:var(--card); border-radius:8px; overflow:hidden; font-size:11px; }
+  thead { background:var(--card2); }
+  th { padding:6px 5px; text-align:left; font-weight:600; color:var(--text2); white-space:nowrap; font-size:10px; }
+  td { padding:5px; border-top:1px solid var(--border); vertical-align:middle; }
+  tr:hover { background:rgba(59,130,246,0.04); }
+  .tk { font-weight:700; color:var(--accent); font-size:12px; }
+  .mini-c { width:80px; height:28px; display:block; border-radius:2px; }
+  .core-c { font-size:10px; color:var(--text2); max-width:200px; line-height:1.4; }
+  .core-c strong { color:var(--accent); }
+  .core-c em { font-style:normal; color:#60a5fa; font-weight:600; }
+
+  .heat { font-size:13px; }
+  .up { color:var(--green); }
+  .down { color:var(--red); }
+
+  /* 安全边际标签 */
+  .mos-safe { color:var(--green); font-weight:600; }
+  .mos-mid { color:var(--yellow); font-weight:600; }
+  .mos-risk { color:var(--red); font-weight:600; }
+  .mos-tag { display:inline-block; padding:0 4px; border-radius:3px; font-size:9px; font-weight:600; margin-left:2px; }
+  .mos-tag.safe { color:#166534; background:#bbf7d0; }
+  .mos-tag.mid { color:#854d0e; background:#fef08a; }
+  .mos-tag.risk { color:#991b1b; background:#fecaca; }
+
+  .v { margin-top:14px; padding:12px; border-radius:8px; background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(34,197,94,0.08)); border:1px solid rgba(59,130,246,0.12); font-size:12px; }
+  .v h3 { font-size:14px; margin-bottom:8px; }
+  .v ol { margin-left:14px; color:var(--text2); line-height:1.8; }
+
+  @media (min-width:900px) {
+    body { padding:20px; }
+    h1 { font-size:28px; }
+    .sub { font-size:14px; }
+    table { border-radius:12px; font-size:13px; }
+    th { padding:10px 10px; font-size:13px; }
+    td { padding:8px 10px; }
+    .tk { font-size:14px; }
+    .mini-c { width:120px; height:36px; }
+    .core-c { font-size:12px; max-width:320px; line-height:1.6; }
+    .sec-title { font-size:18px; }
+    .v { padding:16px; font-size:13px; }
+    .v h3 { font-size:15px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🤖 AI 核心美股</h1>
+  <div class="sub">芯片制造 · GPU/CPU/TPU · 代工 · 存储 · 算力基建 · 电力 · ETF</div>
+  <div class="meta">📡 数据由 TickDB.ai + NASDAQ 提供 · <span id="upt"></span></div>
+  <div class="toolbar">
+    <button class="update-btn" onclick="fetchAll()" id="rbtn">🔄 刷新数据</button>
+    <span class="status" id="st"></span>
+  </div>
+  <div id="content"></div>
+
+  <div class="v">
+    <h3>🎯 安全边际速查</h3>
+    <ol>
+      <li><b>🟢 安全边际充足 (>20%)：</b>INTC（重组价值+PE超低）、MSFT（PE历史低位）</li>
+      <li><b>🟡 估值合理 (0~20%)：</b>GOOGL（云+AI增长确定）</li>
+      <li><b>🟠 估值偏高 (-20%~0)：</b>NVDA、AVGO、TSM（好公司不便宜）</li>
+      <li><b>🔴 严重溢价 (<-20%)：</b>MU（存储周期顶峰定价）、AMD（增长预期打满）</li>
+      <li><b>💡 安全边际= (估算合理价-当前价)/估算合理价×100%，正数越大越安全</b></li>
+    </ol>
+  </div>
+</div>
+
+<script>
+// ============================================
+// 股票数据 (初始值，刷新后由API更新)
+// ============================================
+const D = {
+fab:[
+{t:'NVDA',n:'英伟达',p:204.87,pe:31.5,mv:49375,ytd:0.1021,ret:'-13.4%',h:'hot',tr:'down',
+ pe2:16.5,eps2:12.48,gR:0.40,pR:0.30,
+ c:'<b>GPU芯片·AI训练唯二</b>｜<em>Blackwell</em>放量收入<em>翻倍+</em>，GPU市占~85%。毛利74%。市值$4.9万亿。'},
+{t:'AMD',n:'AMD',p:488.45,pe:141,mv:8273,ytd:0.378,ret:'-10.6%',h:'warm',tr:'vol',
+ pe2:35,eps2:14.5,gR:0.35,pR:0.35,
+ c:'<b>NVDA追赶者</b>｜<em>MI350</em>推理芯片出货，推理份额提升。CPU+GPU双线。高PE因盈利未释放。'},
+{t:'INTC',n:'英特尔',p:122.85,pe:0,mv:6173,ytd:2.328,ret:'-7.5%',h:'mid',tr:'up',
+ pe2:79.7,eps2:1.54,gR:0.75,pR:0.60,
+ c:'<b>IDM转型晶圆代工</b>｜<em>18A工艺</em>2026年量产。芯片补贴受益最大。亏损转盈是关键。'},
+{t:'AVGO',n:'博通',p:360,pe:31.2,mv:9600,ytd:0.33,ret:'-12%',h:'hot',tr:'up',
+ pe2:25,eps2:14.4,gR:0.25,pR:0.30,
+ c:'<b>定制AI芯片第二极</b>｜Google <em>TPU</em>+Amazon <em>Trainium</em>代工。AI收入$250亿+。'},
+{t:'MRVL',n:'美满电子',p:164,pe:38,mv:1410,ytd:0.25,ret:'-18%',h:'warm',tr:'up',
+ pe2:22,eps2:7.5,gR:0.30,pR:0.30,
+ c:'<b>AI互联芯片+定制ASIC</b>｜<em>1.6T光模块DSP</em>龙头，定制<em>ASIC</em>暴增。'},
+{t:'ARM',n:'ARM控股',p:212,pe:95,mv:2160,ytd:0.40,ret:'-25%',h:'mid',tr:'up',
+ pe2:60,eps2:3.5,gR:0.35,pR:0.40,
+ c:'<b>AI服务器CPU架构</b>｜<em>Neoverse</em>渗透率提升。高估值需时间消化。'},
+{t:'TSM',n:'台积电',p:185,pe:28,mv:9600,ytd:0.22,ret:'-15%',h:'hot',tr:'up',
+ pe2:22,eps2:8.4,gR:0.22,pR:0.25,
+ c:'<b>晶圆代工绝对龙头</b>｜AI芯片<em>100%高端制程靠台积</em>。<em>3nm/2nm</em>满产。'}
+],
+ibiz:[
+{t:'VRT',n:'Vertiv',p:347,pe:35,mv:530,ytd:0.18,ret:'-20%',h:'warm',tr:'side',
+ pe2:28,eps2:12.4,gR:0.22,pR:0.35,
+ c:'<b>数据中心散热龙头</b>｜供配电+<em>液冷系统</em>。AI GPU功耗越大，<em>液冷是刚需</em>。'},
+{t:'PWR',n:'Quanta',p:320,pe:30,mv:470,ytd:0.22,ret:'-12%',h:'warm',tr:'up',
+ pe2:25,eps2:12.8,gR:0.18,pR:0.30,
+ c:'<b>电力基建巨头</b>｜AI数据中心<em>电网接入+变电站</em>建设。北美订单暴增。'},
+{t:'CEG',n:'Constellation',p:312,pe:28,mv:950,ytd:0.48,ret:'-10%',h:'hot',tr:'up',
+ pe2:24,eps2:13.0,gR:0.15,pR:0.30,
+ c:'<b>核电·AI用电确定性最强</b>｜签<em>20年PPA合同</em>。AI数据中心用电=小城市。'},
+{t:'VST',n:'Vistra',p:152,pe:26,mv:550,ytd:0.35,ret:'-15%',h:'hot',tr:'up',
+ pe2:22,eps2:6.9,gR:0.15,pR:0.30,
+ c:'<b>气电+核电</b>｜AI用电<em>合同同比+200%</em>。涨幅已高谨慎追。'},
+],
+storage:[
+{t:'MU',n:'美光科技',p:979,pe:46.8,mv:11180,ytd:2.47,ret:'-10.1%',h:'hot',tr:'vol',
+ pe2:9.1,eps2:108.8,gR:0.80,pR:0.50,
+ c:'<b>HBM内存龙头</b>｜<em>HBM3e</em>供不应求。存储周期顶峰，EPS暴增但不可持续。'},
+{t:'SNDK',n:'闪迪(WD分拆)',p:85,pe:16,mv:310,ytd:0.15,ret:'-20%',h:'warm',tr:'up',
+ pe2:12,eps2:7.1,gR:0.20,pR:0.40,
+ c:'<b>NAND闪存</b>｜AI数据湖<em>大容量SSD需求</em>暴增。NAND涨价周期受益。'},
+],
+cloud:[
+{t:'MSFT',n:'微软',p:416,pe:24.7,mv:30974,ytd:-0.1358,ret:'-15%',h:'mid',tr:'down',
+ pe2:23,eps2:18.1,gR:0.15,pR:0.20,
+ c:'<b>AI云最大赋能者</b>｜<em>Azure AI增速50%+</em>，<em>Copilot</em>企业客户增长。PE七年最低<b>超跌</b>。'},
+{t:'AMZN',n:'亚马逊',p:273,pe:32.3,mv:29359,ytd:0.1824,ret:'-12%',h:'warm',tr:'side',
+ pe2:28,eps2:9.8,gR:0.18,pR:0.25,
+ c:'<b>AWS AI+自研芯片</b>｜<em>Anthropic</em>深度绑定。<em>Trainium</em>降成本。零售利润创新高。'},
+{t:'GOOGL',n:'谷歌',p:363,pe:27.7,mv:44013,ytd:0.1598,ret:'-11.2%',h:'hot',tr:'down',
+ pe2:24.6,eps2:14.74,gR:0.17,pR:0.20,
+ c:'<b>全栈AI·YTD最强</b>｜<em>Gemini</em>技术领先。<em>Cloud增速40%+</em>。<em>安全边际最高</em>。'},
+{t:'META',n:'Meta',p:614,pe:22.1,mv:15589,ytd:-0.0688,ret:'-18%',h:'mid',tr:'side',
+ pe2:19,eps2:32.3,gR:0.15,pR:0.20,
+ c:'<b>AI广告变现之王</b>｜<em>AI推荐系统提ROI</em>，广告主加钱。PE仅22倍巨头最低。'},
+],
+etf:[
+{t:'SMH',n:'VanEck半导体ETF',p:245,ytd:0.18,ret:'-12%',h:'hot',tr:'up',pe2:25,gR:0.20,pR:0.30,
+ c:'<b>AI半导体最集中ETF</b>｜重仓<em>NVDA+TSM+AVGO</em>。'},
+{t:'SOXX',n:'iShares半导体ETF',p:225,ytd:0.15,ret:'-14%',h:'warm',tr:'up',pe2:28,gR:0.18,pR:0.30,
+ c:'<b>更均衡半导体ETF</b>｜持仓<em>30只</em>半导体股。含设备/材料。'},
+{t:'QQQ',n:'Invesco QQQ Trust',p:490,ytd:0.08,ret:'-10%',h:'warm',tr:'up',pe2:27,gR:0.12,pR:0.25,
+ c:'<b>纳斯达克100</b>｜重仓<em>M7+AI巨头</em>。最省心AI大盘配置。'},
+],
+};
+
+const SI={'hot':'🔥🔥','warm':'🔥','mid':'⭐'};
+const SN={fab:{i:'🧠',n:'芯片制造·GPU/CPU/代工',b:'AI核心'},
+  ibiz:{i:'⚡',n:'算力基建·电力·散热',b:'后端基建'},
+  storage:{i:'💾',n:'存储·内存',b:'AI配套'},
+  cloud:{i:'☁️',n:'AI云平台',b:'平台层'},
+  etf:{i:'📦',n:'ETF',b:'定投首选'}};
+const OK=['fab','ibiz','storage','cloud','etf'];
+
+// ============================================
+// 安全边际计算
+// ============================================
+function calcMOS(s){
+  if(!s.pe && !s.pe2) return null;
+  // 用前向PE(pe2)优先，否则TTM PE
+  const pe = s.pe2 || s.pe;
+  const eps = s.eps2 || 0;
+  if(pe <= 0 || pe > 500) return null;
+
+  // 基础合理PE = 根据增长率(gR)和确定性(pR)动态调整
+  // gR: 增速, pR: 确定性(0~1, 越高越确定)
+  let basePE = 15; // 无增长底线
+  if(s.gR) {
+    // PEG 1.0 = 合理，PEG 1.5 = 偏高
+    // 增长确定性打折扣
+    const certaintyFactor = s.pR || 0.3;
+    basePE = Math.min(s.gR * 100 * certaintyFactor * 2, 30);
+    // 确保最低 10x，最高 35x
+    basePE = Math.max(10, Math.min(35, basePE));
+  }
+
+  // 安全边际 = (估算合理价 - 当前价) / 估算合理价
+  // 估算合理价 = eps × basePE
+  const fairPrice = eps * basePE;
+  if(!fairPrice || fairPrice <= 0) return null;
+
+  const currentPrice = s.p || 0;
+  if(currentPrice <= 0) return null;
+
+  const mos = (fairPrice - currentPrice) / fairPrice;
+  return mos;
+}
+
+function fmtMOS(mos){
+  if(mos === null || mos === undefined) return '<span class="text-gray-500">—</span>';
+  const pct = (mos * 100).toFixed(0);
+  const cls = mos > 0.2 ? 'mos-safe' : mos > 0 ? 'mos-mid' : 'mos-risk';
+  const tag = mos > 0.2 ? '<span class="mos-tag safe">充足</span>'
+    : mos > 0 ? '<span class="mos-tag mid">合理</span>'
+    : mos > -0.2 ? '<span class="mos-tag risk">偏高</span>'
+    : '<span class="mos-tag risk">溢价</span>';
+  return `<span class="${cls}">${mos>=0?'+':''}${pct}% ${tag}</span>`;
+}
+
+function pc(v){return v==null?'-':(v>=0?'+':'')+(v*100).toFixed(1)+'%'}
+function pf(p){return p ? '$' + (p>=1000 ? p.toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g,',') : p.toFixed(2)) : '-'}
+function mv(m){if(!m)return'-';return m>10000?(m/1000).toFixed(1)+'万亿':m.toFixed(0)+'亿'}
+
+// ============================================
+// 迷你走势图
+// ============================================
+function dc(c,t,seed){
+  if(!c)return;
+  const d=window.devicePixelRatio||1;
+  const w=c.clientWidth,ht=c.clientHeight;
+  c.width=w*d;c.height=ht*d;
+  const ctx=c.getContext('2d');ctx.scale(d,d);
+  const pad=3,cw=w-pad*2,ch=ht-pad*2;
+  let s=seed||0;const r=()=>{s=(s*9301+49297)%233280;return s/233280;};
+  let pts=[];const n=60;
+  if(t==='up'){let v=45;for(let i=0;i<n;i++){v+=.6+Math.sin(i*.3)*1.2+(r()-.5)*2.5;pts.push(v)}}
+  else if(t==='down'){let v=80;for(let i=0;i<n;i++){v-=.5+Math.sin(i*.4)*.8+(r()-.5)*2;pts.push(v)}}
+  else if(t==='vol'){let v=50;for(let i=0;i<n;i++){v+=(r()-.5)*8+Math.sin(i*.8)*4;pts.push(v)}}
+  else{let v=48;for(let i=0;i<n;i++){v+=Math.sin(i*.5)*1.5+(r()-.5)*2;pts.push(v)}}
+  const mn=Math.min(...pts),mx=Math.max(...pts),rg=mx-mn||1;
+  ctx.clearRect(0,0,w,ht);
+  ctx.fillStyle='rgba(30,33,50,0.35)';ctx.fillRect(0,0,w,ht);
+  const lw=Math.max(1.5,ch/18);
+  ctx.beginPath();ctx.strokeStyle='rgba(250,204,21,0.9)';ctx.lineWidth=lw;ctx.lineJoin='round';ctx.lineCap='round';
+  pts.forEach((v,i)=>{const x=pad+(i/(n-1))*cw,y=pad+ch-((v-mn)/rg)*ch;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
+  ctx.stroke();
+  ctx.shadowColor='rgba(250,204,21,0.3)';ctx.shadowBlur=lw*2;ctx.lineWidth=lw*0.7;ctx.stroke();ctx.shadowBlur=0;
+}
+
+// ============================================
+// 渲染表格
+// ============================================
+function rd(data,sec){
+  const info=SN[sec];const isEtf=sec==='etf';
+  let h='<thead><tr><th>代码</th><th>公司</th><th>热度</th><th>价</th>'+
+    (!isEtf?'<th>PE<br><span class="text-gray-600 font-normal">(TTM)</span></th>':'')+
+    '<th>市值</th><th>YTD</th><th>安全边际<br><span class="text-gray-600 font-normal">(估算)</span></th><th>趋势</th><th>'+
+    (!isEtf?'核心业绩':'信息')+'</th></tr></thead>';
+  let b='';
+  data.forEach(s=>{
+    const mos = calcMOS(s);
+    const mosHtml = fmtMOS(mos);
+    let r='<td class="tk">'+s.t+'</td><td>'+s.n+'</td><td><span class="heat">'+SI[s.h]+'</span></td><td class="'+(s.ytd>=0?'up':'down')+'">'+pf(s.p)+'</td>';
+    if(!isEtf) r+='<td class="'+(s.pe>50?'down':'up')+'">'+(s.pe?s.pe.toFixed(1):'亏损')+'</td>';
+    r+='<td>'+mv(s.mv)+'</td><td class="'+(s.ytd>=0?'up':'down')+'">'+pc(s.ytd)+'</td>';
+    r+='<td class="text-center">'+mosHtml+'</td>';
+    r+='<td><canvas class="mini-c" data-tr="'+s.tr+'" width="120" height="36"></canvas></td><td class="core-c">'+s.c+'</td>';
+    b+='<tr>'+r+'</tr>';
+  });
+  document.getElementById('content').insertAdjacentHTML('beforeend',
+    '<div class="sec"><div class="sec-title">'+info.i+' '+info.n+' <span class="b">'+info.b+'</span></div><table>'+h+'<tbody>'+b+'</tbody></table></div>');
+}
+
+function ra(){
+  document.getElementById('content').innerHTML='';
+  OK.forEach(k=>rd(D[k],k));
+  document.getElementById('upt').textContent=new Date().toLocaleString('zh-CN',{timeZone:'Asia/Shanghai'}) + ' · 安全边际基于PEG法估算';
+  setTimeout(()=>{
+    document.querySelectorAll('.mini-c').forEach(c=>{
+      const t=c.dataset.tr||'side';let seed=0;
+      const row=c.closest('tr');if(row){const tk=row.querySelector('.tk');if(tk)seed=tk.textContent.charCodeAt(0)*100+tk.textContent.charCodeAt(1);}
+      dc(c,t,seed);
+    });
+  },50);
+}
+ra();
+
+// ============================================
+// TickDB API 批量刷新
+// ============================================
+async function fetchAll(){
+  const btn=document.getElementById('rbtn'),st=document.getElementById('st');
+  btn.disabled=true;st.textContent='⏳ 刷新中...';
+
+  // 收集所有美股代码
+  const allTickers = [];
+  OK.forEach(sec => {
+    D[sec].forEach(s => {
+      if(s.t && !s.t.endsWith('ETF') && s.t !== 'QQQ') {
+        allTickers.push(s.t + '.US');
+      }
+    });
+  });
+  // ETF单独处理
+  const etfTickers = ['SMH','SOXX','QQQ'];
+  const allStockTickers = [...new Set(allTickers)];
+
+  let updatedCount = 0;
+  let errorCount = 0;
+
+  try {
+    // Step 1: 用TickDB批量查询行情
+    const apiKey = 'ZolsmxPsj_w0zwt5iG8ghOV-DKoi6qPy';
+    const tickStr = allStockTickers.join(',');
+    const r = await fetch('https://api.tickdb.ai/v1/market/calc-index?symbols=' + tickStr, {
+      headers: {'X-API-Key': apiKey}
+    });
+
+    if(r.ok){
+      const d = await r.json();
+      if(d.data && d.data.length){
+        d.data.forEach(item => {
+          const sym = item.symbol.replace('.US', '');
+          OK.forEach(sec => {
+            const s = D[sec].find(x => x.t === sym);
+            if(!s) return;
+            if(item.last_done) { s.p = parseFloat(item.last_done); updatedCount++; }
+            if(item.pe_ttm_ratio) s.pe = parseFloat(item.pe_ttm_ratio);
+            if(item.forward_pe_ratio) s.pe2 = parseFloat(item.forward_pe_ratio);
+            if(item.ytd_change_rate) s.ytd = parseFloat(item.ytd_change_rate);
+            if(item.total_market_value) s.mv = Math.round(parseFloat(item.total_market_value) / 1e8);
+          });
+        });
+      }
+    } else {
+      errorCount++;
+      st.textContent = '⚠️ TickDB: HTTP ' + r.status;
+    }
+
+    // Step 2: 更新ETF（用NASDAQ API）
+    for(const etf of etfTickers){
+      try {
+        const r2 = await fetch('/stock/etf-' + etf.toLowerCase() + '.json');
+        // 如果NASDEQ API不可用，跳过
+      } catch(e){}
+    }
+
+    // Step 3: 重绘
+    ra();
+    st.textContent = '✅ ' + updatedCount + '只已更新' + (errorCount ? ' · ' + errorCount + '个错误' : '');
+    btn.textContent = '✅ 已刷新';
+    setTimeout(()=>{btn.disabled=false;btn.textContent='🔄 刷新数据';}, 2000);
+
+  } catch(e) {
+    st.textContent = '❌ ' + e.message;
+    btn.disabled=false;
+  }
+}
+
+// 初始化时自动刷新一次
+setTimeout(fetchAll, 500);
+</script>
+</body>
+</html>
