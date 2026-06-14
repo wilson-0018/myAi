@@ -1,6 +1,0 @@
-1:"$Sreact.fragment"
-2:I[86546,["/_next/static/chunks/3rdqn8rx95pw7.js","/_next/static/chunks/14mrh2-p_w84d.js","/_next/static/chunks/2nqu43hmat3by.js"],"AgentConfigWorkspace"]
-3:I[97367,["/_next/static/chunks/3rdqn8rx95pw7.js","/_next/static/chunks/14mrh2-p_w84d.js"],"OutletBoundary"]
-4:"$Sreact.suspense"
-0:{"rsc":["$","$1","c",{"children":[["$","main",null,{"className":"page","children":[["$","section",null,{"className":"section-title","children":["$","div",null,{"children":[["$","p",null,{"className":"eyebrow","children":"Enterprise Agent Configuration"}],["$","h1",null,{"children":"企业级Agent配置管理"}],["$","p",null,{"children":"配置企业 Agent 的职责、Skill、协作规则与工作流，作为 AI Native Team 的治理后台。"}]]}]}],["$","$L2",null,{}]]}],[["$","script","script-0",{"src":"/_next/static/chunks/2nqu43hmat3by.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"Z8HLBGGTt4efw0CilBRHK"}
-5:null
