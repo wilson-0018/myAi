@@ -1,10 +1,10 @@
 {
-  "update_time": "2026-06-15 13:36 (盘中实时)",
+  "update_time": "2026-06-15 21:28 (收盘)",
   "stocks": {
     "sh601600": {
       "name": "中国铝业",
-      "price": 10.6,
-      "change_pct": -1.85,
+      "price": 10.67,
+      "change_pct": -1.2,
       "date": "2026-06-15"
     },
     "sz002428": {
@@ -21,20 +21,20 @@
     },
     "sz002155": {
       "name": "湖南黄金",
-      "price": 25.61,
-      "change_pct": 5.7,
+      "price": 25.65,
+      "change_pct": 5.86,
       "date": "2026-06-15"
     },
     "sz000960": {
       "name": "锡业股份",
-      "price": 41.36,
-      "change_pct": 9.85,
+      "price": 41.42,
+      "change_pct": 10.01,
       "date": "2026-06-15"
     },
     "sz000831": {
       "name": "中国稀土",
-      "price": 56.65,
-      "change_pct": 1.09,
+      "price": 58.4,
+      "change_pct": 4.21,
       "date": "2026-06-15"
     },
     "sh688126": {
@@ -45,140 +45,140 @@
     },
     "sh603650": {
       "name": "彤程新材",
-      "price": 62.01,
-      "change_pct": 4.34,
+      "price": 62.06,
+      "change_pct": 4.43,
       "date": "2026-06-15"
     },
     "sh688268": {
       "name": "华特气体",
-      "price": 183.01,
-      "change_pct": -2.91,
+      "price": 183.93,
+      "change_pct": -2.42,
       "date": "2026-06-15"
     },
     "sz300666": {
       "name": "江丰电子",
-      "price": 290.69,
-      "change_pct": 6.06,
+      "price": 293.6,
+      "change_pct": 7.12,
       "date": "2026-06-15"
     },
     "sh688019": {
       "name": "安集科技",
-      "price": 231.8,
-      "change_pct": 3.02,
+      "price": 233.67,
+      "change_pct": 3.85,
       "date": "2026-06-15"
     },
     "sz002409": {
       "name": "雅克科技",
-      "price": 137.9,
-      "change_pct": 3.69,
+      "price": 138.83,
+      "change_pct": 4.39,
       "date": "2026-06-15"
     },
     "sz300395": {
       "name": "菲利华",
-      "price": 125.99,
-      "change_pct": 5.88,
+      "price": 127.32,
+      "change_pct": 7.0,
       "date": "2026-06-15"
     },
     "sh688012": {
       "name": "中微公司",
-      "price": 315.92,
-      "change_pct": 3.95,
+      "price": 319.98,
+      "change_pct": 5.28,
       "date": "2026-06-15"
     },
     "sz002371": {
       "name": "北方华创",
-      "price": 683.5,
-      "change_pct": 2.44,
+      "price": 682.22,
+      "change_pct": 2.25,
       "date": "2026-06-15"
     },
     "sh688072": {
       "name": "拓荆科技",
-      "price": 662.1,
-      "change_pct": 2.62,
+      "price": 669.69,
+      "change_pct": 3.8,
       "date": "2026-06-15"
     },
     "sh688082": {
       "name": "盛美上海",
-      "price": 298.1,
-      "change_pct": -2.15,
+      "price": 315.0,
+      "change_pct": 3.39,
       "date": "2026-06-15"
     },
     "sh688361": {
       "name": "中科飞测",
-      "price": 233.14,
-      "change_pct": 2.95,
+      "price": 235.0,
+      "change_pct": 3.78,
       "date": "2026-06-15"
     },
     "sh600641": {
       "name": "先导基电",
-      "price": 31.33,
-      "change_pct": 10.01,
+      "price": 31.05,
+      "change_pct": 9.02,
       "date": "2026-06-15"
     },
     "sh603986": {
       "name": "兆易创新",
-      "price": 511.23,
-      "change_pct": 6.18,
+      "price": 518.0,
+      "change_pct": 7.59,
       "date": "2026-06-15"
     },
     "sh688008": {
       "name": "澜起科技",
-      "price": 236.87,
-      "change_pct": 5.33,
+      "price": 240.1,
+      "change_pct": 6.77,
       "date": "2026-06-15"
     },
     "sh688037": {
       "name": "芯源微",
-      "price": 266.4,
-      "change_pct": 4.23,
+      "price": 267.35,
+      "change_pct": 4.6,
       "date": "2026-06-15"
     },
     "sz002156": {
       "name": "通富微电",
-      "price": 60.91,
-      "change_pct": 6.45,
+      "price": 61.54,
+      "change_pct": 7.55,
       "date": "2026-06-15"
     },
     "sz000021": {
       "name": "深科技",
-      "price": 38.96,
-      "change_pct": 5.04,
+      "price": 39.47,
+      "change_pct": 6.42,
       "date": "2026-06-15"
     },
     "sz000426": {
       "name": "兴业银锡",
-      "price": 39.97,
-      "change_pct": 8.56,
+      "price": 40.26,
+      "change_pct": 9.34,
       "date": "2026-06-15"
     },
     "sh600584": {
       "name": "长电科技",
-      "price": 73.59,
-      "change_pct": 6.78,
+      "price": 74.32,
+      "change_pct": 7.84,
       "date": "2026-06-15"
     },
     "sz002185": {
       "name": "华天科技",
-      "price": 17.04,
-      "change_pct": 6.1,
+      "price": 17.13,
+      "change_pct": 6.66,
       "date": "2026-06-15"
     },
     "sz300223": {
       "name": "北京君正",
-      "price": 163.67,
-      "change_pct": 12.41,
+      "price": 164.3,
+      "change_pct": 12.84,
       "date": "2026-06-15"
     },
     "sz300054": {
       "name": "鼎龙股份",
-      "price": 85.59,
-      "change_pct": 8.36,
+      "price": 85.57,
+      "change_pct": 8.33,
       "date": "2026-06-15"
     },
     "sz301308": {
       "name": "江波龙",
-      "price": 527.79,
-      "change_pct": 2.51,
+      "price": 529.23,
+      "change_pct": 2.79,
       "date": "2026-06-15"
     }
   }
