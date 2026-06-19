@@ -31,7 +31,7 @@ tr:hover td{background:rgba(68,204,255,.03)}
 <div class="max-w-6xl mx-auto px-3 sm:px-5 pt-8 pb-3 text-center border-b border-white/5">
   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#44ccff]/5 border border-[#44ccff]/15 text-[#44ccff] text-[11px] mb-3">
     <span id="sd" class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span>
-    <span id="st">加载数据中...</span>
+    <span id="st">加载实时行情中...</span>
     <button onclick="reloadData()" class="ml-2 px-2 py-0.5 rounded bg-[#44ccff]/10 border border-[#44ccff]/30 text-[10px] hover:bg-[#44ccff]/20 transition-all" id="refreshBtn">🔄 刷新</button>
   </div>
   <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-[#44ccff] via-blue-400 to-purple-400 bg-clip-text text-transparent leading-snug">
@@ -50,11 +50,11 @@ tr:hover td{background:rgba(68,204,255,.03)}
   <span class="px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-300">📈 增长预期</span>
 </div>
 
-<div id="app"><div class="text-center py-10 text-gray-500">加载数据中...</div></div>
+<div id="app"><div class="text-center py-10 text-gray-500">加载实时行情中...</div></div>
 
 <footer class="text-center text-gray-600 text-[11px] pt-4 mt-2 border-t border-white/5">
   <p>数据基于公开信息整理 · 仅供参考不构成投资建议</p>
-  <p class="text-gray-600/50 mt-1">走势图为近20个交易日收盘价趋势 · 数据源：腾讯财经</p>
+  <p class="text-gray-600/50 mt-1">数据源：新浪财经实时行情</p>
 </footer>
 
 </div>
@@ -113,10 +113,6 @@ const CM = {"688126":"sh688126",
   "002281":"sz002281","688498":"sh688498",
 };
 
-function toTencCode(sinaCode) {
-  return sinaCode;
-}
-
 const G = [
   {t:"💾 一、存储芯片 · 国产替代龙头", s:M.slice(0,4)},
   {t:"⚙️ 二、半导体设备 · 先进制程", s:M.slice(4,10)},
@@ -129,125 +125,10 @@ const G = [
 ];
 
 let liveData = {};
-let klineData = {};
 let _refreshGen = 0;         // 刷新代数，每刷新一次+1
 
 // =====================================================
-// 绘制迷你趋势线 (sparkline)
 // =====================================================
-function drawSparkline(canvasId, prices, isUp) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas || !prices || prices.length < 2) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  const pad = 2;
-  const w = W - pad * 2, h = H - pad * 2;
-
-  ctx.clearRect(0, 0, W, H);
-
-  let min = Infinity, max = -Infinity;
-  for (const p of prices) {
-    if (p < min) min = p;
-    if (p > max) max = p;
-  }
-  const range = max - min || 1;
-  const margin = range * 0.05;
-  min -= margin;
-  max += margin;
-  const r = max - min;
-
-  const grad = ctx.createLinearGradient(0, pad, 0, H - pad);
-  const lineColor = isUp ? 'rgba(239,68,68,1)' : 'rgba(34,197,94,1)';
-  const fillColor = isUp ? 'rgba(239,68,68,0.15)' : 'rgba(34,197,94,0.15)';
-  grad.addColorStop(0, fillColor);
-  grad.addColorStop(1, 'rgba(0,0,0,0)');
-
-  const step = w / (prices.length - 1);
-  ctx.beginPath();
-  for (let i = 0; i < prices.length; i++) {
-    const x = pad + i * step;
-    const y = pad + h - ((prices[i] - min) / r * h);
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  }
-  ctx.strokeStyle = lineColor;
-  ctx.lineWidth = 1.2;
-  ctx.lineJoin = 'round';
-  ctx.stroke();
-
-  ctx.lineTo(pad + (prices.length - 1) * step, pad + h);
-  ctx.lineTo(pad, pad + h);
-  ctx.closePath();
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  const sy = pad + h - ((prices[0] - min) / r * h);
-  const ey = pad + h - ((prices[prices.length-1] - min) / r * h);
-  ctx.beginPath();
-  ctx.arc(pad, sy, 1.5, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(255,255,255,0.4)';
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(pad + (prices.length - 1) * step, ey, 2, 0, Math.PI * 2);
-  ctx.fillStyle = lineColor;
-  ctx.fill();
-}
-
-// =====================================================
-// 批量拉取腾讯财经日K线
-// =====================================================
-function loadKlines(callback) {
-  const codes = Object.keys(CM);
-  let loaded = 0;
-  const total = codes.length;
-  const batchSize = 5;
-  const gen = _refreshGen;
-
-  function loadBatch(start) {
-    const end = Math.min(start + batchSize, total);
-    for (let i = start; i < end; i++) {
-      const code = codes[i];
-      const tencCode = toTencCode(CM[code]);
-      const url = `https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=${tencCode},day,,20,qfq`;
-      const scr = document.createElement('script');
-      const callbackName = 'kline_cb_' + code;
-      window[callbackName] = function(data) {
-        // 旧刷新轮的请求——忽略
-        if (_refreshGen !== gen) { delete window[callbackName]; return; }
-        try {
-          const klines = data?.data?.[tencCode]?.qfqday || data?.data?.[tencCode]?.day;
-          if (klines && klines.length >= 2) {
-            klineData[code] = klines.map(k => parseFloat(k[2]));
-          }
-        } catch(e) {}
-        delete window[callbackName];
-        try { if (scr.parentNode) scr.parentNode.removeChild(scr); } catch(e) {}
-        loaded++;
-        if (loaded >= total && callback) callback();
-      };
-      const actualSrc = url + '&callback=' + callbackName;
-      scr.src = actualSrc;
-      scr.onerror = function() {
-        if (_refreshGen !== gen) return;
-        loaded++;
-        delete window[callbackName];
-        try { if (scr.parentNode) scr.parentNode.removeChild(scr); } catch(e) {}
-        if (loaded >= total && callback) callback();
-      };
-      setTimeout(function() {
-        if (window[callbackName]) {
-          if (_refreshGen !== gen) { delete window[callbackName]; return; }
-          loaded++;
-          delete window[callbackName];
-          if (loaded >= total && callback) callback();
-        }
-      }, 8000);
-      document.body.appendChild(scr);
-    }
-  }
-
-  loadBatch(0);
-}
-
 // =====================================================
 // 渲染表格
 // =====================================================
@@ -264,7 +145,7 @@ function render() {
       <th class="text-center w-9">YTD</th>
       <th class="text-center w-10">毛利率</th>
       <th class="text-center w-14">板块</th>
-      <th class="trend-cell">月走势<br><span class="hint">20日</span></th>
+      
       <th class="text-left">核心看点 · 美韩替代逻辑</th>
       <th class="text-center w-12">标签</th>
     </tr></thead><tbody>`;
@@ -280,17 +161,6 @@ function render() {
         priceDisplay = `<span class="font-mono font-semibold text-white text-[12px]">${p}</span><br><span class="font-mono text-[10px]" style="color:${color}">${sign}${c.toFixed(2)}%</span>`;
       } else {
         priceDisplay = '<span class="text-gray-500">—</span>';
-      }
-
-      const trendId = 'spk_' + x.c;
-      const kPrices = klineData[x.c] || [];
-      const isUp = kPrices.length >= 2 && kPrices[kPrices.length-1] >= kPrices[0];
-
-      let trendHtml;
-      if (kPrices.length >= 2) {
-        trendHtml = `<canvas id="${trendId}" width="90" height="24"></canvas>`;
-      } else {
-        trendHtml = '<span class="text-gray-600 text-[9px]">—</span>';
       }
 
       let tl = '';
@@ -314,7 +184,6 @@ function render() {
         <td class="text-center font-mono text-[11px] text-green-400">${x.y}</td>
         <td class="text-center font-mono text-[11px] text-yellow-300">${x.g}</td>
         <td class="text-center font-mono text-[11px]"><span class="tag ${bc}">${x.b}</span></td>
-        <td class="trend-cell">${trendHtml}</td>
         <td class="text-[11px] leading-relaxed">${x.k}</td>
         <td class="text-center whitespace-nowrap">${tl}</td>
       </tr>`;
@@ -325,10 +194,8 @@ function render() {
   document.getElementById('app').innerHTML = h;
 
   for (const x of M) {
-    const prices = klineData[x.c];
     if (prices && prices.length >= 2) {
       const isUp = prices[prices.length-1] >= prices[0];
-      drawSparkline('spk_' + x.c, prices, isUp);
     }
   }
 }
@@ -427,19 +294,6 @@ function init() {
     if (sinaDone && klineDone) done();
   });
 
-  loadKlines(function() {
-    if (_refreshGen !== gen) return;
-    klineDone = true;
-    // 重新绘制所有趋势线canvas
-    for (const x of M) {
-      const prices = klineData[x.c];
-      if (prices && prices.length >= 2) {
-        const isUp = prices[prices.length-1] >= prices[0];
-        drawSparkline('spk_' + x.c, prices, isUp);
-      }
-    }
-    if (sinaDone && klineDone) done();
-  });
 }
 
 function reloadData() {
@@ -449,7 +303,6 @@ function reloadData() {
   document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse';
   // 纯清数据，不清理旧script标签
   liveData = {};
-  klineData = {};
   init();
 }
 
