@@ -104,7 +104,6 @@ const CM = {
   "000021":"sz000021","600584":"sh600584","513310":"sh513310"
 };
 
-// 腾讯日K代码映射（新浪代码转腾讯格式）
 function toTencCode(sinaCode) {
   return sinaCode;
 }
@@ -118,9 +117,7 @@ const G = [
 
 let liveData = {};
 let klineData = {};
-let _refreshId = 0;          // 每次刷新递增，回调判断是否已过时
-const _klineTimeouts = [];   // 存储loadKlines中的setTimeout id
-const _klineScripts = [];    // 存储loadKlines创建的<script>标签
+let _refreshGen = 0;         // 刷新代数，每刷新一次+1
 
 // =====================================================
 // 绘制迷你趋势线 (sparkline)
@@ -183,42 +180,14 @@ function drawSparkline(canvasId, prices, isUp) {
 }
 
 // =====================================================
-// 清理上次K线请求
-// =====================================================
-function clearKlineRequests() {
-  // 清理所有待执行的 setTimeout
-  for (const id of _klineTimeouts) {
-    clearTimeout(id);
-  }
-  _klineTimeouts.length = 0;
-
-  // 移除还在DOM里的旧script标签
-  for (const scr of _klineScripts) {
-    if (scr.parentNode) {
-      try { scr.parentNode.removeChild(scr); } catch(e) {}
-    }
-  }
-  _klineScripts.length = 0;
-
-  // 清理全局回调函数
-  const codes = Object.keys(CM);
-  for (const code of codes) {
-    delete window['kline_cb_' + code];
-  }
-}
-
-// =====================================================
 // 批量拉取腾讯财经日K线
 // =====================================================
 function loadKlines(callback) {
-  // 先清理上一轮的K线请求
-  clearKlineRequests();
-
   const codes = Object.keys(CM);
   let loaded = 0;
   const total = codes.length;
   const batchSize = 5;
-  const rid = _refreshId;  // 捕获当前刷新ID
+  const gen = _refreshGen;
 
   function loadBatch(start) {
     const end = Math.min(start + batchSize, total);
@@ -227,14 +196,10 @@ function loadKlines(callback) {
       const tencCode = toTencCode(CM[code]);
       const url = `https://web.ifzq.gtimg.cn/appstock/app/fqkline/get?param=${tencCode},day,,,20,qfq`;
       const scr = document.createElement('script');
-      _klineScripts.push(scr);
       const callbackName = 'kline_cb_' + code;
       window[callbackName] = function(data) {
-        // 如果已经不是当前刷新轮次，忽略
-        if (_refreshId !== rid) {
-          delete window[callbackName];
-          return;
-        }
+        // 旧刷新轮的请求——忽略
+        if (_refreshGen !== gen) { delete window[callbackName]; return; }
         try {
           const klines = data?.data?.[tencCode]?.qfqday || data?.data?.[tencCode]?.day;
           if (klines && klines.length >= 2) {
@@ -244,28 +209,25 @@ function loadKlines(callback) {
         delete window[callbackName];
         try { if (scr.parentNode) scr.parentNode.removeChild(scr); } catch(e) {}
         loaded++;
-        if (loaded >= total) {
-          if (callback) callback();
-        }
+        if (loaded >= total && callback) callback();
       };
       const actualSrc = url + '&callback=' + callbackName;
       scr.src = actualSrc;
       scr.onerror = function() {
-        if (_refreshId !== rid) return;
+        if (_refreshGen !== gen) return;
         loaded++;
         delete window[callbackName];
         try { if (scr.parentNode) scr.parentNode.removeChild(scr); } catch(e) {}
         if (loaded >= total && callback) callback();
       };
-      // 超时保护
-      const timeoutId = setTimeout(() => {
+      setTimeout(function() {
         if (window[callbackName]) {
+          if (_refreshGen !== gen) { delete window[callbackName]; return; }
           loaded++;
           delete window[callbackName];
           if (loaded >= total && callback) callback();
         }
       }, 8000);
-      _klineTimeouts.push(timeoutId);
       document.body.appendChild(scr);
     }
   }
@@ -366,21 +328,21 @@ function loadSinaData(callback) {
 
   const codes = Object.values(CM).join(',');
   const scr = document.createElement('script');
-  const cbName = 'sina_cb_' + Date.now();
-  const rid = _refreshId;
+  const cbName = 'sina_cb_' + Date.now() + '_' + _refreshGen;
+  const gen = _refreshGen;
 
-  // 清理旧的新浪script（如果有同名的sina script残留）
-  // 通过标记清理：遍历body移除之前添加的sina script
-  const oldScripts = document.querySelectorAll('script[data-sina="1"]');
+  // 标记script，方便清理旧请求
+  const oldScripts = document.querySelectorAll('script[data-sina="' + (_refreshGen - 1) + '"]');
   for (const old of oldScripts) {
     try { old.parentNode.removeChild(old); } catch(e) {}
   }
-  scr.setAttribute('data-sina', '1');
+  scr.setAttribute('data-sina', '' + _refreshGen);
 
   window[cbName] = function() {};
   scr.src = 'https://hq.sinajs.cn/list=' + codes;
   scr.onload = function() {
-    if (_refreshId !== rid) {
+    // 过时的请求——忽略
+    if (_refreshGen !== gen) {
       delete window[cbName];
       try { if (scr.parentNode) scr.parentNode.removeChild(scr); } catch(e) {}
       return;
@@ -404,7 +366,7 @@ function loadSinaData(callback) {
     delete window[cbName];
   };
   scr.onerror = function() {
-    if (_refreshId !== rid) return;
+    if (_refreshGen !== gen) return;
     if (callback) callback(0, '');
     try { if (scr.parentNode) scr.parentNode.removeChild(scr); } catch(e) {}
     delete window[cbName];
@@ -416,42 +378,44 @@ function loadSinaData(callback) {
 // 启动
 // =====================================================
 function init() {
-  document.getElementById('st').textContent = '加载行情...';
-  const rid = ++_refreshId;  // 递增刷新ID，所有回调必须匹配才能执行
+  document.getElementById('st').textContent = '加载行情+K线...';
 
-  // 先渲染表格（无K线）
   let sinaDone = false, klineDone = false;
+  const gen = _refreshGen;
+  let timeoutDone = false;
 
-  function renderTable() {
-    if (_refreshId !== rid) return;
-    render();
-    const n = Object.keys(liveData).length;
-    document.getElementById('st').textContent = (n >= 25 ? n + '只 ✅' : n + '只') + ' · ' + (klineDone ? '趋势线已绘制' : '加载趋势线...');
-    document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
-  }
-
-  function finishLoad() {
-    if (_refreshId !== rid) return;
+  function done() {
+    if (timeoutDone) return;  // 超时已经处理过了
     const n = Object.keys(liveData).length;
     document.getElementById('st').textContent = (n >= 25 ? n + '只 ✅' : n + '只') + ' · 趋势线已绘制';
     document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
     document.getElementById('refreshBtn').disabled = false;
+    timeoutDone = true;
   }
 
-  // 1) 先拉行情数据 —— 完成后立刻渲染表格
+  // 超时保护：15秒后无论如何放开按钮（K线请求自己也有8秒超时）
+  setTimeout(function() {
+    if (_refreshGen !== gen) return;
+    if (!sinaDone || !klineDone) {
+      sinaDone = true; klineDone = true;
+      done();
+    }
+  }, 15000);
+
   loadSinaData(function(n, tradeDate) {
-    if (_refreshId !== rid) return;
+    if (_refreshGen !== gen) return;
     sinaDone = true;
     if (n > 0) {
-      document.getElementById('st').textContent = (tradeDate || '') + ' · ' + n + '只行情 ✅ 加载趋势线...';
+      document.getElementById('st').textContent = (tradeDate || '') + ' · ' + n + '只行情 ✅ 趋势线加载中...';
     }
-    renderTable();
+    render();  // 先渲染表格（可能有部分/无趋势线）
+    if (sinaDone && klineDone) done();
   });
 
-  // 2) 并行拉K线（允许失败，不影响表格显示）
   loadKlines(function() {
-    if (_refreshId !== rid) return;
+    if (_refreshGen !== gen) return;
     klineDone = true;
+    // 重新绘制所有趋势线canvas
     for (const x of M) {
       const prices = klineData[x.c];
       if (prices && prices.length >= 2) {
@@ -459,27 +423,18 @@ function init() {
         drawSparkline('spk_' + x.c, prices, isUp);
       }
     }
-    finishLoad();
+    if (sinaDone && klineDone) done();
   });
-
-  // 3) K线加载超时保护：10秒后不管K线有没有都结束loading状态
-  setTimeout(function() {
-    if (_refreshId !== rid) return;
-    if (!klineDone) {
-      klineDone = true;
-      finishLoad();
-    }
-  }, 10000);
 }
 
 function reloadData() {
+  _refreshGen++;  // 进入新的一代，所有旧回调自动失效
   document.getElementById('refreshBtn').disabled = true;
   document.getElementById('st').textContent = '刷新中...';
   document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse';
+  // 纯清数据，不清理旧script标签
   liveData = {};
   klineData = {};
-  // 清理所有未完成的K线请求
-  clearKlineRequests();
   init();
 }
 
