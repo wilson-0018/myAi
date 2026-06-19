@@ -260,40 +260,33 @@ function loadSinaData(callback) {
 // 启动
 // =====================================================
 function init() {
-  document.getElementById('st').textContent = '加载行情+K线...';
-
-  let sinaDone = false, klineDone = false;
+  document.getElementById('st').textContent = '加载行情...';
   const gen = _refreshGen;
   let timeoutDone = false;
 
   function done() {
-    if (timeoutDone) return;  // 超时已经处理过了
+    if (timeoutDone) return;
     const n = Object.keys(liveData).length;
-    document.getElementById('st').textContent = (n >= 25 ? n + '只 ✅' : n + '只') + ' · 趋势线已绘制';
+    document.getElementById('st').textContent = (n >= 25 ? n + '只 ✅' : n + '只') + ' · 完成';
     document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-green-400';
     document.getElementById('refreshBtn').disabled = false;
     timeoutDone = true;
   }
 
-  // 超时保护：15秒后无论如何放开按钮（K线请求自己也有8秒超时）
   setTimeout(function() {
     if (_refreshGen !== gen) return;
-    if (!sinaDone || !klineDone) {
-      sinaDone = true; klineDone = true;
-      done();
-    }
-  }, 15000);
+    if (!timeoutDone) done();
+  }, 12000);
 
   loadSinaData(function(n, tradeDate) {
     if (_refreshGen !== gen) return;
-    sinaDone = true;
     if (n > 0) {
-      document.getElementById('st').textContent = (tradeDate || '') + ' · ' + n + '只行情 ✅ 趋势线加载中...';
+      const now = new Date();
+      document.getElementById('st').textContent = (tradeDate || '') + ' · ' + n + '只 ✅ ' + now.toLocaleTimeString('zh-CN', {hour12:false});
     }
-    render();  // 先渲染表格（可能有部分/无趋势线）
-    if (sinaDone && klineDone) done();
+    render();
+    done();
   });
-
 }
 
 function reloadData() {
