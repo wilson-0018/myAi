@@ -213,12 +213,8 @@ function loadSinaData(callback) {
   const cbName = 'sina_cb_' + Date.now() + '_' + _refreshGen;
   const gen = _refreshGen;
 
-  // 标记script，方便清理旧请求
-  const oldScripts = document.querySelectorAll('script[data-sina="' + (_refreshGen - 1) + '"]');
-  for (const old of oldScripts) {
-    try { old.parentNode.removeChild(old); } catch(e) {}
-  }
-  scr.setAttribute('data-sina', '' + _refreshGen);
+  // 直接append，不清理旧script（旧回调会因_refreshGen不匹配自动忽略）
+  scr.setAttribute('data-sina', '1');
 
   window[cbName] = function() {};
   scr.src = 'https://hq.sinajs.cn/list=' + codes;
