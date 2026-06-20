@@ -32,6 +32,7 @@ tr:hover td{background:rgba(68,204,255,.03)}
   <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#44ccff]/5 border border-[#44ccff]/15 text-[#44ccff] text-[11px] mb-3">
     <span id="sd" class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></span>
     <span id="st">加载实时行情中...</span>
+    <span id="stLabel" class="text-[10px] opacity-60"></span>
     <button onclick="reloadData()" class="ml-2 px-2 py-0.5 rounded bg-[#44ccff]/10 border border-[#44ccff]/30 text-[10px] hover:bg-[#44ccff]/20 transition-all" id="refreshBtn">🔄 刷新</button>
   </div>
   <h1 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-[#44ccff] via-blue-400 to-purple-400 bg-clip-text text-transparent leading-snug">
@@ -130,6 +131,35 @@ let _refreshGen = 0;         // 刷新代数，每刷新一次+1
 const JSON_PATH = 'chip-stock-data.json'; // 后端脚本生成的JSON
 
 // =====================================================
+// 交易时段判断 & 显示标签
+// =====================================================
+function getTradePeriod() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes(), d = now.getDay();
+  const time = h * 100 + m;
+  if (d === 0 || d === 6) return { label: '非交易日', isLive: false, color: '#6b7280' };
+  if (time < 930) return { label: '盘前 · 上一交易日收盘', isLive: false, color: '#6b7280' };
+  if (time >= 930 && time < 1130) return { label: '盘中 · 上午', isLive: true, color: '#44ccff' };
+  if (time >= 1130 && time < 1300) return { label: '午休 · 盘中', isLive: true, color: '#44ccff' };
+  if (time >= 1300 && time < 1500) return { label: '盘中 · 下午', isLive: true, color: '#44ccff' };
+  return { label: '盘后 · 收盘', isLive: false, color: '#22c55e' };
+}
+
+function updateTimeLabel(isLive, updateTimeStr) {
+  const el = document.getElementById('stLabel');
+  const period = getTradePeriod();
+  if (isLive) {
+    // 盘中实时数据 → 显示"盘中实时"
+    el.textContent = period.label;
+    el.style.color = period.color;
+  } else {
+    // JSON 数据 → 显示时间标签
+    el.textContent = period.label;
+    el.style.color = period.color;
+  }
+}
+
+// =====================================================
 // =====================================================
 // =====================================================
 // 渲染表格
@@ -217,7 +247,11 @@ function loadData(callback) {
     if (done) return;
     done = true;
     const n = Object.keys(liveData).length;
-    st.textContent = (n >= 25 ? n + '只 ✅ 实时' : n + '只') + ' · 完成';
+    const period = getTradePeriod();
+    const labelText = period.isLive ? '盘中实时' : period.label;
+    document.getElementById('stLabel').textContent = labelText;
+    document.getElementById('stLabel').style.color = period.color;
+    st.textContent = (n >= 25 ? n + '只 ✅' : n + '只');
     sd.className = 'w-1.5 h-1.5 rounded-full bg-green-400';
     document.getElementById('refreshBtn').disabled = false;
     render();
@@ -235,12 +269,19 @@ function loadData(callback) {
           n++;
         }
       }
+      // JSON数据来自后端，显示时段标签
+      const period = getTradePeriod();
+      document.getElementById('stLabel').textContent = period.label;
+      document.getElementById('stLabel').style.color = period.color;
       st.textContent = d.update_time + ' · ' + n + '只 ✅';
       finish();
     })
     .catch(() => {
       // JSON失败→转新浪实时
       if (_refreshGen !== gen) return;
+      const period = getTradePeriod();
+      document.getElementById('stLabel').textContent = period.label;
+      document.getElementById('stLabel').style.color = period.color;
       st.textContent = '尝试新浪实时...';
       loadSinaData(finish);
     });
@@ -277,7 +318,13 @@ function loadSinaData(finishCb) {
     }
     if (n > 0) {
       const now = new Date();
-      document.getElementById('st').textContent = (tradeDate || '') + ' · ' + n + '只 ✅ ' + now.toLocaleTimeString('zh-CN', {hour12:false});
+      const period = getTradePeriod();
+      const labelText = period.isLive ? '盘中实时' : '盘后 · 收盘';
+      document.getElementById('stLabel').textContent = labelText;
+      document.getElementById('stLabel').style.color = period.color;
+      // 显示更新时间
+      const timeStr = now.toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit', hour12: false});
+      document.getElementById('st').textContent = (tradeDate || '') + ' · ' + n + '只 ✅ ' + timeStr;
     }
     if (finishCb) finishCb();
     try { if (scr.parentNode) scr.parentNode.removeChild(scr); } catch(e) {}
@@ -323,6 +370,7 @@ function reloadData() {
   _refreshGen++;
   document.getElementById('refreshBtn').disabled = true;
   document.getElementById('st').textContent = '刷新中...';
+  document.getElementById('stLabel').textContent = '';
   document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse';
   liveData = {};
   init();
