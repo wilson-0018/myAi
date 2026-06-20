@@ -127,6 +127,8 @@ const G = [
 let liveData = {};
 let _refreshGen = 0;         // 刷新代数，每刷新一次+1
 
+const JSON_PATH = 'chip-stock-data.json'; // 后端脚本生成的JSON
+
 // =====================================================
 // =====================================================
 // =====================================================
@@ -201,25 +203,59 @@ function render() {
 }
 
 // =====================================================
-// 新浪实时数据
+// 加载数据：先尝试JSON后端数据，再尝试新浪实时
 // =====================================================
-function loadSinaData(callback) {
+function loadData(callback) {
   const st = document.getElementById('st');
   const sd = document.getElementById('sd');
-  st.textContent = '加载行情...';
+  st.textContent = '加载数据...';
+  sd.className = 'w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse';
+  const gen = _refreshGen;
 
+  let done = false;
+  function finish() {
+    if (done) return;
+    done = true;
+    const n = Object.keys(liveData).length;
+    st.textContent = (n >= 25 ? n + '只 ✅ 实时' : n + '只') + ' · 完成';
+    sd.className = 'w-1.5 h-1.5 rounded-full bg-green-400';
+    document.getElementById('refreshBtn').disabled = false;
+    render();
+  }
+
+  // 先尝试JSON后端数据（更快、更稳定）
+  fetch(JSON_PATH + '?t=' + Date.now())
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(d => {
+      if (_refreshGen !== gen) return;
+      let n = 0;
+      for (const [short, info] of Object.entries(d.stocks)) {
+        if (info && info.price && info.price > 0) {
+          liveData[short] = { price: info.price, change_pct: info.change_pct };
+          n++;
+        }
+      }
+      st.textContent = d.update_time + ' · ' + n + '只 ✅';
+      finish();
+    })
+    .catch(() => {
+      // JSON失败→转新浪实时
+      if (_refreshGen !== gen) return;
+      st.textContent = '尝试新浪实时...';
+      loadSinaData(finish);
+    });
+}
+
+function loadSinaData(finishCb) {
   const codes = Object.values(CM).join(',');
   const scr = document.createElement('script');
   const cbName = 'sina_cb_' + Date.now() + '_' + _refreshGen;
   const gen = _refreshGen;
-
-  // 直接append，不清理旧script（旧回调会因_refreshGen不匹配自动忽略）
   scr.setAttribute('data-sina', '1');
 
   window[cbName] = function() {};
   scr.src = 'https://hq.sinajs.cn/list=' + codes;
   scr.onload = function() {
-    // 过时的请求——忽略
     if (_refreshGen !== gen) {
       delete window[cbName];
       try { if (scr.parentNode) scr.parentNode.removeChild(scr); } catch(e) {}
@@ -239,13 +275,19 @@ function loadSinaData(callback) {
       }
       if (a.length > 30 && a[30] && !tradeDate) tradeDate = a[30];
     }
-    if (callback) callback(n, tradeDate);
+    if (n > 0) {
+      const now = new Date();
+      document.getElementById('st').textContent = (tradeDate || '') + ' · ' + n + '只 ✅ ' + now.toLocaleTimeString('zh-CN', {hour12:false});
+    }
+    if (finishCb) finishCb();
     try { if (scr.parentNode) scr.parentNode.removeChild(scr); } catch(e) {}
     delete window[cbName];
   };
   scr.onerror = function() {
     if (_refreshGen !== gen) return;
-    if (callback) callback(0, '');
+    document.getElementById('st').textContent = '数据加载失败';
+    document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-red-400';
+    if (finishCb) finishCb();
     try { if (scr.parentNode) scr.parentNode.removeChild(scr); } catch(e) {}
     delete window[cbName];
   };
@@ -253,10 +295,10 @@ function loadSinaData(callback) {
 }
 
 // =====================================================
-// 启动
+// 启动 & 刷新
 // =====================================================
 function init() {
-  document.getElementById('st').textContent = '加载行情...';
+  document.getElementById('st').textContent = '加载数据...';
   const gen = _refreshGen;
   let timeoutDone = false;
 
@@ -274,23 +316,14 @@ function init() {
     if (!timeoutDone) done();
   }, 12000);
 
-  loadSinaData(function(n, tradeDate) {
-    if (_refreshGen !== gen) return;
-    if (n > 0) {
-      const now = new Date();
-      document.getElementById('st').textContent = (tradeDate || '') + ' · ' + n + '只 ✅ ' + now.toLocaleTimeString('zh-CN', {hour12:false});
-    }
-    render();
-    done();
-  });
+  loadData(done);
 }
 
 function reloadData() {
-  _refreshGen++;  // 进入新的一代，所有旧回调自动失效
+  _refreshGen++;
   document.getElementById('refreshBtn').disabled = true;
   document.getElementById('st').textContent = '刷新中...';
   document.getElementById('sd').className = 'w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse';
-  // 纯清数据，不清理旧script标签
   liveData = {};
   init();
 }

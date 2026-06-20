@@ -2,17 +2,15 @@ name: Update Stock Data
 
 on:
   schedule:
-    # UTC 00:30 = 北京时间 08:30 开盘前更新
+    # UTC 00:30 = 北京时间 08:30 开盘前
     - cron: '30 0 * * 1-5'
-    # UTC 07:30 = 北京时间 15:30 收盘后30分钟更新
+    # UTC 07:30 = 北京时间 15:30 收盘后30分钟
     - cron: '30 7 * * 1-5'
-  workflow_dispatch:  # 支持手动触发调试
+  workflow_dispatch:  # 手动触发
 
-# 授予仓库读写权限
 permissions:
   contents: write
 
-# 并发控制：同任务互斥，取消正在运行的旧任务
 concurrency:
   group: "stock-update"
   cancel-in-progress: true
@@ -24,21 +22,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0  # 拉取完整历史，避免提交异常
+          fetch-depth: 0
 
       - name: Generate stock-data.json
         run: python3 .github/scripts/update_stock_data.py
 
-      - name: Commit and push changes
+      - name: Commit and push to main
         run: |
           git config user.name 'Stock Bot'
           git config user.email 'bot@github.com'
-          git add stock-data.json
-          # 无变更则直接退出，不执行提交
+          git add stock-data.json stock/stock-data.json stock/chip-stock-data.json
           if git diff --quiet --cached; then
             echo "No changes to commit"
             exit 0
           fi
-          # 提交 + 推送，使用内置 token 授权
           git commit -m "Update stock data $(date '+%Y-%m-%d %H:%M')"
           git push origin HEAD

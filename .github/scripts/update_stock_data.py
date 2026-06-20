@@ -1,31 +1,76 @@
 #!/usr/bin/env python3
 """
 从新浪财经获取股票实时行情，生成 stock-data.json
-盘中拉实时数据，收盘后拉收盘数据
+按新版 chip-supply.html 的 27+1只精选标的结构输出
+支持 chip-supply 和 chip-supply-chain 两个页面使用
 """
 
 import json
 import os
 import re
+import sys
 import urllib.request
 
-# 28+2只精选标的（新浪代码格式）
+# === 新版 chip-supply.html 的 27只股票 + 1 ETF ===
+# 短代码 -> {名称, 新浪完整代码}
 CODES = {
-    "sh601600": "中国铝业", "sz002428": "云南锗业", "sh600549": "厦门钨业",
-    "sz002155": "湖南黄金", "sz000960": "锡业股份", "sz000831": "中国稀土",
-    "sh688126": "沪硅产业", "sh603650": "彤程新材", "sh688268": "华特气体",
-    "sz300666": "江丰电子", "sh688019": "安集科技", "sz002409": "雅克科技",
-    "sz300395": "菲利华", "sh688012": "中微公司", "sz002371": "北方华创",
-    "sh688072": "拓荆科技", "sh688082": "盛美上海", "sh688361": "中科飞测",
-    "sh600641": "先导基电", "sh603986": "兆易创新", "sh688008": "澜起科技",
-    "sh688037": "芯源微", "sz002156": "通富微电", "sz000021": "深科技",
-    "sz000426": "兴业银锡", "sh600584": "长电科技", "sz002185": "华天科技",
-    "sz300223": "北京君正", "sz300054": "鼎龙股份", "sz301308": "江波龙",
+    # 一、存储芯片 · 国产替代龙头 (4只)
+    "603986": {"n": "兆易创新", "s": "sh603986"},
+    "688008": {"n": "澜起科技", "s": "sh688008"},
+    "688126": {"n": "沪硅产业", "s": "sh688126"},
+    "688037": {"n": "芯源微",   "s": "sh688037"},
+    
+    # 二、半导体设备 · 先进制程 (6只)
+    "688012": {"n": "中微公司", "s": "sh688012"},
+    "002371": {"n": "北方华创", "s": "sz002371"},
+    "688072": {"n": "拓荆科技", "s": "sh688072"},
+    "688082": {"n": "盛美上海", "s": "sh688082"},
+    "688361": {"n": "中科飞测", "s": "sh688361"},
+    "600641": {"n": "万业企业", "s": "sh600641"},
+    
+    # 三、芯片上游材料 · 精密工艺 (6只)
+    "603650": {"n": "彤程新材", "s": "sh603650"},
+    "688268": {"n": "华特气体", "s": "sh688268"},
+    "300666": {"n": "江丰电子", "s": "sz300666"},
+    "688019": {"n": "安集科技", "s": "sh688019"},
+    "002409": {"n": "雅克科技", "s": "sz002409"},
+    "300395": {"n": "菲利华",   "s": "sz300395"},
+    
+    # 四、PCB · 线路板 · AI算力硬件 (3只)
+    "002463": {"n": "沪电股份", "s": "sz002463"},
+    "002916": {"n": "深南电路", "s": "sz002916"},
+    "002938": {"n": "鹏鼎控股", "s": "sz002938"},
+    
+    # 五、光模块 & CPO · AI数据中心链 (5只)
+    "300308": {"n": "中际旭创", "s": "sz300308"},
+    "300502": {"n": "新易盛",   "s": "sz300502"},
+    "300394": {"n": "天孚通信", "s": "sz300394"},
+    "002281": {"n": "光迅科技", "s": "sz002281"},
+    "688498": {"n": "源杰科技", "s": "sh688498"},
+    
+    # 六、AI服务器 & 国产算力 (3只)
+    "601138": {"n": "工业富联", "s": "sh601138"},
+    "000977": {"n": "浪潮信息", "s": "sz000977"},
+    "603019": {"n": "中科曙光", "s": "sh603019"},
+    
+    # 七、光纤光缆 · 数据中心互联 (3只)
+    "601869": {"n": "长飞光纤", "s": "sh601869"},
+    "600487": {"n": "亨通光电", "s": "sh600487"},
+    "600522": {"n": "中天科技", "s": "sh600522"},
+    
+    # 八、封装测试 & 存储模组 (4只)
+    "600584": {"n": "长电科技", "s": "sh600584"},
+    "000021": {"n": "深科技",   "s": "sz000021"},
+    "002156": {"n": "通富微电", "s": "sz002156"},
+    # ETF
+    "513310": {"n": "中韩半导ETF", "s": "sh513310"},
 }
 
 def fetch_from_sina():
     """从新浪财经拉实时行情"""
-    code_str = ','.join(CODES.keys())
+    # 用完整新浪代码 (s字段) 去请求
+    sina_codes = [v["s"] for v in CODES.values()]
+    code_str = ','.join(sina_codes)
     url = f'https://hq.sinajs.cn/list={code_str}'
     req = urllib.request.Request(url, headers={
         'Referer': 'https://finance.sina.com.cn',
@@ -36,17 +81,24 @@ def fetch_from_sina():
     return raw
 
 def parse_sina_data(text):
-    """解析新浪返回的行情数据"""
+    """解析新浪返回的行情数据，输出以短代码为 key"""
     stocks = {}
     trade_date = None
+    
+    # 构建 新浪完整代码 -> 短代码 映射
+    sinav2short = {v["s"]: k for k, v in CODES.items()}
     
     for line in text.strip().split('\n'):
         m = re.search(r'hq_str_(\w+)="([^"]+)"', line)
         if not m:
             continue
-        code = m.group(1)
+        sina_code = m.group(1)
         vals = m.group(2).split(',')
         if len(vals) < 8:
+            continue
+        
+        short = sinav2short.get(sina_code)
+        if not short:
             continue
         
         name = vals[0]
@@ -55,11 +107,12 @@ def parse_sina_data(text):
         change_pct = round((price - prev_close) / prev_close * 100, 2) if prev_close > 0 else 0.0
         date_str = vals[30] if len(vals) > 30 else ''
         
-        stocks[code] = {
+        stocks[short] = {
             "name": name,
             "price": price,
             "change_pct": change_pct,
-            "date": date_str
+            "date": date_str,
+            "sina_code": sina_code
         }
         if not trade_date and date_str:
             trade_date = date_str
@@ -112,36 +165,34 @@ def fetch_stock_data():
 def main():
     try:
         print("=" * 60)
-        print("股票数据更新脚本启动")
+        print("股票数据更新脚本启动 (v2)")
+        print(f"目标标的: {len(CODES)} 只")
         print("=" * 60)
         
         data = fetch_stock_data()
         
-        # 生成两个位置的文件，以兼容不同的配置
+        # 三个输出位置：
+        # 1. stock-data.json — 旧版 chip-supply-chain 用（保持新浪全码格式向后兼容）
+        # 2. stock/stock-data.json — gh-pages stock/ 目录
+        # 3. stock/chip-stock-data.json — 新版 chip-supply 用（短码key，含sina_code）
         paths = [
-            'stock/stock-data.json',      # 新位置（推荐）
-            'stock-data.json'             # 旧位置（兼容）
+            'stock-data.json',            # 旧版兼容
+            'stock/stock-data.json',      # gh-pages
+            'stock/chip-stock-data.json', # 新版chip-supply专用
         ]
         
         for output_path in paths:
             try:
-                # 确保目录存在
                 os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
-                
-                # 生成文件
                 with open(output_path, 'w', encoding='utf-8') as f:
                     json.dump(data, f, indent=2, ensure_ascii=False)
-                
                 print(f"✓ 文件已生成: {output_path}")
-                file_size = os.path.getsize(output_path)
-                print(f"  文件大小: {file_size} 字节")
+                print(f"  文件大小: {os.path.getsize(output_path)} 字节")
             except Exception as e:
                 print(f"✗ 生成文件失败 {output_path}: {e}")
         
         print(f"✓ 共更新 {len(data['stocks'])} 只股票")
         print(f"✓ 更新时间: {data['update_time']}")
-        print("=" * 60)
-        print("脚本执行成功")
         print("=" * 60)
         
     except Exception as e:
