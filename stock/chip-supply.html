@@ -133,30 +133,61 @@ const JSON_PATH = 'chip-stock-data.json'; // 后端脚本生成的JSON
 // =====================================================
 // 交易时段判断 & 显示标签
 // =====================================================
+const WEEKDAYS_CN = ['日','一','二','三','四','五','六'];
+
+function getLastTradeDay() {
+  // 找出最近一个交易日 (向前找，跳过周末)
+  const now = new Date();
+  const d = now.getDay();
+  if (d === 0) { // 周日 → 上周五
+    const d2 = new Date(now); d2.setDate(d2.getDate() - 2);
+    return d2;
+  }
+  if (d === 6) { // 周六 → 上周五
+    const d2 = new Date(now); d2.setDate(d2.getDate() - 1);
+    return d2;
+  }
+  // 周一~周五：如果是盘前→上一个交易日(周五)，否则算今天
+  const h = now.getHours(), m = now.getMinutes();
+  const time = h * 100 + m;
+  if (time < 930) { // 盘前 → 周五或上个交易日
+    const d2 = new Date(now);
+    if (d === 1) d2.setDate(d2.getDate() - 3); // 周一盘前→上周五
+    else d2.setDate(d2.getDate() - 1);
+    return d2;
+  }
+  return now; // 盘中/盘后→今天
+}
+
+function formatDate(d) {
+  const mo = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  const w = WEEKDAYS_CN[d.getDay()];
+  return `${d.getFullYear()}-${mo}-${dd} 周${w}`;
+}
+
 function getTradePeriod() {
   const now = new Date();
   const h = now.getHours(), m = now.getMinutes(), d = now.getDay();
   const time = h * 100 + m;
-  if (d === 0 || d === 6) return { label: '非交易日', isLive: false, color: '#6b7280' };
-  if (time < 930) return { label: '盘前 · 上一交易日收盘', isLive: false, color: '#6b7280' };
-  if (time >= 930 && time < 1130) return { label: '盘中 · 上午', isLive: true, color: '#44ccff' };
-  if (time >= 1130 && time < 1300) return { label: '午休 · 盘中', isLive: true, color: '#44ccff' };
-  if (time >= 1300 && time < 1500) return { label: '盘中 · 下午', isLive: true, color: '#44ccff' };
-  return { label: '盘后 · 收盘', isLive: false, color: '#22c55e' };
+  
+  if (d === 0 || d === 6) {
+    const last = getLastTradeDay();
+    return { label: '非交易日', date: formatDate(last), time: '15:00', isLive: false, color: '#6b7280' };
+  }
+  if (time < 930) {
+    const last = getLastTradeDay();
+    return { label: '盘前', date: formatDate(last), time: '15:00', isLive: false, color: '#6b7280' };
+  }
+  if (time >= 930 && time < 1130) return { label: '盘中 · 上午', date: formatDate(now), time: `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`, isLive: true, color: '#44ccff' };
+  if (time >= 1130 && time < 1300) return { label: '午休', date: formatDate(now), time: `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`, isLive: true, color: '#44ccff' };
+  if (time >= 1300 && time < 1500) return { label: '盘中 · 下午', date: formatDate(now), time: `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`, isLive: true, color: '#44ccff' };
+  return { label: '盘后 · 收盘', date: formatDate(now), time: '15:00', isLive: false, color: '#22c55e' };
 }
 
-function updateTimeLabel(isLive, updateTimeStr) {
-  const el = document.getElementById('stLabel');
-  const period = getTradePeriod();
-  if (isLive) {
-    // 盘中实时数据 → 显示"盘中实时"
-    el.textContent = period.label;
-    el.style.color = period.color;
-  } else {
-    // JSON 数据 → 显示时间标签
-    el.textContent = period.label;
-    el.style.color = period.color;
-  }
+function getDisplayText(period) {
+  if (period.isLive) return `${period.label} ${period.date} ${period.time}`;
+  return `${period.label} · ${period.date} ${period.time} 数据`;
 }
 
 // =====================================================
@@ -248,8 +279,7 @@ function loadData(callback) {
     done = true;
     const n = Object.keys(liveData).length;
     const period = getTradePeriod();
-    const labelText = period.isLive ? '盘中实时' : period.label;
-    document.getElementById('stLabel').textContent = labelText;
+    document.getElementById('stLabel').textContent = getDisplayText(period);
     document.getElementById('stLabel').style.color = period.color;
     st.textContent = (n >= 25 ? n + '只 ✅' : n + '只');
     sd.className = 'w-1.5 h-1.5 rounded-full bg-green-400';
@@ -271,7 +301,7 @@ function loadData(callback) {
       }
       // JSON数据来自后端，显示时段标签
       const period = getTradePeriod();
-      document.getElementById('stLabel').textContent = period.label;
+      document.getElementById('stLabel').textContent = getDisplayText(period);
       document.getElementById('stLabel').style.color = period.color;
       st.textContent = d.update_time + ' · ' + n + '只 ✅';
       finish();
@@ -280,7 +310,7 @@ function loadData(callback) {
       // JSON失败→转新浪实时
       if (_refreshGen !== gen) return;
       const period = getTradePeriod();
-      document.getElementById('stLabel').textContent = period.label;
+      document.getElementById('stLabel').textContent = getDisplayText(period);
       document.getElementById('stLabel').style.color = period.color;
       st.textContent = '尝试新浪实时...';
       loadSinaData(finish);
@@ -319,8 +349,7 @@ function loadSinaData(finishCb) {
     if (n > 0) {
       const now = new Date();
       const period = getTradePeriod();
-      const labelText = period.isLive ? '盘中实时' : '盘后 · 收盘';
-      document.getElementById('stLabel').textContent = labelText;
+      document.getElementById('stLabel').textContent = getDisplayText(period);
       document.getElementById('stLabel').style.color = period.color;
       // 显示更新时间
       const timeStr = now.toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit', hour12: false});
