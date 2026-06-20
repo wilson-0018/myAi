@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import urllib.request
+import urllib.parse
 
 # === 新版 chip-supply.html 的 27只股票 + 1 ETF ===
 # 短代码 -> {名称, 新浪完整代码}
@@ -119,6 +120,42 @@ def parse_sina_data(text):
     
     return stocks, trade_date
 
+def fetch_pe_data():
+    """从东方财富批量获取动态市盈率 (PE)"""
+    pe_stocks = {}
+    for short, info in CODES.items():
+        s = info["s"]
+        if s.startswith("sz"):
+            secid = f"0.{short}"
+        elif s.startswith("sh"):
+            secid = f"1.{short}"
+        else:
+            continue
+        pe_stocks[short] = secid
+    
+    try:
+        secids = ",".join(pe_stocks.values())
+        url = f'https://push2.eastmoney.com/api/qt/ulist.np/get?fltt=2&fields=f2,f3,f12,f14,f20,f21&secids={urllib.parse.quote(secids)}'
+        req = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0',
+            'Referer': 'https://quote.eastmoney.com/'
+        })
+        resp = urllib.request.urlopen(req, timeout=15)
+        data = json.loads(resp.read().decode())
+        
+        result = {}
+        for item in data.get('data', {}).get('diff', []):
+            code = item.get('f12', '')
+            f20 = item.get('f20')  # 动态市盈率 (×100)
+            f21 = item.get('f21')  # TTM市盈率
+            pe = round(f20 / 100, 2) if f20 and isinstance(f20, (int, float)) and f20 > 0 else None
+            pe_ttm = round(f21 / 100, 2) if f21 and isinstance(f21, (int, float)) and f21 > 0 else None
+            result[code] = {"pe": pe, "pe_ttm": pe_ttm}
+        return result
+    except Exception as e:
+        print(f"⚠️ 获取PE数据失败: {e}")
+        return {}
+
 def fetch_stock_data():
     """获取股票数据"""
     print("从新浪财经拉取实时行情...")
@@ -155,6 +192,18 @@ def fetch_stock_data():
     
     print(f"✓ 成功获取 {len(stocks)} 只股票数据")
     print(f"  交易日期: {trade_date}")
+    
+    # 获取动态市盈率
+    print("从东方财富获取动态市盈率...")
+    pe_data = fetch_pe_data()
+    pe_count = 0
+    for short in stocks:
+        if short in pe_data and pe_data[short]["pe"]:
+            stocks[short]["pe"] = pe_data[short]["pe"]
+            pe_count += 1
+        else:
+            stocks[short]["pe"] = None
+    print(f"✓ 成功获取 {pe_count} 只市盈率")
     print(f"  更新类型: {time_label}")
     
     return {
