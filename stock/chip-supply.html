@@ -299,11 +299,14 @@ function loadData(callback) {
           n++;
         }
       }
-      // JSON数据来自后端，显示时段标签
+      // JSON数据来自后端，显示时段标签和动态时间
       const period = getTradePeriod();
+      const timeStr = period.isLive
+        ? `${period.date} ${period.time}`
+        : `${period.date} ${period.time}`;
       document.getElementById('stLabel').textContent = getDisplayText(period);
       document.getElementById('stLabel').style.color = period.color;
-      st.textContent = d.update_time + ' · ' + n + '只 ✅';
+      st.textContent = timeStr + ' · ' + n + '只 ✅';
       finish();
     })
     .catch(() => {
