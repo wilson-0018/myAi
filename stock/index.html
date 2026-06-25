@@ -296,75 +296,53 @@ ra();
 // ============================================
 async function fetchAll(){
   const btn=document.getElementById('rbtn'),st=document.getElementById('st');
-  btn.disabled=true;st.textContent='⏳ 刷新中...';
-
-  // 收集所有美股代码
-  const allTickers = [];
-  OK.forEach(sec => {
-    D[sec].forEach(s => {
-      if(s.t && !s.t.endsWith('ETF') && s.t !== 'QQQ') {
-        allTickers.push(s.t + '.US');
-      }
-    });
-  });
-  // ETF单独处理
-  const etfTickers = ['SMH','SOXX','QQQ'];
-  const allStockTickers = [...new Set(allTickers)];
+  btn.disabled=true;st.textContent='⏳ 获取最新数据...';
 
   let updatedCount = 0;
-  let errorCount = 0;
+  let usedCache = false;
 
   try {
-    // Step 1: 用TickDB批量查询行情
-    const apiKey = 'ZolsmxPsj_w0zwt5iG8ghOV-DKoi6qPy';
-    const tickStr = allStockTickers.join(',');
-    const r = await fetch('https://api.tickdb.ai/v1/market/calc-index?symbols=' + tickStr, {
-      headers: {'X-API-Key': apiKey}
-    });
+    // 从 stock-data-us.json 获取实时数据（定时推送，来自新浪财经）
+    const r = await fetch('./stock-data-us.json?t=' + Date.now());
 
     if(r.ok){
       const d = await r.json();
-      if(d.data && d.data.length){
-        d.data.forEach(item => {
-          const sym = item.symbol.replace('.US', '');
+      if(d.stocks){
+        const stocks = d.stocks;
+        Object.keys(stocks).forEach(ticker => {
+          const item = stocks[ticker];
           OK.forEach(sec => {
-            const s = D[sec].find(x => x.t === sym);
+            const s = D[sec].find(x => x.t === ticker);
             if(!s) return;
-            if(item.last_done) { s.p = parseFloat(item.last_done); updatedCount++; }
-            if(item.pe_ttm_ratio) s.pe = parseFloat(item.pe_ttm_ratio);
-            if(item.forward_pe_ratio) s.pe2 = parseFloat(item.forward_pe_ratio);
-            if(item.ytd_change_rate) s.ytd = parseFloat(item.ytd_change_rate);
-            if(item.total_market_value) s.mv = Math.round(parseFloat(item.total_market_value) / 1e8);
+            if(item.price) { s.p = item.price; }
+            if(item.change_pct) { s.ytd = item.change_pct / 100; } // ytd复用涨跌幅
+            if(item.pe != null) s.pe = item.pe;
+            updatedCount++;
           });
         });
       }
+      document.getElementById('upt').textContent = d.update_time + ' · 安全边际基于PEG法估算';
+      st.textContent = '✅ 数据来自新浪财经';
+      usedCache = true;
     } else {
-      errorCount++;
-      st.textContent = '⚠️ TickDB: HTTP ' + r.status;
+      throw new Error('HTTP ' + r.status);
     }
 
-    // Step 2: 更新ETF（用NASDAQ API）
-    for(const etf of etfTickers){
-      try {
-        const r2 = await fetch('/stock/etf-' + etf.toLowerCase() + '.json');
-        // 如果NASDEQ API不可用，跳过
-      } catch(e){}
-    }
-
-    // Step 3: 重绘
     ra();
-    st.textContent = '✅ ' + updatedCount + '只已更新' + (errorCount ? ' · ' + errorCount + '个错误' : '');
+    st.textContent = '✅ ' + updatedCount + '只已更新';
     btn.textContent = '✅ 已刷新';
     setTimeout(()=>{btn.disabled=false;btn.textContent='🔄 刷新数据';}, 2000);
 
   } catch(e) {
-    st.textContent = '❌ ' + e.message;
+    // 兜底：初始数据
+    st.textContent = '⚠️ ' + e.message + '，使用初始数据';
+    ra();
     btn.disabled=false;
   }
 }
 
-// 初始化时自动刷新一次
-setTimeout(fetchAll, 500);
+// 页面加载后自动刷新一次
+setTimeout(fetchAll, 800);
 </script>
 </body>
 </html>

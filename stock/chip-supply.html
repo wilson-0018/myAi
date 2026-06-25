@@ -226,6 +226,14 @@ function render() {
         priceDisplay = '<span class="text-gray-500">—</span>';
       }
 
+      let peDisplay;
+      if (ld && ld.pe) {
+        const peColor = ld.pe < 0 ? '#22c55e' : ld.pe > 100 ? '#ef4444' : '#e0e0e0';
+        peDisplay = `<span class="font-mono text-[11px]" style="color:${peColor}">${ld.pe}</span>`;
+      } else {
+        peDisplay = `<span class="font-mono text-[11px] text-gray-500">${x.p}</span>`;
+      }
+
       let tl = '';
       if (x.t.includes('🏆')) tl += '<span class="tag bg-green-500/10 text-green-300">🏆 龙头</span> ';
       if (x.t.includes('💰')) tl += '<span class="tag bg-yellow-500/10 text-yellow-300">💰 业绩</span> ';
@@ -242,7 +250,7 @@ function render() {
       h += `<tr class="${kr?'kr':''}">
         <td><span style="color:#44ccff" class="font-mono text-[11px] font-semibold">${x.c}</span><br><span style="color:#44ccff" class="font-medium text-[12px]">${x.n}</span></td>
         <td class="text-center">${priceDisplay}</td>
-        <td class="text-center font-mono text-[11px]">${x.p}</td>
+        <td class="text-center font-mono text-[11px]">${peDisplay}</td>
         <td class="text-center font-mono text-[11px] text-white">${x.m || '—'}</td>
         <td class="text-center font-mono text-[11px] text-green-400">${x.y}</td>
         <td class="text-center font-mono text-[11px] text-yellow-300">${x.g}</td>
@@ -295,7 +303,7 @@ function loadData(callback) {
       let n = 0;
       for (const [short, info] of Object.entries(d.stocks)) {
         if (info && info.price && info.price > 0) {
-          liveData[short] = { price: info.price, change_pct: info.change_pct };
+          liveData[short] = { price: info.price, change_pct: info.change_pct, pe: info.pe || null };
           n++;
         }
       }
