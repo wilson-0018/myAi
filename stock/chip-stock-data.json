@@ -1,277 +1,277 @@
 {
-  "update_time": "2026-06-24 18:29 (收盘)",
+  "update_time": "2026-06-25 12:45 (午休 · 盘中实时)",
   "stocks": {
     "603986": {
       "name": "兆易创新",
-      "price": 705.09,
-      "change_pct": 10.0,
-      "date": "2026-06-24",
+      "price": 751.9,
+      "change_pct": 6.64,
+      "date": "2026-06-25",
       "sina_code": "sh603986",
-      "pe": 4947966247.59
+      "pe": null
     },
     "688008": {
       "name": "澜起科技",
-      "price": 266.49,
-      "change_pct": 3.29,
-      "date": "2026-06-24",
+      "price": 274.75,
+      "change_pct": 3.1,
+      "date": "2026-06-25",
       "sina_code": "sh688008",
-      "pe": 3257040835.96
+      "pe": null
     },
     "688126": {
       "name": "沪硅产业",
-      "price": 32.57,
-      "change_pct": 1.09,
-      "date": "2026-06-24",
+      "price": 33.45,
+      "change_pct": 2.7,
+      "date": "2026-06-25",
       "sina_code": "sh688126",
-      "pe": 1076446119.1
+      "pe": null
     },
     "688037": {
       "name": "芯源微",
-      "price": 318.0,
-      "change_pct": 12.06,
-      "date": "2026-06-24",
+      "price": 332.35,
+      "change_pct": 4.51,
+      "date": "2026-06-25",
       "sina_code": "sh688037",
-      "pe": 641174801.28
+      "pe": null
     },
     "688012": {
       "name": "中微公司",
-      "price": 383.0,
-      "change_pct": 3.03,
-      "date": "2026-06-24",
+      "price": 403.27,
+      "change_pct": 5.29,
+      "date": "2026-06-25",
       "sina_code": "sh688012",
-      "pe": 3628777667.56
+      "pe": null
     },
     "002371": {
       "name": "北方华创",
-      "price": 770.07,
-      "change_pct": 3.02,
-      "date": "2026-06-24",
+      "price": 809.81,
+      "change_pct": 5.16,
+      "date": "2026-06-25",
       "sina_code": "sz002371",
-      "pe": 5581718526.03
+      "pe": null
     },
     "688072": {
       "name": "拓荆科技",
-      "price": 820.0,
-      "change_pct": 6.49,
-      "date": "2026-06-24",
+      "price": 834.0,
+      "change_pct": 1.71,
+      "date": "2026-06-25",
       "sina_code": "sh688072",
-      "pe": 2318082698.4
+      "pe": null
     },
     "688082": {
       "name": "盛美上海",
-      "price": 402.18,
-      "change_pct": 0.59,
-      "date": "2026-06-24",
+      "price": 409.46,
+      "change_pct": 1.81,
+      "date": "2026-06-25",
       "sina_code": "sh688082",
-      "pe": 1940907363.82
+      "pe": null
     },
     "688361": {
       "name": "中科飞测",
-      "price": 312.34,
-      "change_pct": 13.21,
-      "date": "2026-06-24",
+      "price": 336.47,
+      "change_pct": 7.73,
+      "date": "2026-06-25",
       "sina_code": "sh688361",
-      "pe": 1093699854.45
+      "pe": null
     },
     "600641": {
       "name": "先导基电",
-      "price": 37.76,
-      "change_pct": 4.66,
-      "date": "2026-06-24",
+      "price": 36.96,
+      "change_pct": -2.12,
+      "date": "2026-06-25",
       "sina_code": "sh600641",
-      "pe": 357536571.39
+      "pe": null
     },
     "603650": {
       "name": "彤程新材",
-      "price": 77.22,
-      "change_pct": 10.0,
-      "date": "2026-06-24",
+      "price": 76.36,
+      "change_pct": -1.11,
+      "date": "2026-06-25",
       "sina_code": "sh603650",
-      "pe": 475739269.43
+      "pe": null
     },
     "688268": {
       "name": "华特气体",
-      "price": 237.53,
-      "change_pct": -4.64,
-      "date": "2026-06-24",
+      "price": 244.0,
+      "change_pct": 2.72,
+      "date": "2026-06-25",
       "sina_code": "sh688268",
-      "pe": 303283144.86
+      "pe": null
     },
     "300666": {
       "name": "江丰电子",
-      "price": 304.04,
-      "change_pct": 3.83,
-      "date": "2026-06-24",
+      "price": 336.07,
+      "change_pct": 10.53,
+      "date": "2026-06-25",
       "sina_code": "sz300666",
-      "pe": 839062480.75
+      "pe": null
     },
     "688019": {
       "name": "安集科技",
-      "price": 264.3,
-      "change_pct": 7.4,
-      "date": "2026-06-24",
+      "price": 264.01,
+      "change_pct": -0.11,
+      "date": "2026-06-25",
       "sina_code": "sh688019",
-      "pe": 601263245.75
+      "pe": null
     },
     "002409": {
       "name": "雅克科技",
-      "price": 173.05,
-      "change_pct": 10.0,
-      "date": "2026-06-24",
+      "price": 178.51,
+      "change_pct": 3.16,
+      "date": "2026-06-25",
       "sina_code": "sz002409",
-      "pe": 823592846.78
+      "pe": null
     },
     "300395": {
       "name": "菲利华",
-      "price": 133.48,
-      "change_pct": 4.81,
-      "date": "2026-06-24",
+      "price": 134.26,
+      "change_pct": 0.58,
+      "date": "2026-06-25",
       "sina_code": "sz300395",
-      "pe": 701740509.05
+      "pe": null
     },
     "002463": {
       "name": "沪电股份",
-      "price": 143.35,
-      "change_pct": 3.5,
-      "date": "2026-06-24",
+      "price": 154.73,
+      "change_pct": 7.94,
+      "date": "2026-06-25",
       "sina_code": "sz002463",
-      "pe": 2758575130.29
+      "pe": null
     },
     "002916": {
       "name": "深南电路",
-      "price": 431.9,
-      "change_pct": 1.38,
-      "date": "2026-06-24",
+      "price": 456.46,
+      "change_pct": 5.69,
+      "date": "2026-06-25",
       "sina_code": "sz002916",
-      "pe": 2941958523.81
+      "pe": null
     },
     "002938": {
       "name": "鹏鼎控股",
-      "price": 106.4,
-      "change_pct": -0.48,
-      "date": "2026-06-24",
+      "price": 115.64,
+      "change_pct": 8.68,
+      "date": "2026-06-25",
       "sina_code": "sz002938",
-      "pe": 2465859004.11
+      "pe": null
     },
     "300308": {
       "name": "中际旭创",
-      "price": 1312.18,
-      "change_pct": 0.17,
-      "date": "2026-06-24",
+      "price": 1333.9,
+      "change_pct": 1.66,
+      "date": "2026-06-25",
       "sina_code": "sz300308",
-      "pe": 14633885912.27
+      "pe": null
     },
     "300502": {
       "name": "新易盛",
-      "price": 555.3,
-      "change_pct": 0.6,
-      "date": "2026-06-24",
+      "price": 599.85,
+      "change_pct": 8.02,
+      "date": "2026-06-25",
       "sina_code": "sz300502",
-      "pe": 7742307366.25
+      "pe": null
     },
     "300394": {
       "name": "天孚通信",
-      "price": 325.28,
-      "change_pct": 4.57,
-      "date": "2026-06-24",
+      "price": 322.3,
+      "change_pct": -0.92,
+      "date": "2026-06-25",
       "sina_code": "sz300394",
-      "pe": 3548235862.51
+      "pe": null
     },
     "002281": {
       "name": "光迅科技",
-      "price": 266.36,
-      "change_pct": -0.2,
-      "date": "2026-06-24",
+      "price": 261.8,
+      "change_pct": -1.71,
+      "date": "2026-06-25",
       "sina_code": "sz002281",
-      "pe": 2204302235.22
+      "pe": null
     },
     "688498": {
       "name": "源杰科技",
-      "price": 1838.0,
-      "change_pct": 1.08,
-      "date": "2026-06-24",
+      "price": 1893.0,
+      "change_pct": 2.99,
+      "date": "2026-06-25",
       "sina_code": "sh688498",
-      "pe": 2288316929.26
+      "pe": null
     },
     "601138": {
       "name": "工业富联",
-      "price": 76.78,
-      "change_pct": 3.62,
-      "date": "2026-06-24",
+      "price": 76.19,
+      "change_pct": -0.77,
+      "date": "2026-06-25",
       "sina_code": "sh601138",
-      "pe": 15236294055.66
+      "pe": null
     },
     "000977": {
       "name": "浪潮信息",
-      "price": 64.8,
-      "change_pct": 1.25,
-      "date": "2026-06-24",
+      "price": 66.31,
+      "change_pct": 2.33,
+      "date": "2026-06-25",
       "sina_code": "sz000977",
-      "pe": 951572872.44
+      "pe": null
     },
     "603019": {
       "name": "中科曙光",
-      "price": 88.93,
-      "change_pct": 2.15,
-      "date": "2026-06-24",
+      "price": 95.34,
+      "change_pct": 7.21,
+      "date": "2026-06-25",
       "sina_code": "sh603019",
-      "pe": 1301148866.71
+      "pe": null
     },
     "601869": {
       "name": "长飞光纤",
-      "price": 580.0,
-      "change_pct": 1.65,
-      "date": "2026-06-24",
+      "price": 582.78,
+      "change_pct": 0.48,
+      "date": "2026-06-25",
       "sina_code": "sh601869",
-      "pe": 4801849626.4
+      "pe": null
     },
     "600487": {
       "name": "亨通光电",
-      "price": 119.02,
-      "change_pct": 1.46,
-      "date": "2026-06-24",
+      "price": 121.38,
+      "change_pct": 1.98,
+      "date": "2026-06-25",
       "sina_code": "sh600487",
-      "pe": 2935500064.28
+      "pe": null
     },
     "600522": {
       "name": "中天科技",
-      "price": 61.91,
-      "change_pct": 0.29,
-      "date": "2026-06-24",
+      "price": 67.07,
+      "change_pct": 8.33,
+      "date": "2026-06-25",
       "sina_code": "sh600522",
-      "pe": 2112957129.55
+      "pe": null
     },
     "600584": {
       "name": "长电科技",
-      "price": 94.7,
+      "price": 104.17,
       "change_pct": 10.0,
-      "date": "2026-06-24",
+      "date": "2026-06-25",
       "sina_code": "sh600584",
-      "pe": 1694575597.79
+      "pe": null
     },
     "000021": {
       "name": "深科技",
-      "price": 50.27,
-      "change_pct": 10.0,
-      "date": "2026-06-24",
+      "price": 52.53,
+      "change_pct": 4.5,
+      "date": "2026-06-25",
       "sina_code": "sz000021",
-      "pe": 791435688.41
+      "pe": null
     },
     "002156": {
       "name": "通富微电",
-      "price": 74.64,
-      "change_pct": 9.09,
-      "date": "2026-06-24",
+      "price": 77.66,
+      "change_pct": 4.05,
+      "date": "2026-06-25",
       "sina_code": "sz002156",
-      "pe": 1132734335.12
+      "pe": null
     },
     "513310": {
       "name": "中韩半导体ETF华泰柏瑞",
-      "price": 6.309,
-      "change_pct": 3.55,
-      "date": "2026-06-24",
+      "price": 6.586,
+      "change_pct": 4.39,
+      "date": "2026-06-25",
       "sina_code": "sh513310",
-      "pe": 144061409.93
+      "pe": null
     }
   }
 }
