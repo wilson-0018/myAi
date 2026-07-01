@@ -1,277 +1,286 @@
 {
-  "update_time": "2026-06-30 18:41 (收盘)",
+  "update_time": "2026-07-01 08:11 (北京时间)",
+  "provider": "新浪财经",
   "stocks": {
-    "603986": {
-      "name": "兆易创新",
-      "price": 815.0,
-      "change_pct": -2.98,
-      "date": "2026-06-30",
-      "sina_code": "sh603986",
-      "pe": 5719259231.85
+    "NVDA": {
+      "name": "英伟达",
+      "price": 200.09,
+      "change_pct": 2.63,
+      "open": 200.63,
+      "high": 195.11,
+      "low": 236.29,
+      "prev_close": 197.24,
+      "volume": 166476665,
+      "turnover": 155095949,
+      "pe": 6.57,
+      "ytd": null,
+      "datetime": "2026-07-01 08:10:55"
     },
-    "688008": {
-      "name": "澜起科技",
-      "price": 309.9,
-      "change_pct": 4.67,
-      "date": "2026-06-30",
-      "sina_code": "sh688008",
-      "pe": 3787597865.08
+    "AMD": {
+      "name": "AMD",
+      "price": 580.91,
+      "change_pct": 7.68,
+      "open": 584.73,
+      "high": 545.57,
+      "low": 584.73,
+      "prev_close": 545.57,
+      "volume": 34488502,
+      "turnover": 32200291,
+      "pe": 3.08,
+      "ytd": null,
+      "datetime": "2026-07-01 07:59:56"
     },
-    "688126": {
-      "name": "沪硅产业",
-      "price": 39.89,
-      "change_pct": 2.28,
-      "date": "2026-06-30",
-      "sina_code": "sh688126",
-      "pe": 1318373831.47
+    "INTC": {
+      "name": "英特尔",
+      "price": 139.63,
+      "change_pct": 6.01,
+      "open": 142.35,
+      "high": 131.52,
+      "low": 142.35,
+      "prev_close": 131.99,
+      "volume": 116996685,
+      "turnover": 131086115,
+      "pe": -0.62,
+      "ytd": null,
+      "datetime": "2026-07-01 08:10:57"
     },
-    "688037": {
-      "name": "芯源微",
-      "price": 439.05,
-      "change_pct": 9.86,
-      "date": "2026-06-30",
-      "sina_code": "sh688037",
-      "pe": 885244643.09
+    "AVGO": {
+      "name": "博通",
+      "price": 377.75,
+      "change_pct": 1.42,
+      "open": 379.62,
+      "high": 370.64,
+      "low": 494.35,
+      "prev_close": 374.79,
+      "volume": 28517168,
+      "turnover": 32105006,
+      "pe": 6.19,
+      "ytd": null,
+      "datetime": "2026-07-01 08:10:55"
     },
-    "688012": {
-      "name": "中微公司",
-      "price": 468.5,
-      "change_pct": 2.59,
-      "date": "2026-06-30",
-      "sina_code": "sh688012",
-      "pe": 4463331956.36
+    "MRVL": {
+      "name": "美满电子",
+      "price": 297.89,
+      "change_pct": 7.25,
+      "open": 300,
+      "high": 275.5,
+      "low": 329.88,
+      "prev_close": 278.75,
+      "volume": 37520129,
+      "turnover": 66009401,
+      "pe": 2.95,
+      "ytd": null,
+      "datetime": "2026-07-01 08:11:06"
     },
-    "002371": {
-      "name": "北方华创",
-      "price": 884.56,
-      "change_pct": 2.83,
-      "date": "2026-06-30",
-      "sina_code": "sz002371",
-      "pe": 6419156387.52
+    "ARM": {
+      "name": "ARM控股",
+      "price": 354.57,
+      "change_pct": 3.2,
+      "open": 361.95,
+      "high": 342.07,
+      "low": 452.7,
+      "prev_close": 349.77,
+      "volume": 6267811,
+      "turnover": 12599633,
+      "pe": 0.85,
+      "ytd": null,
+      "datetime": "2026-07-01 08:11:00"
     },
-    "688072": {
-      "name": "拓荆科技",
-      "price": 832.0,
-      "change_pct": 0.0,
-      "date": "2026-06-30",
-      "sina_code": "sh688072",
-      "pe": 2352005859.84
+    "TSM": {
+      "name": "台积电",
+      "price": 477.57,
+      "change_pct": 4.94,
+      "open": 479,
+      "high": 453,
+      "low": 479,
+      "prev_close": 455.61,
+      "volume": 15074208,
+      "turnover": 15058888,
+      "pe": 12.03,
+      "ytd": null,
+      "datetime": "2026-07-01 08:10:51"
     },
-    "688082": {
-      "name": "盛美上海",
-      "price": 432.0,
-      "change_pct": -3.56,
-      "date": "2026-06-30",
-      "sina_code": "sh688082",
-      "pe": 2084817696.48
+    "VRT": {
+      "name": "Vertiv",
+      "price": 334.82,
+      "change_pct": 9.07,
+      "open": 337.23,
+      "high": 310,
+      "low": 379.87,
+      "prev_close": 310,
+      "volume": 7742452,
+      "turnover": 8205052,
+      "pe": 4.08,
+      "ytd": null,
+      "datetime": "2026-07-01 08:11:09"
     },
-    "688361": {
-      "name": "中科飞测",
-      "price": 430.0,
-      "change_pct": 14.29,
-      "date": "2026-06-30",
-      "sina_code": "sh688361",
-      "pe": 1505701919.1
+    "PWR": {
+      "name": "Quanta Services",
+      "price": 720.04,
+      "change_pct": 0.78,
+      "open": 721.37,
+      "high": 703.34,
+      "low": 788.75,
+      "prev_close": 713.93,
+      "volume": 1015499,
+      "turnover": 1882683,
+      "pe": 7.41,
+      "ytd": null,
+      "datetime": "2026-07-01 08:08:00"
     },
-    "600641": {
-      "name": "先导基电",
-      "price": 39.86,
-      "change_pct": 9.99,
-      "date": "2026-06-30",
-      "sina_code": "sh600641",
-      "pe": 377420755.71
+    "CEG": {
+      "name": "Constellation",
+      "price": 248.37,
+      "change_pct": -4.22,
+      "open": 260.29,
+      "high": 245.88,
+      "low": 411.46,
+      "prev_close": 256.81,
+      "volume": 5108318,
+      "turnover": 3728366,
+      "pe": 11.52,
+      "ytd": null,
+      "datetime": "2026-07-01 08:09:07"
     },
-    "603650": {
-      "name": "彤程新材",
-      "price": 97.98,
+    "VST": {
+      "name": "Vistra",
+      "price": 158.63,
+      "change_pct": -2.31,
+      "open": 165.45,
+      "high": 156.51,
+      "low": 219.14,
+      "prev_close": 162.58,
+      "volume": 4181998,
+      "turnover": 4635167,
+      "pe": 6.05,
+      "ytd": null,
+      "datetime": "2026-07-01 08:11:08"
+    },
+    "MU": {
+      "name": "美光科技",
+      "price": 1154.29,
+      "change_pct": 0.79,
+      "open": 1168.68,
+      "high": 1124.66,
+      "low": 1255,
+      "prev_close": 1144.73,
+      "volume": 42152627,
+      "turnover": 61374599,
+      "pe": 44.8,
+      "ytd": null,
+      "datetime": "2026-07-01 07:59:59"
+    },
+    "SNDK": {
+      "name": "Sandisk",
+      "price": 2273.73,
+      "change_pct": 10.89,
+      "open": 2280.8,
+      "high": 2070,
+      "low": 2354.39,
+      "prev_close": 2109.73,
+      "volume": 11453345,
+      "turnover": 11652071,
+      "pe": 30.49,
+      "ytd": null,
+      "datetime": "2026-07-01 08:11:01"
+    },
+    "MSFT": {
+      "name": "微软",
+      "price": 373.02,
+      "change_pct": 1.21,
+      "open": 374.15,
+      "high": 367.45,
+      "low": 551.89,
+      "prev_close": 371.03,
+      "volume": 44945695,
+      "turnover": 59959504,
+      "pe": 16.85,
+      "ytd": null,
+      "datetime": "2026-07-01 08:10:55"
+    },
+    "AMZN": {
+      "name": "亚马逊",
+      "price": 238.34,
+      "change_pct": -0.75,
+      "open": 241.54,
+      "high": 237.17,
+      "low": 278.56,
+      "prev_close": 237.35,
+      "volume": 66228062,
+      "turnover": 80031659,
+      "pe": 8.49,
+      "ytd": null,
+      "datetime": "2026-07-01 08:11:06"
+    },
+    "GOOGL": {
+      "name": "谷歌",
+      "price": 357.37,
+      "change_pct": 1.05,
+      "open": 358.62,
+      "high": 350.4,
+      "low": 408.39,
+      "prev_close": 353.87,
+      "volume": 35237231,
+      "turnover": 44692149,
+      "pe": 13.25,
+      "ytd": null,
+      "datetime": "2026-07-01 08:11:00"
+    },
+    "META": {
+      "name": "Meta",
+      "price": 563.29,
+      "change_pct": 0.12,
+      "open": 565.54,
+      "high": 551.43,
+      "low": 794.15,
+      "prev_close": 560.94,
+      "volume": 18111082,
+      "turnover": 17162027,
+      "pe": 27.94,
+      "ytd": null,
+      "datetime": "2026-07-01 08:10:56"
+    },
+    "SMH": {
+      "name": "半导体ETF-SMH",
+      "price": 655.89,
       "change_pct": 3.78,
-      "date": "2026-06-30",
-      "sina_code": "sh603650",
-      "pe": 603638094.01
+      "open": 659.74,
+      "high": 634.6,
+      "low": 671.83,
+      "prev_close": 636.07,
+      "volume": 9406793,
+      "turnover": 11963424,
+      "pe": null,
+      "ytd": null,
+      "datetime": "2026-07-01 08:09:55"
     },
-    "688268": {
-      "name": "华特气体",
-      "price": 267.5,
-      "change_pct": 6.15,
-      "date": "2026-06-30",
-      "sina_code": "sh688268",
-      "pe": 341549451.65
+    "SOXX": {
+      "name": "半导体ETF-SOXX",
+      "price": 640.76,
+      "change_pct": 4.3,
+      "open": 644.94,
+      "high": 616.15,
+      "low": 655.95,
+      "prev_close": 616.15,
+      "volume": 10112580,
+      "turnover": 10256196,
+      "pe": null,
+      "ytd": null,
+      "datetime": "2026-07-01 08:10:42"
     },
-    "300666": {
-      "name": "江丰电子",
-      "price": 368.6,
-      "change_pct": -3.63,
-      "date": "2026-06-30",
-      "sina_code": "sz300666",
-      "pe": 1017229411.94
-    },
-    "688019": {
-      "name": "安集科技",
-      "price": 339.46,
-      "change_pct": 11.37,
-      "date": "2026-06-30",
-      "sina_code": "sh688019",
-      "pe": 772246770.34
-    },
-    "002409": {
-      "name": "雅克科技",
-      "price": 224.5,
-      "change_pct": 8.21,
-      "date": "2026-06-30",
-      "sina_code": "sz002409",
-      "pe": 1068457637.11
-    },
-    "300395": {
-      "name": "菲利华",
-      "price": 133.73,
-      "change_pct": 2.08,
-      "date": "2026-06-30",
-      "sina_code": "sz300395",
-      "pe": 703054826.76
-    },
-    "002463": {
-      "name": "沪电股份",
-      "price": 152.8,
-      "change_pct": 8.32,
-      "date": "2026-06-30",
-      "sina_code": "sz002463",
-      "pe": 2940427484.54
-    },
-    "002916": {
-      "name": "深南电路",
-      "price": 457.9,
-      "change_pct": 5.47,
-      "date": "2026-06-30",
-      "sina_code": "sz002916",
-      "pe": 3119061838.51
-    },
-    "002938": {
-      "name": "鹏鼎控股",
-      "price": 105.38,
-      "change_pct": 4.34,
-      "date": "2026-06-30",
-      "sina_code": "sz002938",
-      "pe": 2442220130.2
-    },
-    "300308": {
-      "name": "中际旭创",
-      "price": 1270.0,
-      "change_pct": 4.1,
-      "date": "2026-06-30",
-      "sina_code": "sz300308",
-      "pe": 14163479940.7
-    },
-    "300502": {
-      "name": "新易盛",
-      "price": 607.0,
-      "change_pct": 8.98,
-      "date": "2026-06-30",
-      "sina_code": "sz300502",
-      "pe": 8463138071.88
-    },
-    "300394": {
-      "name": "天孚通信",
-      "price": 302.68,
-      "change_pct": 2.55,
-      "date": "2026-06-30",
-      "sina_code": "sz300394",
-      "pe": 3301709391.49
-    },
-    "002281": {
-      "name": "光迅科技",
-      "price": 256.94,
-      "change_pct": 8.9,
-      "date": "2026-06-30",
-      "sina_code": "sz002281",
-      "pe": 2126345608.64
-    },
-    "688498": {
-      "name": "源杰科技",
-      "price": 1886.0,
-      "change_pct": 9.34,
-      "date": "2026-06-30",
-      "sina_code": "sh688498",
-      "pe": 2348077110.22
-    },
-    "601138": {
-      "name": "工业富联",
-      "price": 72.15,
-      "change_pct": 3.65,
-      "date": "2026-06-30",
-      "sina_code": "sh601138",
-      "pe": 14317512582.91
-    },
-    "000977": {
-      "name": "浪潮信息",
-      "price": 70.0,
-      "change_pct": 6.35,
-      "date": "2026-06-30",
-      "sina_code": "sz000977",
-      "pe": 1027933658.5
-    },
-    "603019": {
-      "name": "中科曙光",
-      "price": 107.23,
-      "change_pct": 10.0,
-      "date": "2026-06-30",
-      "sina_code": "sh603019",
-      "pe": 1568899055.18
-    },
-    "601869": {
-      "name": "长飞光纤",
-      "price": 545.9,
-      "change_pct": 3.57,
-      "date": "2026-06-30",
-      "sina_code": "sh601869",
-      "pe": 4519533984.57
-    },
-    "600487": {
-      "name": "亨通光电",
-      "price": 109.34,
-      "change_pct": 1.2,
-      "date": "2026-06-30",
-      "sina_code": "sh600487",
-      "pe": 2696753293.8
-    },
-    "600522": {
-      "name": "中天科技",
-      "price": 60.68,
-      "change_pct": 3.13,
-      "date": "2026-06-30",
-      "sina_code": "sh600522",
-      "pe": 2070977848.83
-    },
-    "600584": {
-      "name": "长电科技",
-      "price": 103.55,
-      "change_pct": 0.29,
-      "date": "2026-06-30",
-      "sina_code": "sh600584",
-      "pe": 1852938787.24
-    },
-    "000021": {
-      "name": "深科技",
-      "price": 64.27,
-      "change_pct": 9.19,
-      "date": "2026-06-30",
-      "sina_code": "sz000021",
-      "pe": 1011847457.61
-    },
-    "002156": {
-      "name": "通富微电",
-      "price": 75.87,
-      "change_pct": 4.53,
-      "date": "2026-06-30",
-      "sina_code": "sz002156",
-      "pe": 1151400777.13
-    },
-    "513310": {
-      "name": "中韩半导体ETF华泰柏瑞",
-      "price": 6.687,
-      "change_pct": 1.72,
-      "date": "2026-06-30",
-      "sina_code": "sh513310",
-      "pe": 153495204.02
+    "QQQ": {
+      "name": "纳斯达克ETF-QQQ",
+      "price": 736.4,
+      "change_pct": 1.7,
+      "open": 737.62,
+      "high": 723.91,
+      "low": 747.84,
+      "prev_close": 724.18,
+      "volume": 42121625,
+      "turnover": 48540074,
+      "pe": null,
+      "ytd": null,
+      "datetime": "2026-07-01 07:59:50"
     }
   }
 }
