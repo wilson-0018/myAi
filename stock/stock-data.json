@@ -1,5 +1,5 @@
 {
-  "update_time": "2026-07-01 09:11 (北京时间)",
+  "update_time": "2026-07-01 11:13 (北京时间)",
   "provider": "新浪财经",
   "stocks": {
     "NVDA": {
@@ -14,7 +14,7 @@
       "turnover": 155095949,
       "pe": 6.57,
       "ytd": null,
-      "datetime": "2026-07-01 08:14:57"
+      "datetime": "2026-07-01 09:30:16"
     },
     "AMD": {
       "name": "AMD",
@@ -28,7 +28,7 @@
       "turnover": 32200291,
       "pe": 3.08,
       "ytd": null,
-      "datetime": "2026-07-01 08:14:50"
+      "datetime": "2026-07-01 09:30:15"
     },
     "INTC": {
       "name": "英特尔",
@@ -42,7 +42,7 @@
       "turnover": 131086115,
       "pe": -0.62,
       "ytd": null,
-      "datetime": "2026-07-01 08:14:57"
+      "datetime": "2026-07-01 09:30:16"
     },
     "AVGO": {
       "name": "博通",
@@ -56,7 +56,7 @@
       "turnover": 32105006,
       "pe": 6.19,
       "ytd": null,
-      "datetime": "2026-07-01 09:11:16"
+      "datetime": "2026-07-01 09:41:16"
     },
     "MRVL": {
       "name": "美满电子",
@@ -70,7 +70,7 @@
       "turnover": 66009401,
       "pe": 2.95,
       "ytd": null,
-      "datetime": "2026-07-01 08:14:46"
+      "datetime": "2026-07-01 09:30:16"
     },
     "ARM": {
       "name": "ARM控股",
@@ -84,7 +84,7 @@
       "turnover": 12599633,
       "pe": 0.85,
       "ytd": null,
-      "datetime": "2026-07-01 09:11:00"
+      "datetime": "2026-07-01 09:49:42"
     },
     "TSM": {
       "name": "台积电",
@@ -98,7 +98,7 @@
       "turnover": 15058888,
       "pe": 12.03,
       "ytd": null,
-      "datetime": "2026-07-01 09:10:26"
+      "datetime": "2026-07-01 09:46:58"
     },
     "VRT": {
       "name": "Vertiv",
@@ -112,7 +112,7 @@
       "turnover": 8205052,
       "pe": 4.08,
       "ytd": null,
-      "datetime": "2026-07-01 09:11:07"
+      "datetime": "2026-07-01 09:47:43"
     },
     "PWR": {
       "name": "Quanta Services",
@@ -126,7 +126,7 @@
       "turnover": 1882683,
       "pe": 7.41,
       "ytd": null,
-      "datetime": "2026-07-01 09:08:00"
+      "datetime": "2026-07-01 09:44:21"
     },
     "CEG": {
       "name": "Constellation",
@@ -154,7 +154,7 @@
       "turnover": 4635167,
       "pe": 6.05,
       "ytd": null,
-      "datetime": "2026-07-01 09:11:08"
+      "datetime": "2026-07-01 09:47:44"
     },
     "MU": {
       "name": "美光科技",
@@ -168,7 +168,7 @@
       "turnover": 61374599,
       "pe": 44.8,
       "ytd": null,
-      "datetime": "2026-07-01 08:14:59"
+      "datetime": "2026-07-01 09:30:16"
     },
     "SNDK": {
       "name": "Sandisk",
@@ -182,7 +182,7 @@
       "turnover": 11652071,
       "pe": 30.49,
       "ytd": null,
-      "datetime": "2026-07-01 09:07:17"
+      "datetime": "2026-07-01 09:45:58"
     },
     "MSFT": {
       "name": "微软",
@@ -196,7 +196,7 @@
       "turnover": 59959504,
       "pe": 16.85,
       "ytd": null,
-      "datetime": "2026-07-01 08:14:50"
+      "datetime": "2026-07-01 09:30:16"
     },
     "AMZN": {
       "name": "亚马逊",
@@ -210,7 +210,7 @@
       "turnover": 80031659,
       "pe": 8.49,
       "ytd": null,
-      "datetime": "2026-07-01 09:10:46"
+      "datetime": "2026-07-01 09:49:27"
     },
     "GOOGL": {
       "name": "谷歌",
@@ -224,7 +224,7 @@
       "turnover": 44692149,
       "pe": 13.25,
       "ytd": null,
-      "datetime": "2026-07-01 08:13:43"
+      "datetime": "2026-07-01 09:30:15"
     },
     "META": {
       "name": "Meta",
@@ -238,7 +238,7 @@
       "turnover": 17162027,
       "pe": 27.94,
       "ytd": null,
-      "datetime": "2026-07-01 09:03:22"
+      "datetime": "2026-07-01 09:48:22"
     },
     "SMH": {
       "name": "半导体ETF-SMH",
@@ -252,7 +252,7 @@
       "turnover": 11963424,
       "pe": null,
       "ytd": null,
-      "datetime": "2026-07-01 09:07:13"
+      "datetime": "2026-07-01 09:37:14"
     },
     "SOXX": {
       "name": "半导体ETF-SOXX",
@@ -280,7 +280,7 @@
       "turnover": 48540074,
       "pe": null,
       "ytd": null,
-      "datetime": "2026-07-01 09:05:57"
+      "datetime": "2026-07-01 09:35:57"
     }
   }
 }
