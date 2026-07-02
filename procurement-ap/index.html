@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>采购智能工具</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #f0f2f5; color: #1a1a1a; font-size: 14px; line-height: 1.5;
+  height: 100vh; display: flex; flex-direction: column;
+}
+
+/* ═══════════════ HEADER ═══════════════ */
+.header {
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 20px;
+  height: 56px;
+  background: #fff;
+  border-bottom: 1px solid #e8eaec;
+  position: sticky; top: 0; z-index: 200;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-icon svg { width: 18px; height: 18px; }
+.logo-text { font-size: 16px; font-weight: 700; color: #111; letter-spacing: -.3px; }
+.logo-sub  { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+.h-sep { width: 1px; height: 28px; background: #e8eaec; flex-shrink: 0; }
+.spacer { flex: 1; }
+.h-stats { display: flex; gap: 24px; align-items: center; }
+.h-stat { text-align: center; }
+.h-stat-val { font-size: 16px; font-weight: 700; color: #111; line-height: 1; }
+.h-stat-val.g { color: #16a34a; }
+.h-stat-lbl { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+.h-user { display: flex; align-items: center; gap: 8px; }
+.h-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+}
+.h-uname { font-size: 13px; font-weight: 600; }
+.h-urole { font-size: 11px; color: #9ca3af; }
+.btn { border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; padding: 6px 14px; transition: all .15s; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-primary   { background: #4f46e5; color: #fff; }
+.btn-primary:hover { background: #4338ca; }
+.btn-secondary { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+.btn-secondary:hover { background: #e5e7eb; }
+.btn-ghost     { background: transparent; color: #6b7280; }
+.btn-ghost:hover { background: #f3f4f6; }
+
+/* ═══════════════ APP SHELL ═══════════════ */
+.app-shell {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ═══════════════ SIDEBAR ═══════════════ */
+.sidebar {
+  width: 80px; flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid #e8eaec;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 12px 0;
+  overflow-y: auto;
+  height: 100%;
+}
+.sidebar-item {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; padding: 10px 6px; width: 72px; border-radius: 8px;
+  cursor: pointer; transition: all .15s; margin-bottom: 2px;
+  position: relative;
+}
+.sidebar-item:hover { background: #f0f2f5; }
+.sidebar-item.active { background: #ede9fe; }
+.sidebar-item.active .si-label { color: #4f46e5; font-weight: 600; }
+.sidebar-item.active .si-icon { color: #4f46e5; }
+.si-icon { color: #6b7280; display: flex; align-items: center; justify-content: center; }
+.si-label { font-size: 11px; color: #6b7280; text-align: center; line-height: 1.2; }
+.sidebar-divider { width: 40px; height: 1px; background: #e8eaec; margin: 8px 0; }
+
+/* Quick link icons at bottom */
+.sidebar-item.ql { background: #f0f2f5; }
+.sidebar-item.ql:hover { background: #e5e7eb; }
+.sidebar-item.ql .si-label { color: #374151; font-weight: 600; }
+
+/* ═══════════════ CONTENT ═══════════════ */
+.content {
+  flex: 1; overflow: hidden;
+  padding: 14px 16px 12px;
+  display: flex; flex-direction: column; min-width: 0;
+}
+/* Each "view" inside content fills remaining height */
+.view-wrap {
+  flex: 1; overflow: hidden;
+  display: flex; flex-direction: column; min-height: 0;
+}
+.view-wrap.scrollable { overflow-y: auto; }
+
+/* Section header row */
+.section-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px; flex-shrink: 0;
+}
+.section-row h2 { font-size: 16px; font-weight: 700; color: #111; }
+.section-row .ct { font-size: 12px; color: #9ca3af; }
+.tab-bar { display: flex; gap: 6px; }
+.pill {
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500;
+  border: 1px solid #e5e7eb; background: #fff; color: #374151;
+  cursor: pointer; transition: all .12s;
+}
+.pill:hover { background: #f3f4f6; }
+.pill.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+.pill.sm { padding: 2px 8px; font-size: 11px; }
+.pill.g  { background: #dcfce7; color: #166534; border-color: #86efac; }
+.pill.y  { background: #fef9c3; color: #854d0e; border-color: #fde047; }
+.pill.b  { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+
+/* ═══════════════ TOOL CARDS ═══════════════ */
+.tool-search-row {
+  flex-shrink: 0;
+  margin-bottom: 10px;
+}
+.tool-search-row.hidden { display: none; }
+.tool-search-input {
+  width: 100%;
+  max-width: 360px;
+  padding: 8px 12px 8px 34px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #111;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;
+  outline: none;
+  transition: border-color .15s;
+}
+.tool-search-input:focus { border-color: #4f46e5; }
+.tool-search-input::placeholder { color: #9ca3af; }
+.cards-grid.favorites-page-grid {
+  grid-template-rows: none;
+  grid-auto-rows: 100px;
+  height: auto;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  align-content: start;
+  flex-shrink: 1;
+}
+.cards-grid.favorites-page-grid .tool-card {
+  height: 100%;
+  min-height: 0;
+}
+.favorites-empty-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #9ca3af;
+  font-size: 13px;
+  text-align: center;
+  padding: 40px 20px;
+}
+.favorites-empty-page.hidden { display: none; }
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8px;
+  height: 208px;   /* 2 rows × ~100px + gap; fixed so carousel gets remaining space */
+  flex-shrink: 0;
+}
+
+.tool-card {
+  position: relative;
+  border-radius: 10px;
+  padding: 11px 12px 10px;
+  color: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .18s, box-shadow .18s;
+  display: flex; flex-direction: column;
+}
+.tool-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+
+/* Decorative circles */
+.tool-card::before {
+  content: '';
+  position: absolute;
+  right: -18px; bottom: -18px;
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.12);
+  pointer-events: none;
+}
+.tool-card::after {
+  content: '';
+  position: absolute;
+  right: 14px; bottom: -8px;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.08);
+  pointer-events: none;
+}
+
+/* Color themes per category */
+.tc-cost     { background: linear-gradient(135deg, #e05a4e 0%, #c0392b 100%); }
+.tc-delivery { background: linear-gradient(135deg, #5c6bc0 0%, #3949ab 100%); }
+.tc-quality  { background: linear-gradient(135deg, #9b59b6 0%, #6c3483 100%); }
+.tc-project  { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); }
+.tc-insight  { background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%); }
+.tc-0        { background: linear-gradient(135deg, #e05a4e 0%, #c0392b 100%); }
+.tc-1        { background: linear-gradient(135deg, #5c6bc0 0%, #3949ab 100%); }
+.tc-2        { background: linear-gradient(135deg, #9b59b6 0%, #6c3483 100%); }
+.tc-3        { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); }
+.tc-4        { background: linear-gradient(135deg, #2196f3 0%, #1565c0 100%); }
+.tc-5        { background: linear-gradient(135deg, #e67e22 0%, #ca6f1e 100%); }
+.tc-6        { background: linear-gradient(135deg, #16a085 0%, #0e6655 100%); }
+.tc-7        { background: linear-gradient(135deg, #e91e63 0%, #ad1457 100%); }
+.tc-8        { background: linear-gradient(135deg, #607d8b 0%, #37474f 100%); }
+.tc-9        { background: linear-gradient(135deg, #ff7043 0%, #bf360c 100%); }
+
+.card-star {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 15px; color: rgba(255,255,255,.6);
+  cursor: pointer; transition: all .15s; z-index: 10; user-select: none;
+}
+.card-star:hover { color: #fbbf24; transform: scale(1.2); }
+.card-star.starred { color: #fbbf24; }
+
+.card-title {
+  font-size: 13px; font-weight: 700; margin-bottom: 7px;
+  padding-right: 26px; line-height: 1.25;
+}
+.card-row {
+  display: flex; align-items: flex-start; gap: 3px;
+  font-size: 11px; margin-bottom: 3px; opacity: .88;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-lbl { opacity: .75; flex-shrink: 0; }
+.card-val { font-weight: 500; }
+
+/* Hover overlay */
+.card-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.58);
+  border-radius: inherit;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px;
+  opacity: 0; transition: opacity .2s;
+  pointer-events: none;
+}
+.tool-card:hover .card-overlay { opacity: 1; pointer-events: auto; }
+.overlay-stats { display: flex; gap: 14px; }
+.overlay-stat { text-align: center; }
+.overlay-val { font-size: 15px; font-weight: 700; color: #fff; }
+.overlay-lbl { font-size: 10px; color: rgba(255,255,255,.7); margin-top: 1px; }
+.overlay-date { font-size: 10px; color: rgba(255,255,255,.7); margin-top: 3px; }
+.overlay-enter {
+  margin-top: 6px;
+  padding: 3px 12px; border-radius: 20px; border: 1.5px solid rgba(255,255,255,.8);
+  background: transparent; color: #fff; font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: background .15s;
+}
+.overlay-enter:hover { background: rgba(255,255,255,.2); }
+
+/* Status badge */
+.card-status {
+  position: absolute; top: 10px; right: 32px;
+  font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 20px;
+  background: rgba(255,255,255,.22); color: #fff; letter-spacing: .03em;
+}
+
+
+/* ═══════════════ RIGHT PANEL ═══════════════ */
+.right-panel {
+  width: 260px; flex-shrink: 0;
+  background: #fff;
+  border-left: 1px solid #e8eaec;
+  padding: 14px 14px;
+  overflow-y: auto;
+  height: 100%;
+  display: flex; flex-direction: column; gap: 0;
+}
+.rp-title {
+  font-size: 13px; font-weight: 700; color: #111;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+}
+.rp-subtitle { font-size: 11px; color: #9ca3af; font-weight: 400; }
+.hot-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 0; border-bottom: 1px solid #f3f4f6;
+}
+.hot-item:last-child { border-bottom: none; }
+.hot-rank {
+  width: 20px; height: 20px; border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.hot-rank.top { background: #4f46e5; color: #fff; }
+.hot-rank.mid { background: #ede9fe; color: #4f46e5; }
+.hot-rank.low { background: #f3f4f6; color: #9ca3af; }
+.hot-name { flex: 1; min-width: 0; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hot-uv { font-size: 11px; color: #9ca3af; flex-shrink: 0; }
+.hot-delta { font-size: 11px; font-weight: 600; flex-shrink: 0; min-width: 32px; text-align: right; }
+.hot-delta.up { color: #16a34a; }
+.hot-delta.dn { color: #9ca3af; }
+.rp-divider { height: 1px; background: #f3f4f6; margin: 14px 0; }
+.ql-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px;
+  border: 1px solid #e8eaec; background: #fff;
+  cursor: pointer; margin-bottom: 8px; transition: all .15s;
+  text-decoration: none;
+}
+.ql-btn:hover { border-color: #4f46e5; background: #f5f3ff; }
+.ql-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.ql-name { font-size: 13px; font-weight: 700; color: #111; }
+.ql-desc { font-size: 11px; color: #9ca3af; margin-top: 1px; }
+
+/* ═══════════════ DEMANDS VIEW ═══════════════ */
+table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; border: 1px solid #e8eaec; }
+thead th { background: #f9fafb; font-size: 12px; font-weight: 600; color: #374151; padding: 10px 14px; text-align: left; border-bottom: 1px solid #e8eaec; }
+tbody tr { border-bottom: 1px solid #f3f4f6; transition: background .1s; }
+tbody tr:hover { background: #fafafe; }
+tbody tr:last-child { border-bottom: none; }
+tbody td { padding: 10px 14px; font-size: 13px; }
+.callout { border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-top: 12px; }
+.callout.info    { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+.callout.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+.callout-title   { font-weight: 600; margin-bottom: 4px; }
+
+/* ═══════════════ CAROUSEL ═══════════════ */
+.carousel-outer {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  padding-top: 10px;
+}
+.divider { height: 1px; background: #e8eaec; margin: 8px 0 0; flex-shrink: 0; }
+.carousel-wrap {
+  background: #fff; border-radius: 12px; border: 1px solid #e8eaec;
+  padding: 12px 14px 10px; flex: 1; overflow: hidden; display: flex; flex-direction: column;
+}
+.carousel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-shrink: 0; }
+.carousel-header h2 { font-size: 14px; font-weight: 700; }
+.carousel-counter { font-size: 12px; color: #9ca3af; }
+.carousel-banner {
+  display: flex; align-items: stretch; gap: 12px;
+  flex: 1; min-height: 0;
+}
+.c-arrow {
+  width: 28px; height: 28px; border: 1px solid #e5e7eb; border-radius: 7px;
+  background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: #374151; flex-shrink: 0; align-self: center;
+  transition: all .12s;
+}
+.c-arrow:hover { border-color: #4f46e5; color: #4f46e5; background: #f0f0ff; }
+.c-main { flex: 1; min-width: 0; overflow: hidden; display: flex; flex-direction: column; gap: 6px; }
+.c-tag-row { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.c-tag-meta { font-size: 11px; color: #9ca3af; }
+.c-title { font-size: 15px; font-weight: 700; color: #111; line-height: 1.3; flex-shrink: 0; }
+.c-subtitle { font-size: 12px; color: #6b7280; line-height: 1.5; flex: 1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.c-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.c-sep { width: 1px; background: #e8eaec; flex-shrink: 0; align-self: stretch; margin: 0 2px; }
+.c-features { width: 210px; flex-shrink: 0; overflow: hidden; }
+.c-feat-title { font-size: 10px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+.c-feat-item { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 6px; }
+.c-feat-num {
+  width: 16px; height: 16px; border-radius: 4px; background: #ede9fe;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #4f46e5; flex-shrink: 0; margin-top: 1px;
+}
+.c-feat-text { font-size: 11px; color: #4b5563; line-height: 1.4; }
+.dots { display: flex; gap: 5px; justify-content: center; margin-top: 8px; flex-shrink: 0; }
+.dot { height: 5px; border-radius: 9999px; background: #d1d5db; cursor: pointer; transition: all .2s; }
+.dot.active { background: #4f46e5; width: 18px !important; }
+.c-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 0; margin-top: 6px; flex-shrink: 0; }
+.c-link { font-size: 11px; color: #4f46e5; cursor: pointer; }
+.c-link:hover, .c-link.active { font-weight: 700; }
+.c-link-sep { font-size: 11px; color: #d1d5db; margin: 0 8px; }
+
+/* ═══════════════ FOOTER ═══════════════ */
+.footer {
+  display: flex; align-items: center; gap: 20px;
+  padding: 8px 20px;
+  background: #fff;
+  border-top: 1px solid #e8eaec;
+  flex-shrink: 0;
+  height: 44px;
+}
+.footer-label { font-size: 11px; color: #9ca3af; flex-shrink: 0; }
+.footer-stats { display: flex; gap: 28px; align-items: center; }
+.f-sep { width: 1px; height: 22px; background: #e8eaec; }
+
+/* ═══════════════ DETAIL PAGE ═══════════════ */
+#detailPage { display: none; }
+#detailPage.show { display: flex; flex-direction: column; }
+.detail-content { flex: 1; overflow-y: auto; padding: 24px; }
+.breadcrumb { display: flex; align-items: center; gap: 6px; margin-bottom: 20px; }
+.bc-link { font-size: 13px; color: #4f46e5; cursor: pointer; }
+.bc-sep { font-size: 13px; color: #d1d5db; }
+.bc-cur { font-size: 13px; font-weight: 600; color: #111; }
+.detail-hero { margin-bottom: 20px; }
+.detail-tag-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.detail-h1 { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 8px; }
+.detail-sub { font-size: 14px; color: #6b7280; line-height: 1.6; margin-bottom: 14px; }
+.detail-actions { display: flex; gap: 8px; }
+.demo-box {
+  border: 1px solid #e8eaec; border-radius: 10px;
+  background: #f9fafb; padding: 32px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  text-align: center; margin-bottom: 24px;
+}
+.demo-flow { font-size: 13px; color: #6b7280; max-width: 560px; line-height: 1.6; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.sec-h2 { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+.pain-card {
+  border: 1px solid #e8eaec; border-radius: 8px; padding: 12px 14px;
+  display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px;
+  background: #fff;
+}
+.pain-num { font-size: 13px; font-weight: 700; color: #4f46e5; flex-shrink: 0; width: 22px; text-align: right; }
+.pain-text { font-size: 13px; color: #374151; line-height: 1.5; }
+.feat-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.feat-badge {
+  width: 22px; height: 22px; border-radius: 6px; background: #ede9fe;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #4f46e5; flex-shrink: 0; margin-top: 1px;
+}
+.feat-txt { font-size: 13px; color: #374151; line-height: 1.5; }
+.scenario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.scenario-card {
+  border: 1px solid #e8eaec; border-radius: 8px; padding: 10px 14px;
+  font-size: 13px; font-weight: 600; color: #374151; background: #fff;
+}
+.result-box {
+  border-radius: 10px; padding: 14px 16px;
+  background: #f0fdf4; border: 1px solid #bbf7d0;
+  font-size: 13px; color: #166534; line-height: 1.6; margin-top: 24px;
+}
+.result-box strong { display: block; font-weight: 700; margin-bottom: 4px; }
+.back-actions { display: flex; gap: 8px; margin-top: 20px; }
+.hidden { display: none !important; }
+
+/* ═══════════════ LOGIN GATE ═══════════════ */
+.login-gate {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(160deg, #f0f2f5 0%, #e8eaf6 50%, #f0f2f5 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.login-shell {
+  width: 100%; max-width: 920px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e8eaec;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: 560px;
+  max-height: calc(100vh - 48px);
+}
+.login-brand {
+  background: linear-gradient(160deg, #4f46e5 0%, #7c3aed 100%);
+  color: #fff;
+  padding: 36px 28px;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.login-brand h1 { font-size: 22px; font-weight: 700; line-height: 1.3; margin-bottom: 10px; }
+.login-brand p { font-size: 13px; opacity: .88; line-height: 1.6; }
+.login-brand ul { margin-top: 20px; list-style: none; }
+.login-brand li {
+  font-size: 12px; opacity: .9; padding: 6px 0;
+  display: flex; align-items: center; gap: 8px;
+}
+.login-brand li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.7); flex-shrink: 0; }
+.login-brand-foot { font-size: 11px; opacity: .65; }
+.login-panel {
+  display: flex; flex-direction: column; min-height: 0; background: #fafafa;
+}
+.login-panel-head {
+  padding: 20px 24px 12px; border-bottom: 1px solid #e8eaec; background: #fff; flex-shrink: 0;
+}
+.login-panel-head h2 { font-size: 16px; font-weight: 700; color: #111; }
+.login-panel-head p { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+.login-notice {
+  flex: 1; min-height: 0; overflow-y: auto;
+  padding: 20px 24px; background: #fff;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.login-alert {
+  background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px;
+  padding: 14px 16px; color: #92400e; font-size: 13px; line-height: 1.6;
+}
+.login-alert strong { display: block; font-size: 14px; margin-bottom: 6px; color: #78350f; }
+.callback-box {
+  background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px;
+}
+.callback-box label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+.callback-url-row { display: flex; gap: 8px; align-items: center; }
+.callback-url-row code {
+  flex: 1; min-width: 0; font-size: 12px; color: #4f46e5; word-break: break-all;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 10px;
+}
+.login-steps { font-size: 12px; color: #6b7280; line-height: 1.7; }
+.login-steps ol { margin: 8px 0 0 18px; }
+.login-steps li { margin-bottom: 4px; }
+.login-actions {
+  padding: 14px 24px; border-top: 1px solid #e8eaec; background: #fff; flex-shrink: 0;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.login-actions .hint { font-size: 12px; color: #9ca3af; flex: 1; min-width: 180px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LOGIN GATE ═══════════════ -->
+<div id="loginGate" class="login-gate">
+  <div class="login-shell">
+    <div class="login-brand">
+      <div>
+        <h1>采购智能工具</h1>
+        <p>统一接入传音 PFUAC 认证，登录后方可访问工具中心、案例分享与发布申请。</p>
+        <ul>
+          <li>统一身份认证（SSO）</li>
+          <li>工具权限与访问审计</li>
+          <li>与企业 SRM 账号体系打通</li>
+        </ul>
+      </div>
+      <div class="login-brand-foot">Procurement Intelligence Tools</div>
+    </div>
+    <div class="login-panel">
+      <div class="login-panel-head">
+        <h2>统一认证登录</h2>
+        <p>请使用企业账号登录，认证服务由 PFUAC 提供</p>
+      </div>
+      <div class="login-notice">
+        <div class="login-alert">
+          <strong>认证提示：目标站点未加入白名单</strong>
+          PFUAC 返回「目标站点是不可信站点，拒绝访问」，说明当前回跳地址尚未在认证平台登记。
+          在管理员完成配置前，请使用「本地演示登录」体验系统；正式环境需将下方地址加入 PFUAC 可信站点。
+        </div>
+        <div class="callback-box">
+          <label>需加入 PFUAC 白名单的回跳地址</label>
+          <div class="callback-url-row">
+            <code id="callbackUrlDisplay"></code>
+            <button class="btn btn-secondary btn-sm" onclick="copyCallbackUrl()">复制</button>
+          </div>
+        </div>
+        <div class="login-steps">
+          <strong>管理员配置步骤</strong>
+          <ol>
+            <li>联系 PFUAC / 统一认证管理员</li>
+            <li>为应用 <code>SRM / c_MjIxMjAyMDAxcQ</code> 添加上方回跳地址为可信站点</li>
+            <li>正式部署时，将 localhost 换为正式域名（如 https://pit.xxx.com/callback.html）</li>
+            <li>配置完成后，点击「统一认证登录」即可回到本系统</li>
+          </ol>
+        </div>
+      </div>
+      <div class="login-actions">
+        <span class="hint" id="loginHint">白名单配置前可使用演示登录</span>
+        <button class="btn btn-primary" onclick="loginDevDemo()">本地演示登录</button>
+        <button class="btn btn-secondary" onclick="loginRedirect()">统一认证登录</button>
+        <button class="btn btn-ghost btn-sm" onclick="loginPopup()">弹窗认证</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ APP (需登录) ═══════════════ -->
+<div id="appRoot" class="hidden">
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">采购智能工具</div>
+      <div class="logo-sub">Procurement Intelligence Platform</div>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <div class="h-user">
+    <div class="h-avatar" id="userAvatar">A</div>
+    <div>
+      <div class="h-uname" id="userName">—</div>
+      <div class="h-urole" id="userRole">未登录</div>
+    </div>
+  </div>
+  <button class="btn btn-secondary btn-sm" style="margin-left:8px" onclick="logout()">退出登录</button>
+</div>
+
+<!-- ═══════════════ APP SHELL ═══════════════ -->
+<div class="app-shell">
+
+  <!-- ── SIDEBAR ── -->
+  <div class="sidebar" id="sidebar"></div>
+
+  <!-- ── MAIN CONTENT ── -->
+  <div class="content" id="mainContent">
+
+    <!-- HOME PAGE -->
+    <div id="homePage" style="flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0">
+
+      <div class="section-row">
+        <h2 id="centerTitle">全部工具</h2>
+        <span class="ct" id="centerCount">10 个工具</span>
+        <div class="spacer"></div>
+        <div class="tab-bar">
+          <span class="pill active" id="tabTools"   onclick="switchTab('tools')">工具列表</span>
+          <span class="pill"        id="tabDemands" onclick="switchTab('demands')">发布申请&nbsp;<span id="pendingBadge">(1)</span></span>
+        </div>
+      </div>
+
+      <!-- 搜索栏（全部工具 / 分类） -->
+      <div id="toolSearchBar" class="tool-search-row">
+        <input type="search" class="tool-search-input" id="toolSearchInput"
+          placeholder="搜索工具名称、功能、范围…" oninput="onToolSearch(this.value)">
+      </div>
+
+      <!-- Tools + Carousel -->
+      <div id="toolsView" style="flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0">
+        <div class="cards-grid" id="cardsGrid"></div>
+
+        <!-- Carousel fills remaining height -->
+        <div class="carousel-outer">
+          <div class="divider"></div>
+          <div class="carousel-wrap">
+            <div class="carousel-header">
+              <h2>共创案例分享</h2>
+              <span class="pill sm active" style="margin-left:4px">5 个案例</span>
+              <div class="spacer"></div>
+              <span class="carousel-counter" id="carouselCounter">1 / 5</span>
+            </div>
+            <div class="carousel-banner">
+              <div class="c-arrow" onclick="carouselPrev()">&#8249;</div>
+              <div class="c-main" id="carouselMain"></div>
+              <div class="c-sep"></div>
+              <div class="c-features">
+                <div class="c-feat-title">核心功能预览</div>
+                <div id="carouselFeats"></div>
+              </div>
+              <div class="c-arrow" onclick="carouselNext()">&#8250;</div>
+            </div>
+            <div class="dots" id="carouselDots"></div>
+            <div class="c-links" id="carouselLinks"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 我的收藏（独立页面） -->
+      <div id="favoritesView" class="hidden" style="flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0">
+        <div id="favoritesEmpty" class="favorites-empty-page hidden">
+          <strong>暂无收藏</strong>
+          <span>在工具卡片右上角点击 ★ 即可加入收藏</span>
+        </div>
+        <div class="cards-grid favorites-page-grid hidden" id="favoritesPageGrid"></div>
+      </div>
+
+      <!-- Demands view: internal scroll -->
+      <div id="demandsView" style="flex:1;overflow-y:auto;min-height:0" class="hidden">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="font-size:12px;color:#6b7280">共 5 条需求 · 1 条待处理</span>
+          <div class="spacer"></div>
+          <button class="btn btn-primary btn-sm">提交新需求</button>
+          <button class="btn btn-secondary btn-sm">发布公告</button>
+        </div>
+        <table>
+          <thead><tr><th>需求编号</th><th>需求标题</th><th>类型</th><th>提交人</th><th>日期</th><th>状态</th></tr></thead>
+          <tbody id="demandsBody"></tbody>
+        </table>
+        <div class="callout info">
+          <div class="callout-title">管理员处理提示</div>
+          审核通过后系统将自动推送上线通知至相关团队。开发完成请及时更新需求状态，确保看板数据准确。
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL PAGE -->
+    <div id="detailPage" style="flex:1;overflow-y:auto;display:none;padding:20px"></div>
+
+  </div>
+
+  <!-- ── RIGHT PANEL ── -->
+  <div class="right-panel" id="rightPanel">
+    <div class="rp-title">热门工具 <span class="rp-subtitle">本周 UV</span></div>
+    <div id="hotList"></div>
+    <div class="rp-divider"></div>
+    <div class="rp-title">快捷入口</div>
+    <div id="quickLinks"></div>
+    <div class="rp-divider"></div>
+    <div class="rp-title">最新需求 <span class="pill sm active" style="margin-left:2px">1 待处理</span></div>
+    <div id="demandMini"></div>
+    <button class="btn btn-ghost btn-sm" style="width:100%;text-align:left;margin-top:6px"
+      onclick="switchTab('demands')">查看全部需求 ›</button>
+  </div>
+
+</div>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<div class="footer" id="mainFooter">
+  <span class="footer-label">需求看板</span>
+  <div class="spacer"></div>
+  <div class="footer-stats">
+    <div class="h-stat"><div class="h-stat-val" style="font-size:16px;color:#d97706">1</div><div class="h-stat-lbl">待审核</div></div>
+    <div class="f-sep"></div>
+    <div class="h-stat"><div class="h-stat-val" style="font-size:16px;color:#16a34a">1</div><div class="h-stat-lbl">已批准</div></div>
+    <div class="f-sep"></div>
+    <div class="h-stat"><div class="h-stat-val" style="font-size:16px;color:#2563eb">1</div><div class="h-stat-lbl">开发中</div></div>
+    <div class="f-sep"></div>
+    <div class="h-stat"><div class="h-stat-val" style="font-size:16px;color:#16a34a">2</div><div class="h-stat-lbl">已上线</div></div>
+  </div>
+  <div class="f-sep"></div>
+  <button class="btn btn-primary btn-sm" onclick="switchTab('demands')">发起上线申请</button>
+</div>
+
+</div><!-- /#appRoot -->
+
+<script>
+// ─── Auth (PFUAC SSO) ─────────────────────────────────────────────────────────
+const AUTH_KEY = 'pit_auth';
+const PFUAC_BASE = 'https://pfuac.transsion.com:10101/#/c-login';
+const PFUAC_PARAMS = {
+  source: 'SRM',
+  appId: 'c_MjIxMjAyMDAxcQ',
+  region: '',
+  account: '',
+  companyId: '',
+  type: 'simple',
+  lang: 'zh',
+};
+// SRM 原链路（已在 PFUAC 白名单，登录后会进入 SRM 系统）
+const SRM_TOKEN_LOGIN = 'https://srm01.transsion.com/ELSServer_CY/rest/AccountService/tokenLogin';
+
+function getCallbackUrl() {
+  return new URL('callback.html', window.location.href).href;
+}
+
+function buildLoginUrl(redirectUrl) {
+  const p = new URLSearchParams({
+    ...PFUAC_PARAMS,
+    redirect: redirectUrl,
+  });
+  return PFUAC_BASE + '?' + p.toString();
+}
+
+// 采购智能工具回跳（需 PFUAC 管理员将 callback 加入白名单）
+const LOGIN_URL = buildLoginUrl(getCallbackUrl());
+// SRM 原链路（可正常登录，但会进入 SRM 而非本系统）
+const LOGIN_URL_SRM = buildLoginUrl(SRM_TOKEN_LOGIN);
+
+function getAuth() {
+  try {
+    return JSON.parse(sessionStorage.getItem(AUTH_KEY) || 'null');
+  } catch { return null; }
+}
+
+function isLoggedIn() {
+  const auth = getAuth();
+  return !!(auth && auth.loggedIn);
+}
+
+function saveAuth(data) {
+  sessionStorage.setItem(AUTH_KEY, JSON.stringify({
+    loggedIn: true,
+    loginAt: Date.now(),
+    ...data,
+  }));
+}
+
+function clearAuth() {
+  sessionStorage.removeItem(AUTH_KEY);
+}
+
+function updateUserUI() {
+  const auth = getAuth();
+  const name = auth?.account || auth?.userName || auth?.name || '已认证用户';
+  const role = auth?.role || '采购用户';
+  document.getElementById('userName').textContent = name;
+  document.getElementById('userRole').textContent = role;
+  document.getElementById('userAvatar').textContent = (name[0] || 'U').toUpperCase();
+}
+
+function onAuthSuccess(authData) {
+  saveAuth(authData || {});
+  sessionStorage.removeItem('pit_login_pending');
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('loginGate').classList.add('hidden');
+  document.getElementById('appRoot').classList.remove('hidden');
+  updateUserUI();
+  initApp();
+}
+
+function showLoginGate() {
+  document.getElementById('loginGate').classList.remove('hidden');
+  document.getElementById('appRoot').classList.add('hidden');
+  const el = document.getElementById('callbackUrlDisplay');
+  if (el) el.textContent = getCallbackUrl();
+}
+
+function copyCallbackUrl() {
+  const url = getCallbackUrl();
+  navigator.clipboard.writeText(url).then(() => {
+    alert('已复制回跳地址，请发给 PFUAC 管理员：\n' + url);
+  }).catch(() => {
+    prompt('请复制以下地址发给管理员：', url);
+  });
+}
+
+function loginDevDemo() {
+  onAuthSuccess({
+    account: '演示用户',
+    userName: '演示用户',
+    role: '采购管理员',
+    source: 'dev_demo',
+  });
+}
+
+function loginRedirect() {
+  if (!confirm(
+    '统一认证登录需要将回跳地址加入 PFUAC 白名单。\n\n' +
+    '回跳地址：' + getCallbackUrl() + '\n\n' +
+    '若尚未配置，将出现「不可信站点」提示。\n' +
+    '白名单配置前，建议使用「本地演示登录」。\n\n' +
+    '是否继续？'
+  )) return;
+  sessionStorage.setItem('pit_login_pending', '1');
+  window.location.href = LOGIN_URL;
+}
+
+function loginPopup() {
+  if (!confirm('弹窗认证同样需要白名单配置。未配置时请使用「本地演示登录」。是否继续？')) return;
+  sessionStorage.setItem('pit_login_pending', '1');
+  const w = window.open(LOGIN_URL, 'pit_pfuac_login', 'width=520,height=700,scrollbars=yes');
+  if (!w) loginRedirect();
+}
+
+function loginSrmRedirect() {
+  sessionStorage.setItem('pit_login_pending', '1');
+  window.location.href = LOGIN_URL_SRM;
+}
+
+function logout() {
+  clearAuth();
+  sessionStorage.removeItem('pit_login_pending');
+  showLoginGate();
+}
+
+function tryConsumeUrlAuth() {
+  const params = new URLSearchParams(window.location.search);
+  const hash = window.location.hash.replace(/^\#/, '');
+  const hashParams = new URLSearchParams(hash.includes('=') ? hash : '');
+  const token = params.get('token') || params.get('access_token') || hashParams.get('token');
+  const account = params.get('account') || params.get('userName') || hashParams.get('account');
+  if (token || account || params.get('auth') === '1') {
+    saveAuth({ token, account, userName: account, from: 'url' });
+    window.history.replaceState({}, '', window.location.pathname);
+    return true;
+  }
+  return false;
+}
+
+window.addEventListener('message', (event) => {
+  if (event.origin !== window.location.origin) return;
+  if (event.data?.type === 'pit_auth_ok') {
+    onAuthSuccess(event.data.auth);
+  }
+});
+
+function bootstrapAuth() {
+  if (tryConsumeUrlAuth() || isLoggedIn()) {
+    showApp();
+  } else {
+    showLoginGate();
+  }
+}
+
+// ─── SVG Icons ────────────────────────────────────────────────────────────────
+const ICONS = {
+  all: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,
+  cost: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`,
+  delivery: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,
+  quality: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`,
+  project: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+  insight: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+  favorites: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+  srm: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  bi:  `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+  bpm: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>`,
+  erp: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>`,
+};
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const CATEGORIES = [
+  { id:"all",      label:"全部工具", icon:"all",      count:10 },
+  { id:"cost",     label:"成本管理", icon:"cost",     count:3  },
+  { id:"delivery", label:"交付管理", icon:"delivery", count:2  },
+  { id:"quality",  label:"质量管理", icon:"quality",  count:2  },
+  { id:"project",  label:"新项目",   icon:"project",  count:1  },
+  { id:"insight",  label:"洞察分析", icon:"insight",  count:2  },
+];
+
+const SIDEBAR_ITEMS = [
+  { id:"favorites", label:"我的收藏", icon:"favorites" },
+  ...CATEGORIES,
+];
+
+const TOOLS = [
+  { id:"t1",  name:"供应商成本分析", cat:"cost",     date:"2024-01-15", pv:4520, uv:1230, status:"active", func:"成本比较 · AI分析报告", scope:"全品类供应商",  desc:"AI驱动的供应商成本比较与深度分析", url:"https://srm01.transsion.com/ELSServer_CY/" },
+  { id:"t2",  name:"采购价格预测",   cat:"cost",     date:"2024-02-20", pv:3840, uv:980,  status:"active", func:"趋势预测 · 价格预警",   scope:"战略物料",      desc:"基于历史数据的价格趋势智能预测",   url:"https://bi.transsion.com/procurement/price-forecast" },
+  { id:"t3",  name:"交期风险预警",   cat:"delivery", date:"2024-03-10", pv:5120, uv:1560, status:"active", func:"风险识别 · 实时预警",   scope:"在途订单全量",  desc:"实时交货期风险监控与自动预警通知", url:"https://bi.transsion.com/procurement/delivery-risk" },
+  { id:"t4",  name:"物流路径优化",   cat:"delivery", date:"2024-03-25", pv:2960, uv:840,  status:"active", func:"路径规划 · 成本优化",   scope:"外采物料运输",  desc:"AI优化的物流路径与综合成本规划",   url:"https://bi.transsion.com/procurement/logistics" },
+  { id:"t5",  name:"来料质量检测",   cat:"quality",  date:"2024-04-05", pv:6250, uv:1890, status:"active", func:"外观检测 · 缺陷识别",   scope:"来料IQC环节",   desc:"智能来料质量评估与缺陷早期预测",   url:"https://bi.transsion.com/procurement/quality-iqc" },
+  { id:"t6",  name:"供应商质量评估", cat:"quality",  date:"2024-04-18", pv:3380, uv:1020, status:"active", func:"质量画像 · 动态评分",   scope:"A/B类供应商",  desc:"多维度供应商质量画像与动态评分",   url:"https://bi.transsion.com/procurement/supplier-quality" },
+  { id:"t7",  name:"新品需求分析",   cat:"project",  date:"2024-05-08", pv:2840, uv:760,  status:"active", func:"需求规划 · 寻源评估",   scope:"新品立项阶段",  desc:"新产品采购需求智能规划与评估",     url:"https://bi.transsion.com/procurement/new-product" },
+  { id:"t8",  name:"市场洞察报告",   cat:"insight",  date:"2024-05-20", pv:7120, uv:2340, status:"active", func:"市场分析 · 竞品洞察",   scope:"全球供应链",    desc:"全球供应链市场动态深度洞察报告",   url:"https://bi.transsion.com/procurement/market-insight" },
+  { id:"t9",  name:"采购合规检查",   cat:"cost",     date:"2024-06-01", pv:2150, uv:680,  status:"beta",   func:"合规检查 · 风险提示",   scope:"采购全流程",    desc:"采购流程合规性自动检查与风险提示", url:"" },
+  { id:"t10", name:"碳排放追踪",     cat:"insight",  date:"2024-06-15", pv:1890, uv:540,  status:"new",    func:"碳核算 · ESG报告",      scope:"供应链全链路",  desc:"供应链碳足迹全程追踪与ESG报告",     url:"" },
+];
+
+const STATUS_LABEL = { active:"已上线", beta:"测试中", new:"新工具" };
+const CAT_COLOR_CLASS = { cost:"tc-cost", delivery:"tc-delivery", quality:"tc-quality", project:"tc-project", insight:"tc-insight" };
+
+const DEMANDS = [
+  { id:"REQ-089", title:"智能比价工具",     type:"新工具",   submitter:"王明", date:"06-18", status:"审核中" },
+  { id:"REQ-088", title:"供应商评分卡更新", type:"功能优化", submitter:"李红", date:"06-17", status:"已批准" },
+  { id:"REQ-087", title:"采购预算预测模型", type:"新工具",   submitter:"张伟", date:"06-15", status:"开发中" },
+  { id:"REQ-086", title:"物料清单分析器",   type:"新工具",   submitter:"陈静", date:"06-12", status:"已上线" },
+  { id:"REQ-085", title:"采购KPI看板",      type:"功能优化", submitter:"刘洋", date:"06-10", status:"已上线" },
+];
+const D_STATUS_CLASS = { "审核中":"y","已批准":"g","开发中":"b","已上线":"g" };
+
+const CASES = [
+  { id:"case1", tag:"成本优化", team:"采购数字化团队", date:"2024-05-10",
+    title:"智能询价比价系统",
+    subtitle:"通过AI自动解析报价单并实现多维度横向比价，将询比价效率提升80%，价格优化率达5.2%",
+    demo:"上传供应商报价单（Excel / PDF / 图片）→ AI自动解析字段 → 生成多维比价矩阵 → 输出推荐方案",
+    background:["传统询价依赖人工整理Excel，效率低且易出错，单次询价耗时约3个工作日","多供应商报价格式不统一，难以横向对比，人工转换成本极高","比价维度单一，仅关注价格，忽略交期、质量记录、付款条件等综合因素","历史比价数据分散存档，无法支撑采购谈判与市场基准参考"],
+    features:["AI智能解析多格式报价单（Excel / PDF / 图片扫描件）","多维比价矩阵：综合价格、交期、MOQ、付款条件自动评分","历史价格趋势分析与市场基准比对，识别价格异常","一键生成标准化比价报告，支持 PDF 导出与分享","自动推荐最优供应商组合方案，辅助采购决策"],
+    scenarios:["年度集中招标比价","日常零星采购询价","紧急需求快速比价","新供应商引入评估"],
+    result:"询比价周期从3天缩短至4小时，年节省人工成本约120万元，价格优化率提升5.2%，已覆盖全品类87%的采购场景。" },
+  { id:"case2", tag:"交付保障", team:"供应链管理团队", date:"2024-04-20",
+    title:"供应商交付风险预警平台",
+    subtitle:"基于多维数据建立交付风险预测模型，提前14天预警潜在延迟，准时交付率提升至96%",
+    demo:"录入在途订单信息 → AI风险评分 → 多级预警推送 → 自动匹配备选供应商与应急预案",
+    background:["供应商交付延迟频发，严重影响生产计划，每年因此导致停产损失超千万","现有预警机制滞后，发现延迟时距交货期不足48小时，已无法有效干预","缺乏对供应商产能、原材料库存等上游数据的实时掌握，风险不可见","应急处理机制不健全，延迟后的补救成本高昂且效率低下"],
+    features:["实时采集供应商产能、库存、在制品进度等上游数据","AI预测模型：基于3年历史交付数据训练的风险评分算法","四级预警机制：绿 / 黄 / 橙 / 红，精准推送至责任人","自动触发备选供应商推荐与紧急采购流程","交付KPI看板：准时交付率趋势、供应商月度排名与改善追踪"],
+    scenarios:["关键物料交付监控","新供应商能力验证","旺季备货保障","单一来源风险管控"],
+    result:"供应商准时交付率从87%提升至96%，因延迟导致的停产损失减少78%，库存安全库存设置精度提升40%。" },
+  { id:"case3", tag:"质量提升", team:"质量工程团队", date:"2024-03-15",
+    title:"AI来料质量智能检测助手",
+    subtitle:"融合视觉AI与历史质量数据，实现来料质检自动化，漏检率降低至0.3%以下",
+    demo:"扫描来料批次条码 → 视觉AI自动检测外观 → 合格/不合格判定 → 异常根因定位与供应商反馈",
+    background:["来料检验高度依赖人工抽检，检验效率低、主观误差大，漏检率约2.1%","质量异常发现滞后，往往流入生产线后才被察觉，返工成本极高","质量问题根因追溯困难，供应商整改要求缺乏数据支撑说服力","检验标准不统一，不同检验员对同一缺陷的判断存在较大差异"],
+    features:["视觉AI自动识别外观缺陷：划痕、变形、色差、异物等30+缺陷类型","基于历史质量数据的来料批次风险预测，高风险批次优先复检","异常根因智能分析：精准定位至供应商工序、批次、班次","检验报告自动生成，与SRM/ERP系统无缝对接同步质量数据","供应商质量画像：质量趋势、改善追踪与季度质量评级"],
+    scenarios:["机械零件外观检验","电子元器件尺寸检测","包装材料质量控制","新供应商来料验证"],
+    result:"来料检验效率提升60%，质量漏检率降至0.3%以下，供应商质量整改响应时间缩短50%，年质量损失减少约340万元。" },
+  { id:"case4", tag:"新项目加速", team:"新品开发团队", date:"2024-02-28",
+    title:"新品快速寻源智能工具",
+    subtitle:"AI驱动全球供应商匹配引擎，新品寻源周期从6周压缩至1周，候选命中率达92%",
+    demo:"输入物料规格或上传图纸 → AI解析关键参数 → 全球供应商智能匹配 → 能力评估打分 → 推荐候选方案",
+    background:["新品寻源高度依赖资深采购经验，知识积累难以传承，人员流动导致寻源能力大幅下降","全球供应商资源分散在多个系统，快速匹配最优资源需耗时数周","供应商能力评估维度不全，价格之外的技术、认证、风险因素识别不足","寻源过程不透明，决策依据难以追溯，内外部审查合规风险较高"],
+    features:["整合内外部供应商数据库：覆盖全球10万+供应商资源，持续动态更新","智能需求解析：自然语言描述或图纸上传，自动提取关键技术参数","多维能力匹配评分：技术能力、产能、认证资质、地理位置、风险评级","寻源全程可视化：进度追踪、团队协作、审批流程一体化管理","寻源知识库沉淀：历史案例复用、最佳实践推荐，赋能新人快速上手"],
+    scenarios:["新产品开发寻源","供应商多元化策略","紧急替代料寻源","海外本土化采购"],
+    result:"新品寻源周期从42天降至7天，供应商候选命中率提升至92%，寻源成功率提升35%，年节省采购开发成本约80万元。" },
+  { id:"case5", tag:"ESG洞察", team:"可持续发展团队", date:"2024-06-05",
+    title:"采购碳足迹洞察与优化平台",
+    subtitle:"量化供应链碳排放数据，ESG报告编制周期从3个月压缩至2周，支撑绿色采购决策",
+    demo:"选择物料类别与供应商 → 碳排放数据采集与核算 → 减排潜力分析 → 绿色采购推荐 → 一键生成ESG报告",
+    background:["ESG监管趋严，企业须对供应链全范围碳排放进行精确核算并向社会披露","供应商碳数据获取困难，核算方式不统一，数据可信度存疑，易引发审计质疑","绿色采购决策缺乏量化工具，难以在碳减排目标与成本控制之间找到平衡点","ESG报告编制工作量巨大，数据来源分散于多个系统，手工汇总误差风险高"],
+    features:["供应商碳数据采集模板与自动核算引擎，支持范围1/2/3全口径核算","产品全生命周期碳足迹核算，符合 GHG Protocol 等国际标准","绿色供应商评级：碳排放强度评分与减排潜力量化分析","减排方案智能推荐：替代材料、工艺优化、运输方式切换的减排量预测","ESG报告自动生成：数据可追溯、格式合规、支持第三方审计"],
+    scenarios:["年度ESG报告编制","绿色采购决策支持","供应商碳盘查管理","产品碳标签认证"],
+    result:"覆盖90%以上采购类别碳数据，供应链碳排放核算效率提升75%，ESG报告编制周期从3个月压缩至2周，碳数据审计一次性通过率达100%。" },
+];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let activeCat = "all";
+let activeTab = "tools";
+let toolSearchQuery = "";
+let carouselIdx = 0;
+const STARRED_KEY = 'pit_starred';
+let starred = new Set();
+try {
+  starred = new Set(JSON.parse(localStorage.getItem(STARRED_KEY) || '[]'));
+} catch { starred = new Set(); }
+
+function persistStarred() {
+  localStorage.setItem(STARRED_KEY, JSON.stringify([...starred]));
+}
+
+// ─── Hot Tools Data ───────────────────────────────────────────────────────────
+const HOT_TOOLS = [
+  { rank:1, name:"市场洞察报告",   uv:2340, delta:"+12%", up:true  },
+  { rank:2, name:"来料质量检测",   uv:1890, delta:"+8%",  up:true  },
+  { rank:3, name:"交期风险预警",   uv:1560, delta:"+15%", up:true  },
+  { rank:4, name:"供应商成本分析", uv:1230, delta:"+3%",  up:true  },
+  { rank:5, name:"供应商质量评估", uv:1020, delta:"-2%",  up:false },
+  { rank:6, name:"采购价格预测",   uv:980,  delta:"+5%",  up:true  },
+  { rank:7, name:"物流路径优化",   uv:840,  delta:"-1%",  up:false },
+];
+
+const QUICK_LINKS_DATA = [
+  { name:"BPM", desc:"业务流程管理", icon:"bpm", bg:"#fff7ed", ic:"#e67e22" },
+  { name:"SRM", desc:"供应商管理系统", icon:"srm", bg:"#f0f0ff", ic:"#5c6bc0" },
+  { name:"BI",  desc:"商业智能分析",  icon:"bi",  bg:"#f0fdf4", ic:"#27ae60" },
+];
+
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
+function renderSidebar() {
+  const el = document.getElementById("sidebar");
+  el.innerHTML = SIDEBAR_ITEMS.map(c => `
+    <div class="sidebar-item ${activeCat===c.id?'active':''}" onclick="selectCat('${c.id}')">
+      <span class="si-icon">${ICONS[c.icon]||ICONS.all}</span>
+      <span class="si-label">${c.label}</span>
+    </div>
+  `).join("");
+}
+
+// ─── Right Panel ──────────────────────────────────────────────────────────────
+function renderRightPanel() {
+  // Hot tools
+  document.getElementById("hotList").innerHTML = HOT_TOOLS.map(h => {
+    const rankClass = h.rank<=3 ? 'top' : h.rank<=5 ? 'mid' : 'low';
+    return `<div class="hot-item">
+      <div class="hot-rank ${rankClass}">${h.rank}</div>
+      <span class="hot-name" title="${h.name}">${h.name}</span>
+      <span class="hot-uv">${h.uv.toLocaleString()}</span>
+      <span class="hot-delta ${h.up?'up':'dn'}">${h.delta}</span>
+    </div>`;
+  }).join("");
+
+  // Quick links
+  document.getElementById("quickLinks").innerHTML = QUICK_LINKS_DATA.map(l => `
+    <div class="ql-btn" title="${l.desc}">
+      <div class="ql-icon" style="background:${l.bg}">
+        <span style="color:${l.ic}">${ICONS[l.icon]||''}</span>
+      </div>
+      <div>
+        <div class="ql-name">${l.name}</div>
+        <div class="ql-desc">${l.desc}</div>
+      </div>
+    </div>
+  `).join("");
+
+  // Demand mini
+  document.getElementById("demandMini").innerHTML = DEMANDS.slice(0,3).map(d => `
+    <div style="padding:6px 0;border-bottom:1px solid #f3f4f6">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="flex:1;min-width:0;font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.title}</span>
+        <span class="pill sm ${D_STATUS_CLASS[d.status]||''}">${d.status}</span>
+      </div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:2px">${d.date} · ${d.submitter}</div>
+    </div>
+  `).join("");
+}
+
+// ─── Cards ────────────────────────────────────────────────────────────────────
+function getCardColor(tool, idx) {
+  return CAT_COLOR_CLASS[tool.cat] || `tc-${idx % 10}`;
+}
+
+function toggleStar(id, event) {
+  event.stopPropagation();
+  if (starred.has(id)) starred.delete(id); else starred.add(id);
+  persistStarred();
+  renderSidebar();
+  updateMainView();
+}
+
+function openTool(id, event) {
+  if (event) event.stopPropagation();
+  const tool = TOOLS.find(t => t.id === id);
+  if (!tool) return;
+  if (!tool.url) {
+    alert(`「${tool.name}」链接尚未配置，请联系管理员。`);
+    return;
+  }
+  window.open(tool.url, '_blank', 'noopener,noreferrer');
+}
+
+function renderToolCard(t, colorIdx) {
+  return `
+    <div class="tool-card ${getCardColor(t, colorIdx)}" onclick="openTool('${t.id}', event)" title="${t.url ? '点击进入工具' : '链接待配置'}">
+      <span class="card-status">${STATUS_LABEL[t.status]}</span>
+      <span class="card-star ${starred.has(t.id)?'starred':''}"
+        onclick="toggleStar('${t.id}', event)">&#9733;</span>
+      <div class="card-title">${t.name}</div>
+      <div class="card-row">
+        <span class="card-lbl">功能：</span>
+        <span class="card-val">${t.func}</span>
+      </div>
+      <div class="card-row">
+        <span class="card-lbl">范围：</span>
+        <span class="card-val">${t.scope}</span>
+      </div>
+      <div class="card-overlay">
+        <div class="overlay-stats">
+          <div class="overlay-stat">
+            <div class="overlay-val">${t.pv.toLocaleString()}</div>
+            <div class="overlay-lbl">PV 浏览量</div>
+          </div>
+          <div class="overlay-stat">
+            <div class="overlay-val">${t.uv.toLocaleString()}</div>
+            <div class="overlay-lbl">UV 访客数</div>
+          </div>
+        </div>
+        <div class="overlay-date">上线日期：${t.date}</div>
+        <button class="overlay-enter" onclick="openTool('${t.id}', event)">${t.url ? '进入工具' : '链接待配置'}</button>
+      </div>
+    </div>
+  `;
+}
+
+function getFavoriteTools() {
+  return TOOLS.filter(t => starred.has(t.id));
+}
+
+function filterToolsBySearch(tools) {
+  const q = toolSearchQuery.trim().toLowerCase();
+  if (!q) return tools;
+  return tools.filter(t =>
+    [t.name, t.func, t.scope, t.desc].join(" ").toLowerCase().includes(q)
+  );
+}
+
+function onToolSearch(value) {
+  toolSearchQuery = value;
+  renderCards();
+}
+
+function renderFavoritesPage() {
+  const view = document.getElementById("favoritesView");
+  const grid = document.getElementById("favoritesPageGrid");
+  const empty = document.getElementById("favoritesEmpty");
+  if (!view || !grid) return;
+
+  const favTools = getFavoriteTools();
+  document.getElementById("centerTitle").textContent = "我的收藏";
+  document.getElementById("centerCount").textContent = `${favTools.length} 个`;
+
+  if (favTools.length === 0) {
+    empty.classList.remove("hidden");
+    grid.classList.add("hidden");
+    grid.innerHTML = "";
+    return;
+  }
+
+  empty.classList.add("hidden");
+  grid.classList.remove("hidden");
+  grid.innerHTML = favTools.map((t, i) => renderToolCard(t, i)).join("");
+}
+
+function renderCards() {
+  if (activeCat === "favorites") return;
+
+  let allTools = activeCat === "all" ? TOOLS : TOOLS.filter(t => t.cat === activeCat);
+  allTools = filterToolsBySearch(allTools);
+  const tools = allTools.slice(0, 8);
+  const extra = allTools.length - tools.length;
+  const catLabel = CATEGORIES.find(c => c.id === activeCat)?.label ?? "全部工具";
+
+  document.getElementById("centerTitle").textContent = catLabel;
+  if (toolSearchQuery.trim()) {
+    document.getElementById("centerCount").textContent =
+      `找到 ${allTools.length} 个工具`;
+  } else {
+    document.getElementById("centerCount").textContent =
+      extra > 0 ? `${allTools.length} 个工具（显示前 8 个）` : `${allTools.length} 个工具`;
+  }
+
+  const grid = document.getElementById("cardsGrid");
+  if (allTools.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:24px;color:#9ca3af;font-size:13px">未找到匹配的工具</div>`;
+    return;
+  }
+  grid.innerHTML = tools.map((t, i) => renderToolCard(t, i)).join("");
+}
+
+function updateMainView() {
+  const toolsView = document.getElementById("toolsView");
+  const favoritesView = document.getElementById("favoritesView");
+  const searchBar = document.getElementById("toolSearchBar");
+
+  if (activeTab !== "tools") {
+    searchBar.classList.add("hidden");
+    toolsView.classList.add("hidden");
+    favoritesView.classList.add("hidden");
+    return;
+  }
+
+  if (activeCat === "favorites") {
+    searchBar.classList.add("hidden");
+    toolsView.classList.add("hidden");
+    favoritesView.classList.remove("hidden");
+    favoritesView.style.display = "flex";
+    renderFavoritesPage();
+  } else {
+    searchBar.classList.remove("hidden");
+    toolsView.classList.remove("hidden");
+    favoritesView.classList.add("hidden");
+    favoritesView.style.display = "none";
+    renderCards();
+  }
+}
+
+// ─── Demands ──────────────────────────────────────────────────────────────────
+function renderDemands() {
+  const tbody = document.getElementById("demandsBody");
+  tbody.innerHTML = DEMANDS.map(d => `
+    <tr>
+      <td style="color:#9ca3af;font-size:12px">${d.id}</td>
+      <td style="font-weight:600">${d.title}</td>
+      <td><span class="pill sm">${d.type}</span></td>
+      <td>${d.submitter}</td>
+      <td style="color:#9ca3af;font-size:12px">${d.date}</td>
+      <td><span class="pill sm ${D_STATUS_CLASS[d.status]||''}">${d.status}</span></td>
+    </tr>
+  `).join("");
+}
+
+// ─── Carousel ─────────────────────────────────────────────────────────────────
+function renderCarousel() {
+  const c = CASES[carouselIdx];
+  document.getElementById("carouselCounter").textContent = `${carouselIdx+1} / ${CASES.length}`;
+  document.getElementById("carouselMain").innerHTML = `
+    <div class="c-tag-row">
+      <span class="pill sm active">${c.tag}</span>
+      <span class="c-tag-meta">${c.team} · ${c.date}</span>
+    </div>
+    <div class="c-title">${c.title}</div>
+    <div class="c-subtitle">${c.subtitle}</div>
+    <div class="c-actions">
+      <button class="btn btn-primary btn-sm" onclick="openDetail('${c.id}')">查看详情</button>
+      <button class="btn btn-secondary btn-sm">Demo 演示</button>
+    </div>
+  `;
+  document.getElementById("carouselFeats").innerHTML = c.features.slice(0,4).map((f,i)=>`
+    <div class="c-feat-item">
+      <div class="c-feat-num">${i+1}</div>
+      <div class="c-feat-text">${f}</div>
+    </div>
+  `).join("");
+  document.getElementById("carouselDots").innerHTML = CASES.map((_,i)=>`
+    <div class="dot ${i===carouselIdx?'active':''}" style="width:${i===carouselIdx?20:6}px"
+      onclick="carouselGoTo(${i})"></div>
+  `).join("");
+  document.getElementById("carouselLinks").innerHTML = CASES.map((item,i)=>`
+    ${i>0?'<span class="c-link-sep">|</span>':''}
+    <span class="c-link ${i===carouselIdx?'active':''}"
+      onclick="carouselGoTo(${i})">${item.title}</span>
+  `).join("");
+}
+function carouselPrev() { carouselIdx=(carouselIdx-1+CASES.length)%CASES.length; renderCarousel(); }
+function carouselNext() { carouselIdx=(carouselIdx+1)%CASES.length; renderCarousel(); }
+function carouselGoTo(i) { carouselIdx=i; renderCarousel(); }
+
+// ─── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  activeTab = tab;
+  const tv  = document.getElementById("toolsView");
+  const dv  = document.getElementById("demandsView");
+  const ttt = document.getElementById("tabTools");
+  const ttd = document.getElementById("tabDemands");
+
+  if (tab === "tools") {
+    tv.classList.remove("hidden"); dv.classList.add("hidden");
+    ttt.classList.add("active");   ttd.classList.remove("active");
+    updateMainView();
+  } else {
+    tv.classList.add("hidden");    dv.classList.remove("hidden");
+    ttt.classList.remove("active");ttd.classList.add("active");
+    document.getElementById("toolSearchBar").classList.add("hidden");
+    document.getElementById("favoritesView").classList.add("hidden");
+  }
+}
+
+// ─── Category selection ────────────────────────────────────────────────────────
+function selectCat(id) {
+  activeCat = id;
+  toolSearchQuery = "";
+  const input = document.getElementById("toolSearchInput");
+  if (input) input.value = "";
+  renderSidebar();
+  updateMainView();
+}
+
+// ─── Detail page ──────────────────────────────────────────────────────────────
+function openDetail(caseId) {
+  const c = CASES.find(x=>x.id===caseId); if (!c) return;
+  document.getElementById("homePage").style.display = "none";
+  document.getElementById("mainFooter").classList.add("hidden");
+  document.getElementById("rightPanel").style.display = "none";
+  const dp = document.getElementById("detailPage");
+  dp.style.display = "flex";
+  dp.style.flexDirection = "column";
+  dp.innerHTML = `
+    <div class="detail-content">
+      <div class="breadcrumb">
+        <span class="bc-link" onclick="closeDetail()">返回首页</span>
+        <span class="bc-sep">/</span>
+        <span style="color:#9ca3af;font-size:13px">共创案例分享</span>
+        <span class="bc-sep">/</span>
+        <span class="bc-cur">${c.title}</span>
+      </div>
+      <div class="detail-hero">
+        <div class="detail-tag-row">
+          <span class="pill sm active">${c.tag}</span>
+          <span style="font-size:12px;color:#9ca3af">${c.team}</span>
+          <span style="color:#d1d5db;font-size:12px">·</span>
+          <span style="font-size:12px;color:#9ca3af">发布于 ${c.date}</span>
+        </div>
+        <div class="detail-h1">${c.title}</div>
+        <div class="detail-sub">${c.subtitle}</div>
+        <div class="detail-actions">
+          <button class="btn btn-primary">启动 Demo 演示</button>
+          <button class="btn btn-secondary">收藏案例</button>
+          <button class="btn btn-ghost">分享链接</button>
+        </div>
+      </div>
+      <div style="height:1px;background:#e8eaec;margin:20px 0"></div>
+      <div class="sec-h2">Demo 演示</div>
+      <div class="demo-box">
+        <div class="demo-flow">${c.demo}</div>
+        <button class="btn btn-primary">立即体验 Demo</button>
+      </div>
+      <div style="height:1px;background:#e8eaec;margin:0 0 24px"></div>
+      <div class="two-col">
+        <div>
+          <div class="sec-h2">背景痛点</div>
+          ${c.background.map((p,i)=>`
+            <div class="pain-card">
+              <span class="pain-num">${String(i+1).padStart(2,'0')}</span>
+              <span class="pain-text">${p}</span>
+            </div>`).join("")}
+        </div>
+        <div>
+          <div class="sec-h2">核心功能</div>
+          <div style="margin-bottom:20px">
+            ${c.features.map((f,i)=>`
+              <div class="feat-row">
+                <div class="feat-badge">${i+1}</div>
+                <div class="feat-txt">${f}</div>
+              </div>`).join("")}
+          </div>
+          <div class="sec-h2">适用场景</div>
+          <div class="scenario-grid">
+            ${c.scenarios.map(s=>`<div class="scenario-card">${s}</div>`).join("")}
+          </div>
+        </div>
+      </div>
+      <div class="result-box">
+        <strong>落地成果</strong>${c.result}
+      </div>
+      <div class="back-actions">
+        <button class="btn btn-secondary" onclick="closeDetail()">返回首页</button>
+        <button class="btn btn-ghost">查看相关工具</button>
+      </div>
+    </div>
+  `;
+  window.scrollTo(0,0);
+}
+function closeDetail() {
+  document.getElementById("detailPage").style.display = "none";
+  document.getElementById("homePage").style.display   = "flex";
+  document.getElementById("mainFooter").classList.remove("hidden");
+  document.getElementById("rightPanel").style.display = "";
+}
+
+// ─── Auto-advance carousel ────────────────────────────────────────────────────
+setInterval(()=>{
+  if (!isLoggedIn()) return;
+  if (activeTab !== "tools" || activeCat === "favorites") return;
+  const hp = document.getElementById("homePage");
+  if (hp && hp.style.display !== "none" && !hp.classList.contains("hidden")) {
+    carouselIdx=(carouselIdx+1)%CASES.length;
+    renderCarousel();
+  }
+}, 5000);
+
+// ─── Init (after login) ───────────────────────────────────────────────────────
+let appInitialized = false;
+function initApp() {
+  if (appInitialized) return;
+  appInitialized = true;
+  renderSidebar();
+  updateMainView();
+  renderDemands();
+  renderCarousel();
+  renderRightPanel();
+}
+
+bootstrapAuth();
+</script>
+</body>
+</html>
