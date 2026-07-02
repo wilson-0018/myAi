@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录处理中…</title>
+<style>
+body {
+  margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #f0f2f5; color: #374151;
+}
+.box { text-align: center; padding: 32px; max-width: 420px; }
+h1 { font-size: 18px; margin-bottom: 8px; color: #111; }
+p { font-size: 13px; color: #6b7280; line-height: 1.6; }
+.spinner {
+  width: 32px; height: 32px; border: 3px solid #e5e7eb; border-top-color: #4f46e5;
+  border-radius: 50%; margin: 0 auto 16px; animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.err { color: #b45309; font-size: 12px; margin-top: 12px; }
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="spinner" id="spinner"></div>
+  <h1 id="title">正在完成登录</h1>
+  <p id="msg">请稍候，即将进入采购智能工具…</p>
+  <p class="err hidden" id="err"></p>
+</div>
+<script>
+(function () {
+  const AUTH_KEY = 'pit_auth';
+
+  function parseHashParams() {
+    const hash = window.location.hash.replace(/^\#/, '');
+    if (!hash || !hash.includes('=')) return {};
+    const q = hash.includes('?') ? hash.split('?').pop() : hash;
+    try {
+      return Object.fromEntries(new URLSearchParams(q));
+    } catch { return {}; }
+  }
+
+  function parseQueryParams() {
+    return Object.fromEntries(new URLSearchParams(window.location.search));
+  }
+
+  const query = parseQueryParams();
+  const hash = parseHashParams();
+  const merged = { ...hash, ...query };
+
+  const token = merged.token || merged.access_token || merged.accessToken || merged.ticket || '';
+  const account = merged.account || merged.userName || merged.username || merged.user || merged.loginName || '';
+  const name = merged.name || merged.displayName || account;
+
+  const auth = {
+    loggedIn: true,
+    loginAt: Date.now(),
+    token: token || undefined,
+    account: account || undefined,
+    userName: name || undefined,
+    role: merged.role || '采购用户',
+    source: 'PFUAC',
+    raw: merged,
+  };
+
+  if (!token && !account) {
+    auth.loginNote = 'callback_without_token';
+  }
+
+  sessionStorage.setItem(AUTH_KEY, JSON.stringify(auth));
+  sessionStorage.removeItem('pit_login_pending');
+
+  const indexUrl = new URL('index.html', window.location.href).href;
+  const payload = { type: 'pit_auth_ok', auth };
+
+  function finish() {
+    document.getElementById('title').textContent = '登录成功';
+    document.getElementById('msg').textContent = '正在进入采购智能工具…';
+    window.location.replace(indexUrl);
+  }
+
+  // 弹窗登录：通知 opener 后关闭
+  if (window.opener && !window.opener.closed) {
+    try {
+      window.opener.postMessage(payload, window.location.origin);
+      window.close();
+      setTimeout(finish, 800);
+      return;
+    } catch (e) { /* fallback */ }
+  }
+
+  // iframe 内嵌登录：通知父页面
+  if (window.parent !== window) {
+    try {
+      window.parent.postMessage(payload, window.location.origin);
+      document.getElementById('title').textContent = '登录成功';
+      document.getElementById('msg').textContent = '已通知主页面，请稍候…';
+      return;
+    } catch (e) { /* fallback */ }
+  }
+
+  // 整页跳转登录
+  finish();
+})();
+</script>
+</body>
+</html>
