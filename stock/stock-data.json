@@ -1,5 +1,5 @@
 {
-  "update_time": "2026-09-10 08:01 (北京时间)",
+  "update_time": "2026-09-10 08:02 (北京时间)",
   "provider": "新浪财经",
   "stocks": {
     "NVDA": {
@@ -14,7 +14,7 @@
       "turnover": 158079800,
       "pe": 6.57,
       "ytd": null,
-      "datetime": "2026-09-10 08:01:27"
+      "datetime": "2026-09-10 08:02:36"
     },
     "AMD": {
       "name": "AMD",
@@ -98,7 +98,7 @@
       "turnover": 9032303,
       "pe": 12.03,
       "ytd": null,
-      "datetime": "2026-09-10 08:01:13"
+      "datetime": "2026-09-10 08:02:23"
     },
     "VRT": {
       "name": "Vertiv",
@@ -182,7 +182,7 @@
       "turnover": 11549002,
       "pe": 30.49,
       "ytd": null,
-      "datetime": "2026-09-10 08:01:29"
+      "datetime": "2026-09-10 08:02:39"
     },
     "MSFT": {
       "name": "微软",
@@ -252,7 +252,7 @@
       "turnover": 6197576,
       "pe": null,
       "ytd": null,
-      "datetime": "2026-09-10 08:01:21"
+      "datetime": "2026-09-10 08:02:38"
     },
     "SOXX": {
       "name": "半导体ETF-SOXX",
@@ -266,7 +266,7 @@
       "turnover": 7290505,
       "pe": null,
       "ytd": null,
-      "datetime": "2026-09-10 08:01:13"
+      "datetime": "2026-09-10 08:02:39"
     },
     "QQQ": {
       "name": "纳斯达克ETF-QQQ",
@@ -280,7 +280,7 @@
       "turnover": 28870240,
       "pe": null,
       "ytd": null,
-      "datetime": "2026-09-10 08:01:29"
+      "datetime": "2026-09-10 08:02:40"
     }
   }
 }
