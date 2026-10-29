@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Weekdinner — Join the waitlist</title>
+  <style>
+    :root {
+      --bg: #f4f3f1;
+      --card: #ffffff;
+      --ink: #1c1b1a;
+      --muted: #6b6966;
+      --line: #e4e2de;
+      --accent: #2a2927;
+      --accent-hover: #111;
+      --ok: #1f6b4a;
+      --ok-bg: #e8f5ef;
+      --radius: 16px;
+      --shadow: 0 12px 40px rgba(28, 27, 26, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 28px 16px 48px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 22px 24px;
+      max-width: 390px;
+      margin: 0 auto;
+    }
+    @media (min-width: 640px) {
+      .page { padding: 48px 24px 64px; }
+      .card {
+        max-width: 640px;
+        padding: 40px 40px 32px;
+      }
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 26px;
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+    @media (min-width: 640px) {
+      h1 { font-size: 32px; }
+    }
+    .lede {
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .lede strong { color: var(--ink); font-weight: 600; }
+    .not-ai {
+      font-size: 13px;
+      color: var(--muted);
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 24px;
+    }
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .shot {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #eee;
+      aspect-ratio: 9 / 16;
+      position: relative;
+    }
+    .shot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+    }
+    .shot span {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      background: linear-gradient(transparent, rgba(28,27,26,0.72));
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      text-align: center;
+      padding: 18px 4px 6px;
+      letter-spacing: 0.02em;
+    }
+    form { display: flex; flex-direction: column; gap: 16px; }
+    label.field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    input[type="email"] {
+      font: inherit;
+      font-weight: 400;
+      font-size: 15px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+    input[type="email"]:focus {
+      border-color: var(--ink);
+      box-shadow: 0 0 0 3px rgba(42, 41, 39, 0.12);
+    }
+    .choices-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .choice {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .choice:hover { border-color: #bbb; }
+    .choice:has(input:checked) {
+      border-color: var(--ink);
+      background: #faf9f7;
+    }
+    .choice input {
+      accent-color: var(--ink);
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    button.cta {
+      margin-top: 4px;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    button.cta:hover { background: var(--accent-hover); }
+    button.cta:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .success {
+      display: none;
+      background: var(--ok-bg);
+      color: var(--ok);
+      border: 1px solid #c5e6d4;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+    }
+    .success.show { display: block; }
+    form.hide { display: none; }
+    footer {
+      margin-top: 22px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <article class="card">
+      <span class="eyebrow">Weekdinner · waitlist</span>
+      <h1>Week of dinners from your budget, allergies &amp; what’s already in the fridge</h1>
+      <p class="lede">
+        Enter your <strong>budget</strong>, <strong>allergies / avoids</strong>, and
+        <strong>kitchen gear + leftovers</strong> → get <strong>5–7 dinners</strong> and a
+        <strong>shopping list</strong>. One job. No fluff.
+      </p>
+      <p class="not-ai">
+        Not an AI recipe community. No calorie tracking. No health claims — just a planning + shopping assistant for real kitchens.
+      </p>
+
+      <div class="shots" aria-hidden="true">
+        <div class="shot">
+          <img src="screen-01-constraints.jpg" alt="" />
+          <span>Constraints</span>
+        </div>
+        <div class="shot">
+          <img src="screen-02-week.jpg" alt="" />
+          <span>Week plan</span>
+        </div>
+        <div class="shot">
+          <img src="screen-03-shopping.jpg" alt="" />
+          <span>Shopping</span>
+        </div>
+      </div>
+
+      <form id="waitlist" action="#" method="post" novalidate>
+        <label class="field" for="email">
+          Email
+          <input id="email" name="email" type="email" required placeholder="you@example.com" autocomplete="email" />
+        </label>
+
+        <div>
+          <div class="choices-label" id="goal-label">What do you most want solved?</div>
+          <div class="choices" role="radiogroup" aria-labelledby="goal-label">
+            <label class="choice">
+              <input type="radio" name="goal" value="budget" required />
+              Stay on budget
+            </label>
+            <label class="choice">
+              <input type="radio" name="goal" value="allergens" />
+              Avoid allergens
+            </label>
+            <label class="choice">
+              <input type="radio" name="goal" value="fridge" />
+              Waste less from the fridge
+            </label>
+          </div>
+        </div>
+
+        <button class="cta" type="button" id="join">Join waitlist</button>
+      </form>
+
+      <div class="success" id="success" role="status">
+        You’re on the list. We’ll email when a spot opens.
+      </div>
+
+      <footer>
+        Prototype waitlist · not medical advice · no calorie tracking
+      </footer>
+    </article>
+  </main>
+
+  <script>
+    (function () {
+      var form = document.getElementById("waitlist");
+      var btn = document.getElementById("join");
+      var success = document.getElementById("success");
+      var email = document.getElementById("email");
+      var NTFY = "https://ntfy.sh/weekdinner-wl-4aab46d160dbbb4066b98f5490ee3bef";
+
+      btn.addEventListener("click", async function () {
+        if (!email.value || !email.checkValidity()) {
+          email.reportValidity();
+          return;
+        }
+        var picked = form.querySelector('input[name="goal"]:checked');
+        if (!picked) {
+          form.querySelector('input[name="goal"]').reportValidity();
+          return;
+        }
+        btn.disabled = true;
+        var payload = {
+          email: email.value.trim(),
+          goal: picked.value,
+          source: "weekdinner-waitlist",
+          ts: new Date().toISOString()
+        };
+        try {
+          var res = await fetch(NTFY, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Title": "Weekdinner waitlist",
+              "Tags": "email,meal"
+            },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error("submit failed " + res.status);
+          form.classList.add("hide");
+          success.classList.add("show");
+        } catch (err) {
+          btn.disabled = false;
+          alert("Could not join right now. Please try again in a minute.");
+          console.error(err);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
