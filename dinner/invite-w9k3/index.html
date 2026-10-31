@@ -4,32 +4,32 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="description" content="Plan a week of dinners from your budget, allergies, and what's already in your fridge. Prototype for feedback." />
-<meta name="theme-color" content="#FFF6E8" />
+<meta name="theme-color" content="#FFF4E6" />
 <title>Week of Dinners — prototype</title>
 <style>
   :root {
-    /* Designer freeze — warm produce palette v2 (carrot + yellow-green) */
-    --bg: #FFF6E8;
+    /* Designer freeze — warm produce palette v3 */
+    --bg: #FFF4E6;
     --card: #ffffff;
     --ink: #1a1a1a;
     --muted: #6b6b6b;
-    --line: #F0E4D4;
-    --accent: #FF8C2A;
-    --chip: #FFF1E0;
-    --chip-on: #C4D63A;
-    --chip-on-text: #ffffff;
-    --soft: #FFE9C8;
-    --ok: #C4D63A;
-    --tomato: #FF8C2A;
-    --leaf: #C4D63A;
-    --lemon: #F5C542;
+    --line: #F0E0CC;
+    --accent: #E86E1E;
+    --chip: #FFE8C8;
+    --chip-on: #B8D63A;
+    --chip-on-text: #1a1a1a;
+    --soft: #FFE2B8;
+    --ok: #B8D63A;
+    --tomato: #E86E1E;
+    --leaf: #B8D63A;
+    --lemon: #FFD23A;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    background: #F2E6D8;
+    background: #F5E6D0;
     color: var(--ink);
     min-height: 100%;
     min-height: 100dvh;
@@ -206,6 +206,16 @@
     font-family: inherit;
   }
   .btn-primary {
+    color: #fff;
+    background: linear-gradient(180deg, #FFB85A 0%, #E86E1E 100%);
+    box-shadow: 0 6px 16px rgba(232,110,30,.35);
+    border-radius: 16px;
+    text-shadow: 0 1px 0 rgba(0,0,0,.1);
+  }
+  .btn-primary:active {
+    transform: translateY(1px);
+    box-shadow: 0 3px 10px rgba(232,110,30,.3);
+  }
     color: #fff;
     background: linear-gradient(180deg, #FFB45C 0%, var(--accent) 48%, #E86E12 100%);
     box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 4px 0 #C45A10, 0 8px 16px rgba(255,140,42,.32);
