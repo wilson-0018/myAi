@@ -249,6 +249,27 @@
     color: var(--muted);
     border: 1px solid var(--line);
   }
+
+  .day-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    line-height: 1;
+    background: linear-gradient(145deg, #FFE8C0, #FFD08A);
+    border: 1px solid var(--line);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .day-body { flex: 1; min-width: 0; }
   .day {
     background: var(--card);
     border: 1px solid var(--line);
@@ -476,22 +497,22 @@
 <script>
 (function () {
   const baseMeals = [
-    { day: "Mon", dish: "Lemon garlic chicken thighs + rice", time: "~35 min", uses: "Uses on hand: chicken thighs, rice", tags: [] },
-    { day: "Tue", dish: "Onion & white bean skillet", time: "~25 min", uses: "Uses on hand: onions, pantry beans", tags: [] },
-    { day: "Wed", dish: "Sheet-pan veggies + sausage", time: "~40 min", uses: "Oven · under $9", tags: [] },
-    { day: "Thu", dish: "Chicken fried rice remix", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: ["egg"] },
-    { day: "Fri", dish: "Tomato pasta with spinach", time: "~25 min", uses: "Stovetop · under $7", tags: ["gluten", "dairy"] },
-    { day: "Sat", dish: "Black bean tacos + slaw", time: "~30 min", uses: "Uses on hand: onions", tags: ["gluten"] },
-    { day: "Sun", dish: "Slow-roast chicken + potatoes", time: "~55 min", uses: "Oven · batch for leftovers", tags: [] }
+    { day: "Mon", icon: "🍗", dish: "Lemon garlic chicken thighs + rice", time: "~35 min", uses: "Uses on hand: chicken thighs, rice", tags: [] },
+    { day: "Tue", icon: "🫘", dish: "Onion & white bean skillet", time: "~25 min", uses: "Uses on hand: onions, pantry beans", tags: [] },
+    { day: "Wed", icon: "🥕", dish: "Sheet-pan veggies + sausage", time: "~40 min", uses: "Oven · under $9", tags: [] },
+    { day: "Thu", icon: "🍚", dish: "Chicken fried rice remix", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: ["egg"] },
+    { day: "Fri", icon: "🍝", dish: "Tomato pasta with spinach", time: "~25 min", uses: "Stovetop · under $7", tags: ["gluten", "dairy"] },
+    { day: "Sat", icon: "🌮", dish: "Black bean tacos + slaw", time: "~30 min", uses: "Uses on hand: onions", tags: ["gluten"] },
+    { day: "Sun", icon: "🥔", dish: "Slow-roast chicken + potatoes", time: "~55 min", uses: "Oven · batch for leftovers", tags: [] }
   ];
 
   const altMeals = {
-    egg: { day: "Thu", dish: "Chicken rice bowl (no egg)", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: [] },
+    egg: { day: "Thu", icon: "🍚", dish: "Chicken rice bowl (no egg)", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: [] },
     gluten: {
-      Fri: { day: "Fri", dish: "Tomato quinoa with spinach", time: "~25 min", uses: "Stovetop · gluten-free · under $8", tags: [] },
-      Sat: { day: "Sat", dish: "Black bean lettuce wraps + slaw", time: "~25 min", uses: "Uses on hand: onions · no tortillas", tags: [] }
+      Fri: { day: "Fri", icon: "🥗", dish: "Tomato quinoa with spinach", time: "~25 min", uses: "Stovetop · gluten-free · under $8", tags: [] },
+      Sat: { day: "Sat", icon: "🥬", dish: "Black bean lettuce wraps + slaw", time: "~25 min", uses: "Uses on hand: onions · no tortillas", tags: [] }
     },
-    dairy: { day: "Fri", dish: "Tomato pasta with spinach (no cheese)", time: "~25 min", uses: "Stovetop · dairy-free · under $7", tags: ["gluten"] }
+    dairy: { day: "Fri", icon: "🍝", dish: "Tomato pasta with spinach (no cheese)", time: "~25 min", uses: "Stovetop · dairy-free · under $7", tags: ["gluten"] }
   };
 
   const baseShopping = {
@@ -617,13 +638,18 @@
     const week = document.getElementById("weekList");
     week.innerHTML = list.map((m, i) => `
       <div class="day">
-        <div class="day-top">
-          <span class="day-name">${m.day}</span>
-          <span class="dish">${m.dish}</span>
-          <span class="time">${m.time}</span>
+        <div class="day-row">
+          <div class="thumb" aria-hidden="true">${m.icon || "🍋"}</div>
+          <div class="day-body">
+            <div class="day-top">
+              <span class="day-name">${m.day}</span>
+              <span class="dish">${m.dish}</span>
+              <span class="time">${m.time}</span>
+            </div>
+            <div class="uses">${m.uses}</div>
+            <button type="button" class="swap" data-i="${i}">Swap (stub)</button>
+          </div>
         </div>
-        <div class="uses">${m.uses}</div>
-        <button type="button" class="swap" data-i="${i}">Swap (stub)</button>
       </div>
     `).join("");
 
