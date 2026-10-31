@@ -1,36 +1,37 @@
 <!DOCTYPE html>
-<!-- build: inventory-filter-wholeword+thumbs -->
+<!-- build: palette-v31-sat-leaf-thumb -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="description" content="Plan a week of dinners from your budget, allergies, and what's already in your fridge. Prototype for feedback." />
-<meta name="theme-color" content="#FFF4E6" />
+<meta name="theme-color" content="#FFEFD6" />
 <title>Week of Dinners — prototype</title>
 <style>
   :root {
-    /* Designer freeze — warm produce palette v3 */
-    --bg: #FFF4E6;
+    /* Warm produce v3.1 — higher sat; darker leaf for contrast; no yellow thumbs */
+    --bg: #FFEFD6;
     --card: #ffffff;
-    --ink: #1a1a1a;
-    --muted: #6b6b6b;
-    --line: #F0E0CC;
-    --accent: #E86E1E;
-    --chip: #FFE8C8;
-    --chip-on: #B8D63A;
-    --chip-on-text: #1a1a1a;
-    --soft: #FFE2B8;
-    --ok: #B8D63A;
-    --tomato: #E86E1E;
-    --leaf: #B8D63A;
-    --lemon: #FFD23A;
+    --ink: #141414;
+    --muted: #5A5A5A;
+    --line: #E8C9A8;
+    --accent: #F05A0A;
+    --chip: #FFD9A8;
+    --chip-on: #7BC41D;
+    --chip-on-text: #14240A;
+    --soft: #FFD19A;
+    --ok: #3F7A12;
+    --tomato: #F05A0A;
+    --leaf: #3F7A12;
+    --lemon: #F5C400;
+    --thumb-bg: #EEF5EA;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    background: #F5E6D0;
+    background: #E8D4B8;
     color: var(--ink);
     min-height: 100%;
     min-height: 100dvh;
@@ -218,7 +219,7 @@
     box-shadow: 0 3px 10px rgba(232,110,30,.3);
   }
     color: #fff;
-    background: linear-gradient(180deg, #FFB45C 0%, var(--accent) 48%, #E86E12 100%);
+    background: linear-gradient(180deg, #FF9E3D 0%, var(--accent) 48%, #D94800 100%);
     box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 4px 0 #C45A10, 0 8px 16px rgba(255,140,42,.32);
     text-shadow: 0 1px 0 rgba(0,0,0,.12);
   }
@@ -266,9 +267,9 @@
     justify-content: center;
     font-size: 26px;
     line-height: 1;
-    background: linear-gradient(145deg, #FFE8C0, #FFD08A);
-    border: 1px solid var(--line);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
+    background: var(--thumb-bg);
+    border: 1px solid #C5D9C0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
   }
   .day-body { flex: 1; min-width: 0; }
   .day {
@@ -306,6 +307,7 @@
   }
   .uses {
     font-size: 12px;
+    font-weight: 600;
     color: var(--ok);
     margin-top: 4px;
     line-height: 1.35;
