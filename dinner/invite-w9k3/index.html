@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- build: inventory-filter+thumbs $(date -u +%Y%m%dT%H%M%SZ) -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -593,7 +594,26 @@
     });
   }
 
-  function buildShopping(allergies) {
+  function parseInventoryTokens(raw) {
+    return String(raw || "")
+      .toLowerCase()
+      .split(/[,，\n;/]+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length >= 2);
+  }
+
+  /** Drop shopping rows covered by fridge/pantry text (wedge: only list what's missing). */
+  function isOnHand(itemName, tokens) {
+    const n = String(itemName || "").toLowerCase();
+    return tokens.some((t) => {
+      if (n.includes(t)) return true;
+      // token "chicken thighs" ↔ "Extra chicken thighs (backup)"
+      const stem = n.replace(/\([^)]*\)/g, " ").replace(/\s+/g, " ").trim();
+      return stem.includes(t) || (t.length >= 4 && t.includes(stem.split(" ")[0]));
+    });
+  }
+
+  function buildShopping(allergies, inventoryRaw) {
     const shop = JSON.parse(JSON.stringify(baseShopping));
     if (allergies.includes("dairy")) {
       shop.Dairy = [{ name: "Skip cheese / dairy toppings", qty: "avoid — dairy selected" }];
@@ -615,6 +635,12 @@
       // meals already have no shellfish; leave note
       shop.Protein.push({ name: "No shellfish this week", qty: "already avoided" });
     }
+    const tokens = parseInventoryTokens(inventoryRaw);
+    if (tokens.length) {
+      Object.keys(shop).forEach((g) => {
+        shop[g] = shop[g].filter((it) => !isOnHand(it.name, tokens));
+      });
+    }
     return shop;
   }
 
@@ -633,7 +659,7 @@
     if (inv) meta.innerHTML += `<span class="pill">Using fridge/pantry</span>`;
 
     const list = buildMeals(allergies);
-    currentShopping = buildShopping(allergies);
+    currentShopping = buildShopping(allergies, inv);
 
     const week = document.getElementById("weekList");
     week.innerHTML = list.map((m, i) => `
@@ -666,7 +692,12 @@
       `Est. new spend <strong>~$${est}</strong> · Remaining vs $${budget} cap: <strong>$${rem}</strong> (stub)`;
 
     const root = document.getElementById("shopGroups");
-    root.innerHTML = Object.entries(currentShopping).map(([group, items]) => `
+    const entries = Object.entries(currentShopping).filter(([, items]) => items.length);
+    if (!entries.length) {
+      root.innerHTML = '<p style="color:var(--muted);font-size:14px;line-height:1.4">Nothing to buy — fridge/pantry covers this stub list.</p>';
+      return;
+    }
+    root.innerHTML = entries.map(([group, items]) => `
       <div class="group">
         <div class="group-title">${group}</div>
         ${items.map((it, idx) => `
