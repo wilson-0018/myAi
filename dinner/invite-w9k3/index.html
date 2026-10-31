@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="Plan a week of dinners from your budget, allergies, and what's already in your fridge. Prototype for feedback." />
+<meta name="theme-color" content="#FFF6E8" />
+<title>Week of Dinners — prototype</title>
+<style>
+  :root {
+    /* Designer freeze — warm produce palette v2 (carrot + yellow-green) */
+    --bg: #FFF6E8;
+    --card: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #6b6b6b;
+    --line: #F0E4D4;
+    --accent: #FF8C2A;
+    --chip: #FFF1E0;
+    --chip-on: #C4D63A;
+    --chip-on-text: #ffffff;
+    --soft: #FFE9C8;
+    --ok: #C4D63A;
+    --tomato: #FF8C2A;
+    --leaf: #C4D63A;
+    --lemon: #F5C542;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #F2E6D8;
+    color: var(--ink);
+    min-height: 100%;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 12px;
+  }
+  .phone {
+    width: 100%;
+    max-width: 420px;
+    height: min(844px, 100dvh - 32px);
+    background: var(--bg);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0,0,0,.18);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid #999;
+  }
+  @media (max-width: 480px) {
+    body {
+      padding: 0;
+      background: var(--bg);
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    .phone {
+      max-width: none;
+      height: 100%;
+      height: 100dvh;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+    }
+  }
+  .nav {
+    padding: 14px 20px 12px;
+    padding-top: max(14px, env(safe-area-inset-top, 14px));
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+  .nav h1 {
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -0.2px;
+    flex: 1;
+  }
+  .back {
+    width: 28px; height: 28px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--card);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .back.hidden { visibility: hidden; pointer-events: none; }
+  .scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px 24px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .hint {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.45;
+    margin-bottom: 18px;
+  }
+  .field { margin-bottom: 18px; }
+  .label {
+    font-size: 12px;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .budget-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 14px;
+  }
+  .budget-row .cur {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .budget-row input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 22px;
+    font-weight: 650;
+    background: transparent;
+    color: var(--ink);
+    width: 100%;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    border: 1px solid var(--line);
+    background: var(--chip);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+    transition: .12s;
+    font-family: inherit;
+  }
+  .chip.on {
+    background: var(--chip-on);
+    color: var(--chip-on-text);
+    border-color: var(--chip-on);
+  }
+  textarea, .text-input {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink);
+    outline: none;
+    resize: vertical;
+    min-height: 88px;
+    line-height: 1.45;
+  }
+  .text-input {
+    min-height: 0;
+    margin-top: 8px;
+  }
+  .footer {
+    padding: 12px 20px calc(16px + var(--safe-bottom));
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .proto-note {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.35;
+  }
+  .btn {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 650;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-primary {
+    color: #fff;
+    background: linear-gradient(180deg, #FFB45C 0%, var(--accent) 48%, #E86E12 100%);
+    box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 4px 0 #C45A10, 0 8px 16px rgba(255,140,42,.32);
+    text-shadow: 0 1px 0 rgba(0,0,0,.12);
+  }
+  .btn-primary:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(255,255,255,.25) inset, 0 2px 0 #C45A10, 0 4px 8px rgba(255,140,42,.28);
+  }
+  .btn-secondary {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn-row {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-row .btn { flex: 1; }
+  .meta-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .pill {
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--soft);
+    color: var(--muted);
+    border: 1px solid var(--line);
+  }
+  .day {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .day-top {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .day-name {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    width: 36px;
+    flex-shrink: 0;
+  }
+  .dish {
+    font-size: 15px;
+    font-weight: 650;
+    flex: 1;
+    letter-spacing: -0.2px;
+  }
+  .time {
+    font-size: 12px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .uses {
+    font-size: 12px;
+    color: var(--ok);
+    margin-top: 4px;
+    line-height: 1.35;
+  }
+  .swap {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-family: inherit;
+  }
+  .group { margin-bottom: 18px; }
+  .group-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #ecece8;
+  }
+  .item:last-child { border-bottom: none; }
+  .check {
+    width: 18px; height: 18px;
+    border: 1.5px solid #999;
+    border-radius: 4px;
+    margin-top: 1px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    background: var(--card);
+  }
+  .check.on {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .item-body { flex: 1; }
+  .item-name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .item-name.done { text-decoration: line-through; color: var(--muted); }
+  .item-qty {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .budget-stub {
+    background: var(--soft);
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+  .budget-stub strong { color: var(--ink); font-weight: 650; }
+  .toast {
+    position: absolute;
+    left: 50%;
+    bottom: calc(96px + var(--safe-bottom));
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #fff;
+    font-size: 13px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+    white-space: nowrap;
+    z-index: 20;
+  }
+  .toast.show { opacity: 1; }
+  .screen { display: none; flex-direction: column; height: 100%; min-height: 0; }
+  .screen.active { display: flex; }
+</style>
+</head>
+<body>
+  <div class="phone" id="phone">
+
+    <!-- SCREEN 1: Constraints -->
+    <div class="screen active" id="s1" data-screen="1">
+      <div class="nav">
+        <div class="back hidden">‹</div>
+        <h1>🥕 Plan dinners</h1>
+      </div>
+      <div class="scroll">
+        <p class="hint">Three constraints only. No calorie tracking, no community.</p>
+
+        <div class="field">
+          <div class="label">Weekly budget (USD)</div>
+          <div class="budget-row">
+            <span class="cur">$</span>
+            <input type="number" id="budget" value="80" min="20" max="500" step="5" inputmode="numeric" />
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label">Allergies / avoid</div>
+          <div class="chips" id="allergies">
+            <button type="button" class="chip" data-v="dairy">dairy</button>
+            <button type="button" class="chip" data-v="nuts">nuts</button>
+            <button type="button" class="chip" data-v="shellfish">shellfish</button>
+            <button type="button" class="chip" data-v="gluten">gluten</button>
+            <button type="button" class="chip" data-v="egg">egg</button>
+            <button type="button" class="chip" data-v="soy">soy</button>
+          </div>
+          <input class="text-input" id="allergyExtra" type="text" placeholder="Other (free text)…" />
+        </div>
+
+        <div class="field">
+          <div class="label">Kitchen gear</div>
+          <div class="chips" id="gear">
+            <button type="button" class="chip on" data-v="oven">oven</button>
+            <button type="button" class="chip on" data-v="stovetop">stovetop</button>
+            <button type="button" class="chip" data-v="microwave">microwave</button>
+            <button type="button" class="chip" data-v="air fryer">air fryer</button>
+            <button type="button" class="chip" data-v="slow cooker">slow cooker</button>
+            <button type="button" class="chip" data-v="instant pot">instant pot</button>
+            <button type="button" class="chip" data-v="blender">blender</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="label">Fridge / pantry on hand</div>
+          <textarea id="inventory" placeholder="chicken thighs, rice, onions…"></textarea>
+        </div>
+      </div>
+      <div class="footer">
+        <button class="btn btn-primary" id="planBtn">Plan my week</button>
+        <p class="proto-note">Prototype for feedback · fake menus · not medical advice</p>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: Week plan -->
+    <div class="screen" id="s2" data-screen="2">
+      <div class="nav">
+        <button class="back" data-go="1" aria-label="Back">‹</button>
+        <h1>🍋 This week</h1>
+      </div>
+      <div class="scroll">
+        <div class="meta-bar" id="metaBar"></div>
+        <div id="weekList"></div>
+      </div>
+      <div class="footer">
+        <button class="btn btn-primary" data-go="3">Generate shopping list</button>
+        <p class="proto-note">Prototype for feedback · fake menus · not medical advice</p>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: Shopping list -->
+    <div class="screen" id="s3" data-screen="3">
+      <div class="nav">
+        <button class="back" data-go="2" aria-label="Back">‹</button>
+        <h1>🥬 Shopping list</h1>
+      </div>
+      <div class="scroll">
+        <div class="budget-stub" id="budgetStub"></div>
+        <div id="shopGroups"></div>
+      </div>
+      <div class="footer">
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="copyBtn">Copy list</button>
+          <button class="btn btn-primary" id="shareBtn">Share</button>
+        </div>
+        <p class="proto-note">Prototype for feedback · fake menus · not medical advice</p>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+  </div>
+
+<script>
+(function () {
+  const baseMeals = [
+    { day: "Mon", dish: "Lemon garlic chicken thighs + rice", time: "~35 min", uses: "Uses on hand: chicken thighs, rice", tags: [] },
+    { day: "Tue", dish: "Onion & white bean skillet", time: "~25 min", uses: "Uses on hand: onions, pantry beans", tags: [] },
+    { day: "Wed", dish: "Sheet-pan veggies + sausage", time: "~40 min", uses: "Oven · under $9", tags: [] },
+    { day: "Thu", dish: "Chicken fried rice remix", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: ["egg"] },
+    { day: "Fri", dish: "Tomato pasta with spinach", time: "~25 min", uses: "Stovetop · under $7", tags: ["gluten", "dairy"] },
+    { day: "Sat", dish: "Black bean tacos + slaw", time: "~30 min", uses: "Uses on hand: onions", tags: ["gluten"] },
+    { day: "Sun", dish: "Slow-roast chicken + potatoes", time: "~55 min", uses: "Oven · batch for leftovers", tags: [] }
+  ];
+
+  const altMeals = {
+    egg: { day: "Thu", dish: "Chicken rice bowl (no egg)", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: [] },
+    gluten: {
+      Fri: { day: "Fri", dish: "Tomato quinoa with spinach", time: "~25 min", uses: "Stovetop · gluten-free · under $8", tags: [] },
+      Sat: { day: "Sat", dish: "Black bean lettuce wraps + slaw", time: "~25 min", uses: "Uses on hand: onions · no tortillas", tags: [] }
+    },
+    dairy: { day: "Fri", dish: "Tomato pasta with spinach (no cheese)", time: "~25 min", uses: "Stovetop · dairy-free · under $7", tags: ["gluten"] }
+  };
+
+  const baseShopping = {
+    Produce: [
+      { name: "Baby spinach", qty: "1 bag" },
+      { name: "Cabbage (for slaw)", qty: "½ head" },
+      { name: "Tomatoes / canned crushed", qty: "1 can" },
+      { name: "Lemons", qty: "2" },
+      { name: "Garlic", qty: "1 head" },
+      { name: "Potatoes", qty: "2 lb" }
+    ],
+    Protein: [
+      { name: "Chicken sausage", qty: "1 pack" },
+      { name: "Extra chicken thighs (backup)", qty: "1 lb" }
+    ],
+    Dairy: [
+      { name: "Optional: grated cheese", qty: "small bag — skip if dairy-free" }
+    ],
+    Pantry: [
+      { name: "Black beans", qty: "2 cans" },
+      { name: "White beans", qty: "1 can" },
+      { name: "Pasta (spaghetti)", qty: "1 box" },
+      { name: "Tortillas", qty: "1 pack" },
+      { name: "Olive oil / spices top-up", qty: "as needed" }
+    ]
+  };
+
+  let currentShopping = JSON.parse(JSON.stringify(baseShopping));
+
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove("show"), 1800);
+  }
+
+  function go(n) {
+    n = Number(n);
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById("s" + n).classList.add("active");
+    if (n === 2) renderWeek();
+    if (n === 3) renderShop();
+  }
+
+  document.querySelectorAll("[data-go]").forEach(el => {
+    el.addEventListener("click", () => go(el.getAttribute("data-go")));
+  });
+
+  document.querySelectorAll(".chips").forEach(group => {
+    group.addEventListener("click", e => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      chip.classList.toggle("on");
+    });
+  });
+
+  document.getElementById("planBtn").addEventListener("click", () => go(2));
+
+  function selected(id) {
+    return [...document.querySelectorAll("#" + id + " .chip.on")].map(c => c.dataset.v);
+  }
+
+  function allergySet() {
+    const allergies = selected("allergies").map(a => a.toLowerCase());
+    const extra = (document.getElementById("allergyExtra").value || "").trim().toLowerCase();
+    if (extra) allergies.push(extra);
+    return allergies;
+  }
+
+  function buildMeals(allergies) {
+    return baseMeals.map(m => {
+      if (allergies.includes("egg") && m.tags.includes("egg")) return altMeals.egg;
+      if (allergies.includes("gluten") && m.day === "Fri") return altMeals.gluten.Fri;
+      if (allergies.includes("gluten") && m.day === "Sat") return altMeals.gluten.Sat;
+      if (allergies.includes("dairy") && m.tags.includes("dairy") && !allergies.includes("gluten")) return altMeals.dairy;
+      return m;
+    });
+  }
+
+  function buildShopping(allergies) {
+    const shop = JSON.parse(JSON.stringify(baseShopping));
+    if (allergies.includes("dairy")) {
+      shop.Dairy = [{ name: "Skip cheese / dairy toppings", qty: "avoid — dairy selected" }];
+    }
+    if (allergies.includes("gluten")) {
+      shop.Pantry = shop.Pantry.map(it => {
+        if (it.name.indexOf("Pasta") === 0) return { name: "Quinoa (or GF pasta)", qty: "1 box/bag" };
+        if (it.name.indexOf("Tortillas") === 0) return { name: "Butter lettuce (wraps)", qty: "1 head" };
+        return it;
+      });
+    }
+    if (allergies.includes("nuts")) {
+      shop.Pantry.push({ name: "Check labels: no nut oils / pesto", qty: "as needed" });
+    }
+    if (allergies.includes("soy")) {
+      shop.Pantry.push({ name: "Skip soy sauce — use salt + lemon", qty: "on hand OK" });
+    }
+    if (allergies.includes("shellfish")) {
+      // meals already have no shellfish; leave note
+      shop.Protein.push({ name: "No shellfish this week", qty: "already avoided" });
+    }
+    return shop;
+  }
+
+  function renderWeek() {
+    const budget = document.getElementById("budget").value || "80";
+    const allergies = allergySet();
+    const gear = selected("gear");
+    const inv = (document.getElementById("inventory").value || "").trim();
+
+    const meta = document.getElementById("metaBar");
+    meta.innerHTML = "";
+    meta.innerHTML += `<span class="pill">Budget $${budget}/wk</span>`;
+    if (allergies.length) meta.innerHTML += `<span class="pill">Avoid: ${allergies.join(", ")}</span>`;
+    else meta.innerHTML += `<span class="pill">No allergies set</span>`;
+    if (gear.length) meta.innerHTML += `<span class="pill">${gear.slice(0, 3).join(" · ")}${gear.length > 3 ? " +" : ""}</span>`;
+    if (inv) meta.innerHTML += `<span class="pill">Using fridge/pantry</span>`;
+
+    const list = buildMeals(allergies);
+    currentShopping = buildShopping(allergies);
+
+    const week = document.getElementById("weekList");
+    week.innerHTML = list.map((m, i) => `
+      <div class="day">
+        <div class="day-top">
+          <span class="day-name">${m.day}</span>
+          <span class="dish">${m.dish}</span>
+          <span class="time">${m.time}</span>
+        </div>
+        <div class="uses">${m.uses}</div>
+        <button type="button" class="swap" data-i="${i}">Swap (stub)</button>
+      </div>
+    `).join("");
+
+    week.querySelectorAll(".swap").forEach(btn => {
+      btn.addEventListener("click", () => toast("Swap stub — not in this prototype"));
+    });
+  }
+
+  function renderShop() {
+    const budget = Number(document.getElementById("budget").value || 80);
+    const est = 62;
+    const rem = Math.max(0, budget - est);
+    document.getElementById("budgetStub").innerHTML =
+      `Est. new spend <strong>~$${est}</strong> · Remaining vs $${budget} cap: <strong>$${rem}</strong> (stub)`;
+
+    const root = document.getElementById("shopGroups");
+    root.innerHTML = Object.entries(currentShopping).map(([group, items]) => `
+      <div class="group">
+        <div class="group-title">${group}</div>
+        ${items.map((it, idx) => `
+          <div class="item">
+            <div class="check" data-g="${group}" data-i="${idx}" role="checkbox" aria-checked="false" tabindex="0"></div>
+            <div class="item-body">
+              <div class="item-name">${it.name}</div>
+              <div class="item-qty">${it.qty}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `).join("");
+
+    root.querySelectorAll(".check").forEach(c => {
+      const toggle = () => {
+        c.classList.toggle("on");
+        c.textContent = c.classList.contains("on") ? "✓" : "";
+        c.setAttribute("aria-checked", c.classList.contains("on") ? "true" : "false");
+        const name = c.parentElement.querySelector(".item-name");
+        name.classList.toggle("done", c.classList.contains("on"));
+      };
+      c.addEventListener("click", toggle);
+      c.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+      });
+    });
+  }
+
+  function listText() {
+    const lines = ["Shopping list — Week of Dinners", ""];
+    Object.entries(currentShopping).forEach(([g, items]) => {
+      lines.push(g.toUpperCase());
+      items.forEach(it => lines.push(`- ${it.name} (${it.qty})`));
+      lines.push("");
+    });
+    return lines.join("\n");
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        ta.remove();
+        return ok;
+      } catch {
+        return false;
+      }
+    }
+  }
+
+  document.getElementById("copyBtn").addEventListener("click", async () => {
+    const ok = await copyText(listText());
+    toast(ok ? "List copied" : "Copy failed — select text manually");
+  });
+
+  document.getElementById("shareBtn").addEventListener("click", async () => {
+    const text = listText();
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Shopping list — Week of Dinners", text });
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+      }
+    }
+    const ok = await copyText(text);
+    toast(ok ? "Share unavailable — list copied instead" : "Share unavailable");
+  });
+
+  // Demo defaults
+  document.getElementById("inventory").value = "chicken thighs, rice, onions";
+  document.querySelector('#allergies .chip[data-v="nuts"]').classList.add("on");
+})();
+</script>
+</body>
+</html>
