@@ -17,7 +17,8 @@
     --line: #F0DDD0;
     --accent: #F05A0A;
     --chip: #FFFFFF;
-    --chip-on: #96DC28;
+    --chip-border: #E5E5E5;
+    --chip-on: #B8D63A;
     --chip-on-text: #14240A;
     --soft: #FFE0C2;
     --ok: #3D6B1E;
@@ -149,7 +150,7 @@
     gap: 8px;
   }
   .chip {
-    border: 1px solid var(--line);
+    border: 1px solid var(--chip-border);
     background: var(--chip);
     color: var(--ink);
     border-radius: 999px;
@@ -446,13 +447,13 @@
     <div class="screen active" id="s1" data-screen="1">
       <div class="nav">
         <div class="back hidden">‹</div>
-        <h1>🥕 Plan dinners</h1>
+        <h1>🥕 Plan Dinners</h1>
       </div>
       <div class="scroll">
         <p class="hint">Three constraints only. No calorie tracking, no community.</p>
 
         <div class="field">
-          <div class="label">Weekly budget (USD)</div>
+          <div class="label">Weekly Budget (USD)</div>
           <div class="budget-row">
             <span class="cur">$</span>
             <input type="number" id="budget" value="80" min="20" max="500" step="5" inputmode="numeric" />
@@ -460,39 +461,39 @@
         </div>
 
         <div class="field">
-          <div class="label">Allergies / avoid</div>
+          <div class="label">Allergies / Avoid</div>
           <div class="chips" id="allergies">
-            <button type="button" class="chip" data-v="dairy">dairy</button>
-            <button type="button" class="chip" data-v="nuts">nuts</button>
-            <button type="button" class="chip" data-v="shellfish">shellfish</button>
-            <button type="button" class="chip" data-v="gluten">gluten</button>
-            <button type="button" class="chip" data-v="egg">egg</button>
-            <button type="button" class="chip" data-v="soy">soy</button>
+            <button type="button" class="chip" data-v="dairy">Dairy</button>
+            <button type="button" class="chip" data-v="nuts">Nuts</button>
+            <button type="button" class="chip" data-v="shellfish">Shellfish</button>
+            <button type="button" class="chip" data-v="gluten">Gluten</button>
+            <button type="button" class="chip" data-v="egg">Egg</button>
+            <button type="button" class="chip" data-v="soy">Soy</button>
           </div>
           <input class="text-input" id="allergyExtra" type="text" placeholder="Other (free text)…" />
         </div>
 
         <div class="field">
-          <div class="label">Kitchen gear</div>
+          <div class="label">Kitchen Gear</div>
           <div class="chips" id="gear">
-            <button type="button" class="chip on" data-v="oven">oven</button>
-            <button type="button" class="chip on" data-v="stovetop">stovetop</button>
-            <button type="button" class="chip" data-v="microwave">microwave</button>
-            <button type="button" class="chip" data-v="air fryer">air fryer</button>
-            <button type="button" class="chip" data-v="slow cooker">slow cooker</button>
-            <button type="button" class="chip" data-v="instant pot">instant pot</button>
-            <button type="button" class="chip" data-v="blender">blender</button>
+            <button type="button" class="chip on" data-v="oven">Oven</button>
+            <button type="button" class="chip on" data-v="stovetop">Stovetop</button>
+            <button type="button" class="chip" data-v="microwave">Microwave</button>
+            <button type="button" class="chip" data-v="air fryer">Air Fryer</button>
+            <button type="button" class="chip" data-v="slow cooker">Slow Cooker</button>
+            <button type="button" class="chip" data-v="instant pot">Instant Pot</button>
+            <button type="button" class="chip" data-v="blender">Blender</button>
           </div>
         </div>
 
         <div class="field">
-          <div class="label">Fridge / pantry on hand</div>
+          <div class="label">Fridge / Pantry on Hand</div>
           <textarea id="inventory" placeholder="chicken thighs, rice, onions…"></textarea>
         </div>
       </div>
       <div class="footer">
-        <button class="btn btn-primary" id="planBtn">Plan my week</button>
-        <p class="proto-note">Prototype for feedback · fake menus · not medical advice</p>
+        <button class="btn btn-primary" id="planBtn">Plan My Week</button>
+        <p class="proto-note">Prototype for Feedback · Fake Menus · Not Medical Advice</p>
       </div>
     </div>
 
@@ -500,15 +501,15 @@
     <div class="screen" id="s2" data-screen="2">
       <div class="nav">
         <button class="back" data-go="1" aria-label="Back">‹</button>
-        <h1>🍋 This week</h1>
+        <h1>🍋 This Week</h1>
       </div>
       <div class="scroll">
         <div class="meta-bar" id="metaBar"></div>
         <div id="weekList"></div>
       </div>
       <div class="footer">
-        <button class="btn btn-primary" data-go="3">Generate shopping list</button>
-        <p class="proto-note">Prototype for feedback · fake menus · not medical advice</p>
+        <button class="btn btn-primary" data-go="3">Generate Shopping List</button>
+        <p class="proto-note">Prototype for Feedback · Fake Menus · Not Medical Advice</p>
       </div>
     </div>
 
@@ -516,7 +517,7 @@
     <div class="screen" id="s3" data-screen="3">
       <div class="nav">
         <button class="back" data-go="2" aria-label="Back">‹</button>
-        <h1>🥬 Shopping list</h1>
+        <h1>🥬 Shopping List</h1>
       </div>
       <div class="scroll">
         <div class="budget-stub" id="budgetStub"></div>
@@ -524,10 +525,10 @@
       </div>
       <div class="footer">
         <div class="btn-row">
-          <button class="btn btn-secondary" id="copyBtn">Copy list</button>
+          <button class="btn btn-secondary" id="copyBtn">Copy List</button>
           <button class="btn btn-primary" id="shareBtn">Share</button>
         </div>
-        <p class="proto-note">Prototype for feedback · fake menus · not medical advice</p>
+        <p class="proto-note">Prototype for Feedback · Fake Menus · Not Medical Advice</p>
       </div>
     </div>
 
@@ -723,7 +724,7 @@
               <span class="time">${m.time}</span>
             </div>
             <div class="uses">${m.uses}</div>
-            <button type="button" class="swap" data-i="${i}">Swap (stub)</button>
+            <button type="button" class="swap" data-i="${i}">Swap (Stub)</button>
           </div>
         </div>
       </div>
