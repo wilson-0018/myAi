@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: s2-onhand-cook-v1 -->
+<!-- build: s1-fridge-icons-tight-v1 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -718,10 +718,12 @@
 
 
   /* Fridge / Pantry three-category chips */
+  #s1 .field { margin-bottom: 14px; }
+  #s1 .hint { margin-bottom: 14px; line-height: 1.3; }
   .fridge-cat {
     border: 1px solid #E8E8E8;
     border-radius: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     overflow: hidden;
     background: #FAFAFA;
   }
@@ -732,7 +734,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 8px 10px;
     border: none;
     background: transparent;
     cursor: pointer;
@@ -741,6 +743,30 @@
     font-weight: 650;
     color: var(--ink);
     text-align: left;
+  }
+  .fridge-cat-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .fridge-ico {
+    font-size: 18px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .fridge-cat-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+    line-height: 1.15;
+  }
+  .fridge-cat-name { font-weight: 650; }
+  .fridge-cat-hint {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
   }
   .fridge-cat-head .chev {
     color: var(--muted);
@@ -876,7 +902,7 @@
 
           <div class="fridge-cat open" data-cat="meat">
             <button type="button" class="fridge-cat-head" aria-expanded="true">
-              <span>Meat &amp; Eggs</span>
+              <span class="fridge-cat-title"><span class="fridge-ico" aria-hidden="true">🥩🥚</span><span class="fridge-cat-text"><span class="fridge-cat-name">Meat &amp; Eggs</span><span class="fridge-cat-hint">Tap to multi-select</span></span></span>
               <span class="chev" aria-hidden="true">›</span>
             </button>
             <div class="fridge-cat-body">
@@ -900,7 +926,7 @@
 
           <div class="fridge-cat" data-cat="produce">
             <button type="button" class="fridge-cat-head" aria-expanded="false">
-              <span>Produce</span>
+              <span class="fridge-cat-title"><span class="fridge-ico" aria-hidden="true">🥦</span><span class="fridge-cat-text"><span class="fridge-cat-name">Produce</span><span class="fridge-cat-hint">Tap to multi-select</span></span></span>
               <span class="chev" aria-hidden="true">›</span>
             </button>
             <div class="fridge-cat-body">
@@ -923,7 +949,7 @@
 
           <div class="fridge-cat" data-cat="sauces">
             <button type="button" class="fridge-cat-head" aria-expanded="false">
-              <span>Sauces &amp; Condiments</span>
+              <span class="fridge-cat-title"><span class="fridge-ico" aria-hidden="true">🫙</span><span class="fridge-cat-text"><span class="fridge-cat-name">Sauces &amp; Condiments</span><span class="fridge-cat-hint">Tap to multi-select</span></span></span>
               <span class="chev" aria-hidden="true">›</span>
             </button>
             <div class="fridge-cat-body">
