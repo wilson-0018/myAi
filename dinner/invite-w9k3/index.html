@@ -276,9 +276,9 @@
     gap: 12px;
   }
   .thumb {
-    width: 80px;
-    height: 80px;
-    border-radius: 12px;
+    width: 104px;
+    height: 104px;
+    border-radius: 14px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -432,6 +432,46 @@
     color: var(--ink);
   }
   .budget-cell .v.ok { color: var(--leaf); }
+  .budget-cell .v.warn { color: #E86E1E; }
+  .budget-stub.warn {
+    border-color: #F5C4A0;
+    background: #FFF6EE;
+  }
+  .budget-bar > span.warn {
+    background: linear-gradient(90deg, #FFB85A, #E86E1E);
+  }
+  .budget-alert {
+    margin-top: 8px;
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #E86E1E;
+  }
+  .item-est {
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--leaf);
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+  .week-budget {
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: var(--mint);
+    border: 1px solid #D7E8DA;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--leaf);
+  }
+  .week-budget.warn { background: #FFF6EE; border-color: #F5C4A0; color: #E86E1E; }
+  .week-budget .nums { font-weight: 800; color: var(--ink); }
   .budget-bar {
     height: 8px;
     border-radius: 999px;
@@ -597,6 +637,7 @@
         <h1>🍋 This Week</h1>
       </div>
       <div class="scroll">
+        <div class="week-budget" id="weekBudget"></div>
         <div class="meta-bar" id="metaBar"></div>
         <div id="weekList"></div>
       </div>
@@ -651,26 +692,26 @@
 
   const baseShopping = {
     Produce: [
-      { name: "Baby Spinach", qty: "1 bag", emoji: "🥬" },
-      { name: "Cabbage (For Slaw)", qty: "½ head", emoji: "🥬" },
-      { name: "Tomatoes / Canned Crushed", qty: "1 can", emoji: "🍅" },
-      { name: "Lemons", qty: "2", emoji: "🍋" },
-      { name: "Garlic", qty: "1 head", emoji: "🧄" },
-      { name: "Potatoes", qty: "2 lb", emoji: "🥔" }
+      { name: "Baby Spinach", qty: "1 bag", emoji: "🥬", est: 2.5 },
+      { name: "Cabbage (For Slaw)", qty: "½ head", emoji: "🥬", est: 1.8 },
+      { name: "Tomatoes / Canned Crushed", qty: "1 can", emoji: "🍅", est: 1.5 },
+      { name: "Lemons", qty: "2", emoji: "🍋", est: 1.2 },
+      { name: "Garlic", qty: "1 head", emoji: "🧄", est: 0.8 },
+      { name: "Potatoes", qty: "2 lb", emoji: "🥔", est: 3.0 }
     ],
     Protein: [
-      { name: "Chicken Sausage", qty: "1 pack", emoji: "🌭" },
-      { name: "Extra Chicken Thighs (Backup)", qty: "1 lb", emoji: "🍗" }
+      { name: "Chicken Sausage", qty: "1 pack", emoji: "🌭", est: 6.5 },
+      { name: "Extra Chicken Thighs (Backup)", qty: "1 lb", emoji: "🍗", est: 5.5 }
     ],
     Dairy: [
-      { name: "Optional: Grated Cheese", qty: "small bag — skip if dairy-free", emoji: "🧀" }
+      { name: "Optional: Grated Cheese", qty: "small bag — skip if dairy-free", emoji: "🧀", est: 3.0 }
     ],
     Pantry: [
-      { name: "Black Beans", qty: "2 cans", emoji: "🫘" },
-      { name: "White Beans", qty: "1 can", emoji: "🥫" },
-      { name: "Pasta (Spaghetti)", qty: "1 box", emoji: "🍝" },
-      { name: "Tortillas", qty: "1 pack", emoji: "🫓" },
-      { name: "Olive Oil / Spices Top-Up", qty: "as needed", emoji: "🫒" }
+      { name: "Black Beans", qty: "2 cans", emoji: "🫘", est: 2.4 },
+      { name: "White Beans", qty: "1 can", emoji: "🥫", est: 1.2 },
+      { name: "Pasta (Spaghetti)", qty: "1 box", emoji: "🍝", est: 1.8 },
+      { name: "Tortillas", qty: "1 pack", emoji: "🫓", est: 3.2 },
+      { name: "Olive Oil / Spices Top-Up", qty: "as needed", emoji: "🫒", est: 4.0 }
     ]
   };
   const groupEmoji = { Produce: "🥦", Protein: "🥩", Dairy: "🥛", Pantry: "🫙" };
@@ -789,11 +830,26 @@
     return shop;
   }
 
+  function sumEst(shop) {
+    return Object.values(shop).flat().reduce((s, it) => s + (Number(it.est) || 0), 0);
+  }
+
   function renderWeek() {
     const budget = document.getElementById("budget").value || "80";
     const allergies = allergySet();
     const gear = selected("gear");
     const inv = (document.getElementById("inventory").value || "").trim();
+    const list = buildMeals(allergies);
+    currentShopping = buildShopping(allergies, inv);
+    const est = Math.round(sumEst(currentShopping) * 10) / 10;
+    const cap = Number(budget) || 80;
+    const rem = Math.max(0, Math.round((cap - est) * 10) / 10);
+    const over = est > cap;
+    const wb = document.getElementById("weekBudget");
+    wb.classList.toggle("warn", over);
+    wb.innerHTML = over
+      ? `<span>⚠️ Over Budget</span><span class="nums">Est $${est} / $${cap}</span>`
+      : `<span>💰 Budget</span><span class="nums">Est $${est} · Left $${rem} / $${cap}</span>`;
 
     const meta = document.getElementById("metaBar");
     meta.innerHTML = "";
@@ -802,9 +858,6 @@
     else meta.innerHTML += `<span class="pill">No Allergies Set</span>`;
     if (gear.length) meta.innerHTML += `<span class="pill">${gear.slice(0, 3).join(" · ")}${gear.length > 3 ? " +" : ""}</span>`;
     if (inv) meta.innerHTML += `<span class="pill">Using Fridge/Pantry</span>`;
-
-    const list = buildMeals(allergies);
-    currentShopping = buildShopping(allergies, inv);
 
     const week = document.getElementById("weekList");
     week.innerHTML = list.map((m) => {
@@ -830,18 +883,21 @@
 
   function renderShop() {
     const budget = Number(document.getElementById("budget").value || 80);
-    const est = 62;
-    const rem = Math.max(0, budget - est);
+    const est = Math.round(sumEst(currentShopping) * 10) / 10;
+    const rem = Math.max(0, Math.round((budget - est) * 10) / 10);
+    const over = est > budget;
     const pct = Math.min(100, Math.round((est / Math.max(budget, 1)) * 100));
-    document.getElementById("budgetStub").innerHTML = `
+    const stub = document.getElementById("budgetStub");
+    stub.classList.toggle("warn", over);
+    stub.innerHTML = `
       <div class="budget-card-title">💰 Weekly Budget</div>
       <div class="budget-grid">
         <div class="budget-cell"><div class="k">Cap</div><div class="v">$${budget}</div></div>
-        <div class="budget-cell"><div class="k">Est. Spend</div><div class="v">~$${est}</div></div>
-        <div class="budget-cell"><div class="k">Left</div><div class="v ok">$${rem}</div></div>
+        <div class="budget-cell"><div class="k">Est. Cart</div><div class="v${over ? " warn" : ""}">~$${est}</div></div>
+        <div class="budget-cell"><div class="k">Left</div><div class="v ${over ? "warn" : "ok"}">$${rem}</div></div>
       </div>
-      <div class="budget-bar" aria-hidden="true"><span style="width:${pct}%"></span></div>
-      <div class="budget-note">Stub estimate · fridge/pantry already counted</div>`;
+      <div class="budget-bar" aria-hidden="true"><span class="${over ? "warn" : ""}" style="width:${pct}%"></span></div>
+      ${over ? '<div class="budget-alert">Over budget — trim the list or raise Cap</div>' : '<div class="budget-note">Stub estimate · fridge/pantry already counted</div>'}`;
 
     const root = document.getElementById("shopGroups");
     const entries = Object.entries(currentShopping).filter(([, items]) => items.length);
@@ -860,6 +916,7 @@
               <div class="item-name">${it.name}</div>
               <div class="item-qty">${it.qty}</div>
             </div>
+            <div class="item-est">$${Number(it.est || 0).toFixed(2)}</div>
           </div>
         `).join("")}
       </div>
