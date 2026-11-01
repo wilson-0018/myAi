@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: type-13-shop-meta-row -->
+<!-- build: hifi-week-shop-mock-v1 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -227,18 +227,9 @@
   }
   .btn-primary {
     color: #fff;
-    background: linear-gradient(180deg, #FFB85A 0%, #E86E1E 100%);
-    box-shadow: 0 6px 16px rgba(232,110,30,.35);
-    border-radius: 16px;
-    text-shadow: 0 1px 0 rgba(0,0,0,.1);
-  }
-  .btn-primary:active {
-    transform: translateY(1px);
-    box-shadow: 0 3px 10px rgba(232,110,30,.3);
-  }
-    color: #fff;
     background: linear-gradient(180deg, #FF9E3D 0%, var(--accent) 48%, #D94800 100%);
     box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 4px 0 #C45A10, 0 8px 16px rgba(255,140,42,.32);
+    border-radius: 16px;
     text-shadow: 0 1px 0 rgba(0,0,0,.12);
   }
   .btn-primary:active {
@@ -256,7 +247,7 @@
   }
   .btn-row .btn { flex: 1; }
   .meta-bar {
-    display: flex;
+    display: none;
     gap: 8px;
     flex-wrap: wrap;
     margin-bottom: 14px;
@@ -279,29 +270,60 @@
   .day-body { flex: 1; min-width: 0; }
 
   .day-name {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-family: "Fredoka", "Nunito", sans-serif;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #3D6B1E;
-    min-width: 36px;
+    color: #FFFFFF;
+    background: #3D6B1E;
+    border-radius: 999px;
+    padding: 3px 10px;
+    min-width: 0;
     flex-shrink: 0;
+    line-height: 1.2;
   }
-  .uses {
-    font-size: 13px;
-    font-weight: 600;
+  .uses-block, .cook-block { margin-top: 6px; line-height: 1.35; }
+  .uses-label {
+    font-size: 12px;
+    font-weight: 700;
     color: #3D6B1E;
-    margin-top: 6px;
-    line-height: 1.35;
   }
-  .cook {
+  .uses-body {
     font-size: 13px;
     font-weight: 600;
-    color: #B8793A;
-    margin-top: 2px;
-    line-height: 1.35;
+    color: #1A1A1A;
+    margin-top: 1px;
   }
+  .cook-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #B8793A;
+  }
+  .cook-body {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2F6FED;
+    margin-top: 1px;
+  }
+  .no-swap {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 8px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #E8A05A;
+    color: #FFFFFF;
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    align-self: flex-start;
+  }
+  .day-body { display: flex; flex-direction: column; align-items: flex-start; }
   .thumb {
     width: 112px;
     height: 112px;
@@ -329,25 +351,67 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 0 12px;
+    gap: 10px;
+    margin: 0 0 14px;
+    flex-wrap: nowrap;
+  }
+  .select-all-wrap {
+    display: flex;
+    align-items: center;
     gap: 8px;
-  }
-  .select-all {
-    font-family: "Fredoka", "Nunito", sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--leaf);
-    background: var(--mint);
-    border: 1px solid #D7E8DA;
-    border-radius: 999px;
-    padding: 7px 12px;
+    flex-shrink: 0;
     cursor: pointer;
+    user-select: none;
   }
-  .shop-count {
-    font-size: 12px;
-    color: var(--muted);
+  .select-all-wrap .check {
+    margin-top: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+  }
+  .select-all-label {
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+  }
+  .select-all { display: none; }
+  .shop-count { display: none; }
+  .budget-inline {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+    min-width: 0;
+    justify-content: flex-end;
+    gap: 0;
+  }
+  .budget-inline .bi {
+    flex: 1;
+    text-align: center;
+    padding: 0 6px;
+    border-left: 1px solid #E0E0E0;
+  }
+  .budget-inline .bi:first-child { border-left: none; }
+  .budget-inline .k {
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 9px;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #3D6B1E;
+    line-height: 1.2;
+    margin-bottom: 2px;
   }
+  .budget-inline .bi.est .k { color: #666; }
+  .budget-inline .v {
+    font-size: 14px;
+    font-weight: 800;
+    color: #3D6B1E;
+    line-height: 1.2;
+  }
+  .budget-inline .bi.est .v { color: #0B1F3A; }
+  .budget-inline .v.warn { color: #E86E1E; }
+  .budget-stub { display: none !important; }
   .item-thumb {
     width: 44px;
     height: 44px;
@@ -378,21 +442,40 @@
   }
   .day-top {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
-    margin-bottom: 4px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin-bottom: 2px;
+    width: 100%;
   }
 
   .dish {
     font-size: 16px;
-    font-weight: 650;
-    flex: 1;
+    font-weight: 800;
+    color: #0B1F3A;
     letter-spacing: -0.2px;
+    line-height: 1.25;
   }
   .time {
-    font-size: 12px;
+    display: none;
+  }
+  .week-sub {
+    font-size: 13px;
     color: var(--muted);
-    flex-shrink: 0;
+    line-height: 1.4;
+    margin: 0 0 14px;
+  }
+  #s2 .nav h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0B1F3A;
+    letter-spacing: -0.3px;
+  }
+  #s3 .nav h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0B1F3A;
+    letter-spacing: -0.3px;
   }
 
   .group { margin-bottom: 18px; }
@@ -408,40 +491,75 @@
   }
   .item {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid #ecece8;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #E8E8E8;
+    border-radius: 14px;
+    background: #FFFFFF;
   }
-  .item:last-child { border-bottom: none; }
+  .item:last-child { margin-bottom: 0; }
   .check {
-    width: 18px; height: 18px;
-    border: 1.5px solid #999;
-    border-radius: 4px;
-    margin-top: 1px;
+    width: 22px; height: 22px;
+    border: 1.5px solid #C0C0C0;
+    border-radius: 6px;
+    margin-top: 0;
     flex-shrink: 0;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
-    background: var(--card);
+    font-size: 12px;
+    background: #FFFFFF;
   }
   .check.on {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: #3D6B1E;
+    border-color: #3D6B1E;
     color: #fff;
   }
-  .item-body { flex: 1; }
-  .item-name {
-    font-size: 14px;
-    font-weight: 500;
-  }
-  .item-name.done { text-decoration: line-through; color: var(--muted); }
-  .item-meta {
+  .item-body {
+    flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-top: 4px;
-    flex-wrap: wrap;
+  }
+  .item-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0B1F3A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 0 1 auto;
+    max-width: 42%;
+  }
+  .item-name.done { text-decoration: line-through; color: var(--muted); }
+  .item-meta {
+    display: contents;
+  }
+  .item-qty {
+    display: inline-flex !important;
+    align-items: center;
+    margin-top: 0 !important;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #E8F6EC;
+    border: 1px solid #D0EAD8;
+    color: #2F6B3A;
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .item-est {
+    margin-left: auto !important;
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    color: #0B1F3A;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .budget-stub {
     background: var(--mint);
@@ -506,28 +624,8 @@
     font-weight: 600;
     color: #E86E1E;
   }
-  .item-est {
-    font-family: "Fredoka", "Nunito", sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--leaf);
-    flex-shrink: 0;
-    margin-left: 0;
-  }
   .week-budget {
-    margin: 0 0 12px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    background: var(--mint);
-    border: 1px solid #D7E8DA;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    font-family: "Fredoka", "Nunito", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--leaf);
+    display: none !important;
   }
   .week-budget.warn { background: #FFF6EE; border-color: #F5C4A0; color: #E86E1E; }
   .week-budget .nums { font-weight: 800; color: var(--ink); }
@@ -559,18 +657,6 @@
     justify-content: center;
     font-size: 18px;
     flex-shrink: 0;
-  }
-  .item-qty {
-    display: inline-block;
-    margin-top: 0;
-    padding: 2px 8px;
-    border-radius: 999px;
-    background: var(--mint);
-    border: 1px solid #D7E8DA;
-    color: var(--leaf);
-    font-family: "Fredoka", "Nunito", sans-serif;
-    font-weight: 600;
-    font-size: 11px;
   }
   .group-title {
     font-family: "Fredoka", "Nunito", sans-serif;
@@ -619,10 +705,22 @@
     border: 1px solid #E4F0E8;
   }
   .group-title {
-    background: var(--mint, #F3FAF4);
-    border-radius: 10px;
-    padding: 6px 10px;
-    display: inline-block;
+    background: transparent;
+    border-radius: 0;
+    padding: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    color: #9A9A9A;
+    font-size: 12px;
+    border-bottom: 1px solid #E8E8E8;
+  }
+  .group-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #E8E8E8;
   }
   .day, .group, .item { background: #FFFFFF; }
   .thumb {
@@ -693,9 +791,10 @@
     <div class="screen" id="s2" data-screen="2">
       <div class="nav">
         <button class="back" data-go="1" aria-label="Back">‹</button>
-        <h1>🍋 This Week</h1>
+        <h1>Week Dinner Plan</h1>
       </div>
       <div class="scroll">
+        <p class="week-sub">Easy meals. Real ingredients. Minimal fuss.</p>
         <div class="week-budget" id="weekBudget"></div>
         <div class="meta-bar" id="metaBar"></div>
         <div id="weekList"></div>
@@ -710,7 +809,7 @@
     <div class="screen" id="s3" data-screen="3">
       <div class="nav">
         <button class="back" data-go="2" aria-label="Back">‹</button>
-        <h1>🥬 Shopping List</h1>
+        <h1>Shopping List</h1>
       </div>
       <div class="scroll">
         <div class="budget-stub" id="budgetStub"></div>
@@ -718,10 +817,8 @@
         <div id="shopGroups"></div>
       </div>
       <div class="footer">
-        <div class="btn-row">
-          <button class="btn btn-secondary" id="copyBtn">Copy List</button>
-          <button class="btn btn-primary" id="shareBtn">Share</button>
-        </div>
+        <button class="btn btn-primary" id="copyBtn">Copy List</button>
+        <button class="btn btn-secondary" id="shareBtn" style="margin-top:6px">Share</button>
         <p class="proto-note">Prototype for Feedback · Fake Menus · Not Medical Advice</p>
       </div>
     </div>
@@ -924,8 +1021,12 @@
       const media = m.photo
         ? `<img src="${m.photo}" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${m.icon || "🍋"}'))" />`
         : (m.icon || "🍋");
-      const onHand = m.onHand ? `<div class="uses">Uses on hand: ${m.onHand}</div>` : "";
-      const cook = m.cookIn ? `<div class="cook">Cook in: ${m.cookIn}</div>` : "";
+      const onHand = m.onHand
+        ? `<div class="uses-block"><div class="uses-label">Uses on hand</div><div class="uses-body">${m.onHand}</div></div>`
+        : "";
+      const cook = m.cookIn
+        ? `<div class="cook-block"><div class="cook-label">Cook in</div><div class="cook-body">${m.cookIn}</div></div>`
+        : "";
       return `
       <div class="day">
         <div class="day-row">
@@ -934,10 +1035,10 @@
             <div class="day-top">
               <span class="day-name">${m.day}</span>
               <span class="dish">${m.dish}</span>
-              <span class="time">${m.time}</span>
             </div>
             ${onHand}
             ${cook}
+            <span class="no-swap">No Swap</span>
           </div>
         </div>
       </div>`;
@@ -949,32 +1050,31 @@
     const est = Math.round(sumEst(currentShopping) * 10) / 10;
     const rem = Math.max(0, Math.round((budget - est) * 10) / 10);
     const over = est > budget;
-    const pct = Math.min(100, Math.round((est / Math.max(budget, 1)) * 100));
     const stub = document.getElementById("budgetStub");
-    stub.classList.toggle("warn", over);
-    stub.innerHTML = `
-      <div class="budget-card-title">💰 Weekly Budget</div>
-      <div class="budget-grid">
-        <div class="budget-cell"><div class="k">Cap</div><div class="v">$${budget}</div></div>
-        <div class="budget-cell"><div class="k">Est. Cart</div><div class="v${over ? " warn" : ""}">~$${est}</div></div>
-        <div class="budget-cell"><div class="k">Left</div><div class="v ${over ? "warn" : "ok"}">$${rem}</div></div>
-      </div>
-      <div class="budget-bar" aria-hidden="true"><span class="${over ? "warn" : ""}" style="width:${pct}%"></span></div>
-      ${over ? '<div class="budget-alert">Over budget — trim the list or raise Cap</div>' : '<div class="budget-note">Stub estimate · fridge/pantry already counted</div>'}`;
+    stub.innerHTML = "";
 
     const root = document.getElementById("shopGroups");
     const toolbar = document.getElementById("shopToolbar");
     const entries = Object.entries(currentShopping).filter(([, items]) => items.length);
-    const totalItems = entries.reduce((n, [, items]) => n + items.length, 0);
+    const budgetHtml = `
+      <div class="budget-inline" id="budgetInline">
+        <div class="bi"><div class="k">Weekly Budget Cap</div><div class="v">$${budget.toFixed(2)}</div></div>
+        <div class="bi est"><div class="k">Est</div><div class="v${over ? " warn" : ""}">$${est.toFixed(2)}</div></div>
+        <div class="bi"><div class="k">Left</div><div class="v${over ? " warn" : ""}">$${rem.toFixed(2)}</div></div>
+      </div>`;
     if (!entries.length) {
-      toolbar.innerHTML = "";
+      toolbar.innerHTML = `<div class="select-all-wrap" id="selectAllWrap"><div class="check" id="selectAllCheck" role="checkbox" aria-checked="false"></div><span class="select-all-label">Select All</span></div>` + budgetHtml;
       root.innerHTML = '<p style="color:var(--muted);font-size:14px;line-height:1.4">Nothing to buy — fridge/pantry covers this stub list.</p>';
       return;
     }
-    toolbar.innerHTML = `<button type="button" class="select-all" id="selectAllBtn">Select All</button><span class="shop-count" id="shopCount">0 / ${totalItems} checked</span>`;
+    toolbar.innerHTML = `
+      <div class="select-all-wrap" id="selectAllWrap">
+        <div class="check" id="selectAllCheck" role="checkbox" aria-checked="false" tabindex="0"></div>
+        <span class="select-all-label">Select All</span>
+      </div>` + budgetHtml;
     root.innerHTML = entries.map(([group, items]) => `
       <div class="group">
-        <div class="group-title">${groupEmoji[group] || "🛒"} ${group}</div>
+        <div class="group-title">${group}</div>
         ${items.map((it, idx) => {
           const thumb = it.photo
             ? `<div class="item-thumb"><img src="${it.photo}" alt="" loading="lazy" onerror="this.parentNode.textContent='${it.emoji || "🛒"}'" /></div>`
@@ -985,23 +1085,22 @@
             ${thumb}
             <div class="item-body">
               <div class="item-name">${it.name}</div>
-              <div class="item-meta">
-                <span class="item-qty">${it.qty}</span>
-                <span class="item-est">$${Number(it.est || 0).toFixed(2)}</span>
-              </div>
+              <span class="item-qty">${it.qty}</span>
+              <span class="item-est">$${Number(it.est || 0).toFixed(2)}</span>
             </div>
           </div>`;
         }).join("")}
       </div>
     `).join("");
 
-    function refreshCount() {
-      const on = root.querySelectorAll(".check.on").length;
-      const all = root.querySelectorAll(".check").length;
-      const el = document.getElementById("shopCount");
-      if (el) el.textContent = on + " / " + all + " checked";
-      const btn = document.getElementById("selectAllBtn");
-      if (btn) btn.textContent = on === all && all ? "Clear All" : "Select All";
+    function refreshSelectAll() {
+      const checks = [...root.querySelectorAll(".item .check")];
+      const allOn = checks.length > 0 && checks.every(c => c.classList.contains("on"));
+      const sa = document.getElementById("selectAllCheck");
+      if (!sa) return;
+      sa.classList.toggle("on", allOn);
+      sa.textContent = allOn ? "✓" : "";
+      sa.setAttribute("aria-checked", allOn ? "true" : "false");
     }
     function wireCheck(c) {
       const toggle = () => {
@@ -1010,31 +1109,35 @@
         c.setAttribute("aria-checked", c.classList.contains("on") ? "true" : "false");
         const name = c.parentElement.querySelector(".item-name");
         if (name) name.classList.toggle("done", c.classList.contains("on"));
-        refreshCount();
+        refreshSelectAll();
       };
       c.addEventListener("click", toggle);
       c.addEventListener("keydown", e => {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
       });
     }
-    root.querySelectorAll(".check").forEach(wireCheck);
-    const selectBtn = document.getElementById("selectAllBtn");
-    if (selectBtn) {
-      selectBtn.onclick = () => {
-        const checks = [...root.querySelectorAll(".check")];
+    root.querySelectorAll(".item .check").forEach(wireCheck);
+    const selectWrap = document.getElementById("selectAllWrap");
+    if (selectWrap) {
+      const applyAll = () => {
+        const checks = [...root.querySelectorAll(".item .check")];
         const allOn = checks.every(c => c.classList.contains("on"));
+        const wantOn = !allOn;
         checks.forEach(c => {
-          const wantOn = !allOn;
           c.classList.toggle("on", wantOn);
           c.textContent = wantOn ? "✓" : "";
           c.setAttribute("aria-checked", wantOn ? "true" : "false");
           const name = c.parentElement.querySelector(".item-name");
           if (name) name.classList.toggle("done", wantOn);
         });
-        refreshCount();
+        refreshSelectAll();
       };
+      selectWrap.addEventListener("click", applyAll);
+      selectWrap.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); applyAll(); }
+      });
     }
-    refreshCount();
+    refreshSelectAll();
   }
 
   function listText() {
