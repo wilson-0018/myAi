@@ -291,42 +291,29 @@
     flex-shrink: 0;
     line-height: 1.2;
   }
-  .uses-block, .cook-block { margin-top: 6px; line-height: 1.35; }
-  .uses-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: #3D6B1E;
+  .meal-meta {
+    margin-top: 6px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.35;
   }
-  .uses-body {
+  .meal-meta li {
     font-size: 13px;
     font-weight: 600;
     color: #1A1A1A;
-    margin-top: 1px;
+    padding-left: 0;
   }
-  .cook-label {
-    font-size: 12px;
+  .meal-meta li::before {
+    content: "• ";
+    color: #3D6B1E;
     font-weight: 700;
-    color: #B8793A;
   }
-  .cook-body {
-    font-size: 13px;
-    font-weight: 600;
-    color: #2F6FED;
-    margin-top: 1px;
-  }
-  .no-swap {
-    display: inline-flex;
-    align-items: center;
-    margin-top: 8px;
-    padding: 3px 9px;
-    border-radius: 999px;
-    background: #E8A05A;
-    color: #FFFFFF;
-    font-family: "Fredoka", "Nunito", sans-serif;
-    font-size: 10px;
+  .meal-meta .meta-k {
     font-weight: 700;
-    letter-spacing: 0.02em;
-    align-self: flex-start;
+    color: #3D6B1E;
   }
   .day-body { display: flex; flex-direction: column; align-items: flex-start; }
   .thumb {
@@ -1291,11 +1278,11 @@
       const media = m.photo
         ? `<img src="${m.photo}" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${m.icon || "🍋"}'))" />`
         : (m.icon || "🍋");
-      const onHand = m.onHand
-        ? `<div class="uses-block"><div class="uses-label">Uses on hand</div><div class="uses-body">${m.onHand}</div></div>`
-        : "";
-      const cook = m.cookIn
-        ? `<div class="cook-block"><div class="cook-label">Cook in</div><div class="cook-body">${m.cookIn}</div></div>`
+      const metaLines = [];
+      if (m.cookIn) metaLines.push(`<li><span class="meta-k">Uses:</span> ${m.cookIn}</li>`);
+      if (m.onHand) metaLines.push(`<li><span class="meta-k">On hand:</span> ${m.onHand}</li>`);
+      const metaList = metaLines.length
+        ? `<ul class="meal-meta">${metaLines.join("")}</ul>`
         : "";
       return `
       <div class="day">
@@ -1306,9 +1293,7 @@
               <span class="day-name">${m.day}</span>
               <span class="dish">${m.dish}</span>
             </div>
-            ${onHand}
-            ${cook}
-            <span class="no-swap">No Swap</span>
+            ${metaList}
           </div>
         </div>
       </div>`;
