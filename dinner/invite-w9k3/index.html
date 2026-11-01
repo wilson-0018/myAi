@@ -249,9 +249,9 @@
     font-size: 11px;
     padding: 5px 10px;
     border-radius: 999px;
-    background: var(--soft);
-    color: var(--muted);
-    border: 1px solid var(--line);
+    background: var(--mint);
+    color: var(--leaf);
+    border: 1px solid #E4F0E8;
   }
 
   .day-row {
@@ -260,18 +260,25 @@
     gap: 12px;
   }
   .thumb {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 96px;
+    height: 96px;
+    border-radius: 16px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 40px;
     line-height: 1;
     background: var(--thumb-bg);
-    border: 1px solid #E8D9C8;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
+    border: 1px solid #E4F0E8;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(61, 107, 30, 0.08);
+  }
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
   .day-body { flex: 1; min-width: 0; }
   .day {
@@ -314,18 +321,6 @@
     color: var(--ok);
     margin-top: 4px;
     line-height: 1.35;
-  }
-  .swap {
-    margin-top: 8px;
-    font-size: 12px;
-    color: var(--muted);
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    padding: 0;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    font-family: inherit;
   }
   .group { margin-bottom: 18px; }
   .group-title {
@@ -538,22 +533,22 @@
 <script>
 (function () {
   const baseMeals = [
-    { day: "Mon", icon: "🍗", dish: "Lemon garlic chicken thighs + rice", time: "~35 min", uses: "Uses on hand: chicken thighs, rice", tags: [] },
-    { day: "Tue", icon: "🫘", dish: "Onion & white bean skillet", time: "~25 min", uses: "Uses on hand: onions, pantry beans", tags: [] },
-    { day: "Wed", icon: "🥕", dish: "Sheet-pan veggies + sausage", time: "~40 min", uses: "Oven · under $9", tags: [] },
-    { day: "Thu", icon: "🍚", dish: "Chicken fried rice remix", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: ["egg"] },
-    { day: "Fri", icon: "🍝", dish: "Tomato pasta with spinach", time: "~25 min", uses: "Stovetop · under $7", tags: ["gluten", "dairy"] },
-    { day: "Sat", icon: "🌮", dish: "Black bean tacos + slaw", time: "~30 min", uses: "Uses on hand: onions", tags: ["gluten"] },
-    { day: "Sun", icon: "🥔", dish: "Slow-roast chicken + potatoes", time: "~55 min", uses: "Oven · batch for leftovers", tags: [] }
+    { day: "Mon", icon: "🍗", photo: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=240&h=240&q=80", dish: "Lemon Garlic Chicken Thighs + Rice", time: "~35 min", uses: "Uses on hand: chicken thighs, rice", tags: [] },
+    { day: "Tue", icon: "🫘", photo: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=240&h=240&q=80", dish: "Onion & White Bean Skillet", time: "~25 min", uses: "Uses on hand: onions, pantry beans", tags: [] },
+    { day: "Wed", icon: "🥕", photo: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=240&h=240&q=80", dish: "Sheet-Pan Veggies + Sausage", time: "~40 min", uses: "Oven · under $9", tags: [] },
+    { day: "Thu", icon: "🍚", photo: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=240&h=240&q=80", dish: "Chicken Fried Rice Remix", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: ["egg"] },
+    { day: "Fri", icon: "🍝", photo: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=240&h=240&q=80", dish: "Tomato Pasta with Spinach", time: "~25 min", uses: "Stovetop · under $7", tags: ["gluten", "dairy"] },
+    { day: "Sat", icon: "🌮", photo: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=240&h=240&q=80", dish: "Black Bean Tacos + Slaw", time: "~30 min", uses: "Uses on hand: onions", tags: ["gluten"] },
+    { day: "Sun", icon: "🥔", photo: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=240&h=240&q=80", dish: "Slow-Roast Chicken + Potatoes", time: "~55 min", uses: "Oven · batch for leftovers", tags: [] }
   ];
 
   const altMeals = {
-    egg: { day: "Thu", icon: "🍚", dish: "Chicken rice bowl (no egg)", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: [] },
+    egg: { day: "Thu", icon: "🍚", photo: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=240&h=240&q=80", dish: "Chicken Rice Bowl (No Egg)", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: [] },
     gluten: {
-      Fri: { day: "Fri", icon: "🥗", dish: "Tomato quinoa with spinach", time: "~25 min", uses: "Stovetop · gluten-free · under $8", tags: [] },
-      Sat: { day: "Sat", icon: "🥬", dish: "Black bean lettuce wraps + slaw", time: "~25 min", uses: "Uses on hand: onions · no tortillas", tags: [] }
+      Fri: { day: "Fri", icon: "🥗", photo: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=240&h=240&q=80", dish: "Tomato Quinoa with Spinach", time: "~25 min", uses: "Stovetop · gluten-free · under $8", tags: [] },
+      Sat: { day: "Sat", icon: "🥬", photo: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=240&h=240&q=80", dish: "Black Bean Lettuce Wraps + Slaw", time: "~25 min", uses: "Uses on hand: onions · no tortillas", tags: [] }
     },
-    dairy: { day: "Fri", icon: "🍝", dish: "Tomato pasta with spinach (no cheese)", time: "~25 min", uses: "Stovetop · dairy-free · under $7", tags: ["gluten"] }
+    dairy: { day: "Fri", icon: "🍝", photo: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=240&h=240&q=80", dish: "Tomato Pasta with Spinach (No Cheese)", time: "~25 min", uses: "Stovetop · dairy-free · under $7", tags: ["gluten"] }
   };
 
   const baseShopping = {
@@ -705,18 +700,22 @@
     meta.innerHTML = "";
     meta.innerHTML += `<span class="pill">Budget $${budget}/wk</span>`;
     if (allergies.length) meta.innerHTML += `<span class="pill">Avoid: ${allergies.join(", ")}</span>`;
-    else meta.innerHTML += `<span class="pill">No allergies set</span>`;
+    else meta.innerHTML += `<span class="pill">No Allergies Set</span>`;
     if (gear.length) meta.innerHTML += `<span class="pill">${gear.slice(0, 3).join(" · ")}${gear.length > 3 ? " +" : ""}</span>`;
-    if (inv) meta.innerHTML += `<span class="pill">Using fridge/pantry</span>`;
+    if (inv) meta.innerHTML += `<span class="pill">Using Fridge/Pantry</span>`;
 
     const list = buildMeals(allergies);
     currentShopping = buildShopping(allergies, inv);
 
     const week = document.getElementById("weekList");
-    week.innerHTML = list.map((m, i) => `
+    week.innerHTML = list.map((m) => {
+      const media = m.photo
+        ? `<img src="${m.photo}" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${m.icon || "🍋"}'))" />`
+        : (m.icon || "🍋");
+      return `
       <div class="day">
         <div class="day-row">
-          <div class="thumb" aria-hidden="true">${m.icon || "🍋"}</div>
+          <div class="thumb" aria-hidden="true">${media}</div>
           <div class="day-body">
             <div class="day-top">
               <span class="day-name">${m.day}</span>
@@ -724,15 +723,10 @@
               <span class="time">${m.time}</span>
             </div>
             <div class="uses">${m.uses}</div>
-            <button type="button" class="swap" data-i="${i}">Swap (Stub)</button>
           </div>
         </div>
-      </div>
-    `).join("");
-
-    week.querySelectorAll(".swap").forEach(btn => {
-      btn.addEventListener("click", () => toast("Swap stub — not in this prototype"));
-    });
+      </div>`;
+    }).join("");
   }
 
   function renderShop() {
