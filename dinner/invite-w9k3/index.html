@@ -311,9 +311,16 @@
     color: #3D6B1E;
     font-weight: 700;
   }
-  .meal-meta .meta-k {
+  .meal-meta .meta-k-uses {
     font-weight: 700;
     color: #3D6B1E;
+  }
+  .meal-meta .meta-k-cook {
+    font-weight: 700;
+    color: #B8793A;
+  }
+  .meal-meta .meta-v-cook {
+    color: #2F6FED;
   }
   .day-body { display: flex; flex-direction: column; align-items: flex-start; }
   .thumb {
@@ -1279,8 +1286,8 @@
         ? `<img src="${m.photo}" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${m.icon || "🍋"}'))" />`
         : (m.icon || "🍋");
       const metaLines = [];
-      if (m.cookIn) metaLines.push(`<li><span class="meta-k">Uses:</span> ${m.cookIn}</li>`);
-      if (m.onHand) metaLines.push(`<li><span class="meta-k">On hand:</span> ${m.onHand}</li>`);
+      if (m.onHand) metaLines.push(`<li><span class="meta-k-uses">Uses on hand:</span> ${m.onHand}</li>`);
+      if (m.cookIn) metaLines.push(`<li><span class="meta-k-cook">Cook in:</span> <span class="meta-v-cook">${m.cookIn}</span></li>`);
       const metaList = metaLines.length
         ? `<ul class="meal-meta">${metaLines.join("")}</ul>`
         : "";
