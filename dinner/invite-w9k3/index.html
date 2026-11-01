@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: hifi-week-shop-mock-v1 -->
+<!-- build: s1-unify-titles-whitecards-v1 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -85,9 +85,10 @@
     flex-shrink: 0;
   }
   .nav h1 {
-    font-size: 17px;
-    font-weight: 650;
-    letter-spacing: -0.2px;
+    font-size: 22px;
+    font-weight: 800;
+    color: #0B1F3A;
+    letter-spacing: -0.3px;
     flex: 1;
   }
   .back {
@@ -111,8 +112,12 @@
   .hint {
     font-size: 13px;
     color: var(--muted);
-    line-height: 1.45;
+    line-height: 1.4;
     margin-bottom: 18px;
+  }
+  #s1 .hint {
+    font-size: 14px;
+    margin-bottom: 22px;
   }
 
   .label, .group-title, .pill, .chip, .nav h1, .day-name, .proto-note {
@@ -127,7 +132,7 @@
   .pill {
     font-weight: 600;
   }
-  .field { margin-bottom: 18px; }
+  .field { margin-bottom: 20px; }
   .label {
     font-size: 14px;
     font-weight: 650;
@@ -465,18 +470,6 @@
     line-height: 1.4;
     margin: 0 0 14px;
   }
-  #s2 .nav h1 {
-    font-size: 20px;
-    font-weight: 800;
-    color: #0B1F3A;
-    letter-spacing: -0.3px;
-  }
-  #s3 .nav h1 {
-    font-size: 20px;
-    font-weight: 800;
-    color: #0B1F3A;
-    letter-spacing: -0.3px;
-  }
 
   .group { margin-bottom: 18px; }
   .group-title {
@@ -689,10 +682,11 @@
   /* White frame + narrow mint module strips only (not full scroll) */
   .phone, .nav, .footer, .scroll { background: #FFFFFF !important; }
   .field {
-    background: var(--mint, #F3FAF4);
+    background: #FFFFFF;
     border-radius: 16px;
-    padding: 12px 14px;
-    border: 1px solid #E4F0E8;
+    padding: 14px 14px;
+    border: 1px solid #E5E5E5;
+    box-shadow: 0 1px 3px rgba(11, 31, 58, 0.04);
   }
   .meta-bar {
     background: var(--mint, #F3FAF4) !important;
@@ -737,10 +731,10 @@
     <div class="screen active" id="s1" data-screen="1">
       <div class="nav">
         <div class="back hidden">‹</div>
-        <h1>🥕 Plan Dinners</h1>
+        <h1>Plan Dinners</h1>
       </div>
       <div class="scroll">
-        <p class="hint">Three constraints only. No calorie tracking, no community.</p>
+        <p class="hint">Easy meals. Real ingredients. Minimal fuss.</p>
 
         <div class="field">
           <div class="label">Weekly Budget (USD)</div>
