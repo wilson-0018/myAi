@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: white-frame-mint-modules -->
+<!-- build: white-frame-narrow-mint-strips -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -25,7 +25,7 @@
     --leaf: #3D6B1E;
     --lemon: #F5C400;
     --thumb-bg: #FFFFFF;
-    --mint: #F2FAF5;
+    --mint: #F3FAF4;
     --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -405,21 +405,33 @@
 
 
 
-  /* White phone frame; mint mid scroll modules (Weisen) */
-  .phone { background: #FFFFFF !important; }
-  .nav, .footer { background: #FFFFFF !important; }
-  .scroll {
-    background: var(--mint, #F2FAF5);
-    flex: 1;
-    min-height: 0;
-  }
-  .field, .day, .group, .budget-stub {
-    background: #FFFFFF;
+  
+
+  /* White frame + narrow mint module strips only (not full scroll) */
+  .phone, .nav, .footer, .scroll { background: #FFFFFF !important; }
+  .field {
+    background: var(--mint, #F3FAF4);
+    border-radius: 16px;
+    padding: 12px 14px;
+    border: 1px solid #E4F0E8;
   }
   .meta-bar {
-    background: #E8F6EE !important;
-    border-color: #D0E8DA !important;
+    background: var(--mint, #F3FAF4) !important;
+    border: 1px solid #E4F0E8 !important;
+    border-radius: 14px;
   }
+  .budget-stub {
+    background: var(--mint, #F3FAF4);
+    border-radius: 14px;
+    border: 1px solid #E4F0E8;
+  }
+  .group-title {
+    background: var(--mint, #F3FAF4);
+    border-radius: 10px;
+    padding: 6px 10px;
+    display: inline-block;
+  }
+  .day, .group, .item { background: #FFFFFF; }
   .thumb {
     background: #FFFFFF !important;
     border: 1px solid #E8D9C8 !important;
