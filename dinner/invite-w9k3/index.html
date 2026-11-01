@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: white-frame-narrow-mint-strips -->
+<!-- build: type-13-shop-meta-row -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -129,7 +129,7 @@
   }
   .field { margin-bottom: 18px; }
   .label {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 650;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -280,23 +280,23 @@
 
   .day-name {
     font-family: "Fredoka", "Nunito", sans-serif;
-    font-size: 9px;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     color: #3D6B1E;
-    width: 28px;
+    min-width: 36px;
     flex-shrink: 0;
   }
   .uses {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: #3D6B1E;
     margin-top: 6px;
     line-height: 1.35;
   }
   .cook {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: #B8793A;
     margin-top: 2px;
@@ -384,7 +384,7 @@
   }
 
   .dish {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 650;
     flex: 1;
     letter-spacing: -0.2px;
@@ -397,7 +397,7 @@
 
   .group { margin-bottom: 18px; }
   .group-title {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -436,10 +436,12 @@
     font-weight: 500;
   }
   .item-name.done { text-decoration: line-through; color: var(--muted); }
-  .item-qty {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 2px;
+  .item-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    flex-wrap: wrap;
   }
   .budget-stub {
     background: var(--mint);
@@ -510,7 +512,7 @@
     font-weight: 700;
     color: var(--leaf);
     flex-shrink: 0;
-    margin-left: 8px;
+    margin-left: 0;
   }
   .week-budget {
     margin: 0 0 12px;
@@ -560,7 +562,7 @@
   }
   .item-qty {
     display: inline-block;
-    margin-top: 4px;
+    margin-top: 0;
     padding: 2px 8px;
     border-radius: 999px;
     background: var(--mint);
@@ -983,9 +985,11 @@
             ${thumb}
             <div class="item-body">
               <div class="item-name">${it.name}</div>
-              <div class="item-qty">${it.qty}</div>
+              <div class="item-meta">
+                <span class="item-qty">${it.qty}</span>
+                <span class="item-est">$${Number(it.est || 0).toFixed(2)}</span>
+              </div>
             </div>
-            <div class="item-est">$${Number(it.est || 0).toFixed(2)}</div>
           </div>`;
         }).join("")}
       </div>
