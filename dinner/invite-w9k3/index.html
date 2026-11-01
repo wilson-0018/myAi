@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- build: s1-unify-titles-whitecards-v1 -->
+<!-- build: fridge-three-cat-chips-v1 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -722,6 +722,113 @@
     border: 1px solid #E4F0E8 !important;
   }
 
+
+  /* Fridge / Pantry three-category chips */
+  .fridge-cat {
+    border: 1px solid #E8E8E8;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    background: #FAFAFA;
+  }
+  .fridge-cat.open { background: #FFFFFF; }
+  .fridge-cat-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--ink);
+    text-align: left;
+  }
+  .fridge-cat-head .chev {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1;
+    transition: transform .15s;
+    transform: rotate(90deg);
+  }
+  .fridge-cat.open .fridge-cat-head .chev { transform: rotate(-90deg); }
+  .fridge-cat-body {
+    display: none;
+    padding: 0 12px 12px;
+  }
+  .fridge-cat.open .fridge-cat-body { display: block; }
+  .fridge-custom {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    align-items: center;
+  }
+  .fridge-custom-input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink);
+    outline: none;
+  }
+  .fridge-add-btn {
+    flex-shrink: 0;
+    border: 1px solid var(--chip-border);
+    background: var(--chip);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-weight: 650;
+    font-family: "Fredoka", "Nunito", sans-serif;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .fridge-onhand-wrap {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px dashed #E5E5E5;
+  }
+  .fridge-onhand-label {
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 12px;
+    font-weight: 650;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .fridge-onhand {
+    min-height: 36px;
+  }
+  .fridge-onhand:empty::before {
+    content: "Nothing selected yet";
+    font-size: 12px;
+    color: #B0B0B0;
+  }
+  .fridge-onhand .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--chip-on);
+    color: var(--chip-on-text);
+    border-color: var(--chip-on);
+  }
+  .fridge-onhand .chip .x {
+    font-size: 14px;
+    line-height: 1;
+    opacity: .7;
+    margin-left: 2px;
+  }
+  .fridge-onhand .chip .x:hover { opacity: 1; }
+
 </style>
 </head>
 <body>
@@ -770,9 +877,82 @@
           </div>
         </div>
 
-        <div class="field">
+        <div class="field" id="fridgeField">
           <div class="label">Fridge / Pantry on Hand</div>
-          <textarea id="inventory" placeholder="chicken thighs, rice, onions…"></textarea>
+
+          <div class="fridge-cat open" data-cat="meat">
+            <button type="button" class="fridge-cat-head" aria-expanded="true">
+              <span>Meat &amp; Eggs</span>
+              <span class="chev" aria-hidden="true">›</span>
+            </button>
+            <div class="fridge-cat-body">
+              <div class="chips fridge-presets" data-cat="meat">
+                <button type="button" class="chip" data-label="Chicken Thighs">Chicken Thighs</button>
+                <button type="button" class="chip" data-label="Chicken Breast">Chicken Breast</button>
+                <button type="button" class="chip" data-label="Ground Beef">Ground Beef</button>
+                <button type="button" class="chip" data-label="Pork">Pork</button>
+                <button type="button" class="chip" data-label="Salmon">Salmon</button>
+                <button type="button" class="chip" data-label="Bacon">Bacon</button>
+                <button type="button" class="chip" data-label="Eggs">Eggs</button>
+                <button type="button" class="chip" data-label="Turkey">Turkey</button>
+                <button type="button" class="chip" data-label="Tofu">Tofu</button>
+              </div>
+              <div class="fridge-custom">
+                <input class="fridge-custom-input" type="text" placeholder="Add item…" autocomplete="off" />
+                <button type="button" class="fridge-add-btn">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="fridge-cat" data-cat="produce">
+            <button type="button" class="fridge-cat-head" aria-expanded="false">
+              <span>Produce</span>
+              <span class="chev" aria-hidden="true">›</span>
+            </button>
+            <div class="fridge-cat-body">
+              <div class="chips fridge-presets" data-cat="produce">
+                <button type="button" class="chip" data-label="Onion">Onion</button>
+                <button type="button" class="chip" data-label="Garlic">Garlic</button>
+                <button type="button" class="chip" data-label="Tomato">Tomato</button>
+                <button type="button" class="chip" data-label="Potato">Potato</button>
+                <button type="button" class="chip" data-label="Broccoli">Broccoli</button>
+                <button type="button" class="chip" data-label="Spinach">Spinach</button>
+                <button type="button" class="chip" data-label="Carrot">Carrot</button>
+                <button type="button" class="chip" data-label="Bell Pepper">Bell Pepper</button>
+              </div>
+              <div class="fridge-custom">
+                <input class="fridge-custom-input" type="text" placeholder="Add item…" autocomplete="off" />
+                <button type="button" class="fridge-add-btn">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="fridge-cat" data-cat="sauces">
+            <button type="button" class="fridge-cat-head" aria-expanded="false">
+              <span>Sauces &amp; Condiments</span>
+              <span class="chev" aria-hidden="true">›</span>
+            </button>
+            <div class="fridge-cat-body">
+              <div class="chips fridge-presets" data-cat="sauces">
+                <button type="button" class="chip" data-label="Soy Sauce">Soy Sauce</button>
+                <button type="button" class="chip" data-label="Olive Oil">Olive Oil</button>
+                <button type="button" class="chip" data-label="Hot Sauce">Hot Sauce</button>
+                <button type="button" class="chip" data-label="Mayo">Mayo</button>
+                <button type="button" class="chip" data-label="Ketchup">Ketchup</button>
+                <button type="button" class="chip" data-label="Mustard">Mustard</button>
+                <button type="button" class="chip" data-label="Vinegar">Vinegar</button>
+              </div>
+              <div class="fridge-custom">
+                <input class="fridge-custom-input" type="text" placeholder="Add item…" autocomplete="off" />
+                <button type="button" class="fridge-add-btn">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="fridge-onhand-wrap">
+            <div class="fridge-onhand-label">On Hand</div>
+            <div class="chips fridge-onhand" id="onHandBar" aria-live="polite"></div>
+          </div>
         </div>
       </div>
       <div class="footer">
@@ -890,11 +1070,107 @@
   });
 
   document.querySelectorAll(".chips").forEach(group => {
+    if (group.classList.contains("fridge-presets") || group.classList.contains("fridge-onhand")) return;
     group.addEventListener("click", e => {
       const chip = e.target.closest(".chip");
       if (!chip) return;
       chip.classList.toggle("on");
     });
+  });
+
+  /* —— Fridge / Pantry on Hand (three categories + On Hand bar) —— */
+  const onHandOrder = []; // source of truth labels (display case)
+
+  function titleCaseItem(s) {
+    return String(s || "").trim().replace(/\s+/g, " ").split(" ")
+      .filter(Boolean)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ");
+  }
+
+  function syncFridgePresets() {
+    const set = new Set(onHandOrder.map((x) => x.toLowerCase()));
+    document.querySelectorAll(".fridge-presets .chip").forEach((chip) => {
+      const label = chip.getAttribute("data-label") || chip.textContent.trim();
+      chip.classList.toggle("on", set.has(label.toLowerCase()));
+    });
+  }
+
+  function renderOnHandBar() {
+    const bar = document.getElementById("onHandBar");
+    bar.innerHTML = onHandOrder.map((label) => {
+      const safe = label.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+      return `<button type="button" class="chip on" data-label="${safe}"><span>${safe}</span><span class="x" aria-label="Remove">×</span></button>`;
+    }).join("");
+  }
+
+  function addOnHand(label) {
+    const nice = titleCaseItem(label);
+    if (!nice) return;
+    const key = nice.toLowerCase();
+    if (onHandOrder.some((x) => x.toLowerCase() === key)) return;
+    onHandOrder.push(nice);
+    syncFridgePresets();
+    renderOnHandBar();
+  }
+
+  function removeOnHand(label) {
+    const key = String(label || "").toLowerCase();
+    const idx = onHandOrder.findIndex((x) => x.toLowerCase() === key);
+    if (idx >= 0) onHandOrder.splice(idx, 1);
+    syncFridgePresets();
+    renderOnHandBar();
+  }
+
+  function getInventoryRaw() {
+    return onHandOrder.join(", ");
+  }
+
+  document.querySelectorAll(".fridge-cat-head").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cat = btn.closest(".fridge-cat");
+      const open = !cat.classList.contains("open");
+      cat.classList.toggle("open", open);
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  });
+
+  document.querySelectorAll(".fridge-presets").forEach((group) => {
+    group.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      const label = chip.getAttribute("data-label") || chip.textContent.trim();
+      const key = label.toLowerCase();
+      if (onHandOrder.some((x) => x.toLowerCase() === key)) removeOnHand(label);
+      else addOnHand(label);
+    });
+  });
+
+  document.querySelectorAll(".fridge-cat").forEach((cat) => {
+    const input = cat.querySelector(".fridge-custom-input");
+    const addBtn = cat.querySelector(".fridge-add-btn");
+    if (!input || !addBtn) return;
+    const commit = () => {
+      const v = input.value;
+      if (!String(v || "").trim()) return;
+      addOnHand(v);
+      input.value = "";
+      input.focus();
+    };
+    addBtn.addEventListener("click", commit);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        commit();
+      }
+    });
+  });
+
+  document.getElementById("onHandBar").addEventListener("click", (e) => {
+    const chip = e.target.closest(".chip");
+    if (!chip) return;
+    const label = chip.getAttribute("data-label") || chip.textContent.replace(/×/g, "").trim();
+    removeOnHand(label);
   });
 
   document.getElementById("planBtn").addEventListener("click", () => go(2));
@@ -989,7 +1265,7 @@
     const budget = document.getElementById("budget").value || "80";
     const allergies = allergySet();
     const gear = selected("gear");
-    const inv = (document.getElementById("inventory").value || "").trim();
+    const inv = getInventoryRaw();
     const list = buildMeals(allergies);
     currentShopping = buildShopping(allergies, inv);
     const est = Math.round(sumEst(currentShopping) * 10) / 10;
@@ -1186,7 +1462,9 @@
   });
 
   // Demo defaults
-  document.getElementById("inventory").value = "chicken thighs, rice, onions";
+  addOnHand("Chicken Thighs");
+  addOnHand("Onion");
+  addOnHand("Rice");
   document.querySelector('#allergies .chip[data-v="nuts"]').classList.add("on");
 })();
 </script>
