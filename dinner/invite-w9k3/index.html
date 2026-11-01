@@ -275,9 +275,36 @@
     align-items: flex-start;
     gap: 12px;
   }
+
+  .day-body { flex: 1; min-width: 0; }
+
+  .day-name {
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #3D6B1E;
+    width: 28px;
+    flex-shrink: 0;
+  }
+  .uses {
+    font-size: 12px;
+    font-weight: 600;
+    color: #3D6B1E;
+    margin-top: 6px;
+    line-height: 1.35;
+  }
+  .cook {
+    font-size: 12px;
+    font-weight: 600;
+    color: #B8793A;
+    margin-top: 2px;
+    line-height: 1.35;
+  }
   .thumb {
-    width: 104px;
-    height: 104px;
+    width: 112px;
+    height: 112px;
     border-radius: 14px;
     flex-shrink: 0;
     display: flex;
@@ -294,9 +321,53 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
+    transform: scale(1.08);
     display: block;
   }
-  .day-body { flex: 1; min-width: 0; }
+  .shop-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 12px;
+    gap: 8px;
+  }
+  .select-all {
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--leaf);
+    background: var(--mint);
+    border: 1px solid #D7E8DA;
+    border-radius: 999px;
+    padding: 7px 12px;
+    cursor: pointer;
+  }
+  .shop-count {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .item-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--mint);
+    border: 1px solid #D7E8DA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .item-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
   .day {
     background: var(--card);
     border: 1px solid var(--line);
@@ -311,15 +382,7 @@
     gap: 8px;
     margin-bottom: 4px;
   }
-  .day-name {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--muted);
-    width: 36px;
-    flex-shrink: 0;
-  }
+
   .dish {
     font-size: 15px;
     font-weight: 650;
@@ -331,13 +394,7 @@
     color: var(--muted);
     flex-shrink: 0;
   }
-  .uses {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ok);
-    margin-top: 4px;
-    line-height: 1.35;
-  }
+
   .group { margin-bottom: 18px; }
   .group-title {
     font-size: 12px;
@@ -655,6 +712,7 @@
       </div>
       <div class="scroll">
         <div class="budget-stub" id="budgetStub"></div>
+        <div class="shop-toolbar" id="shopToolbar"></div>
         <div id="shopGroups"></div>
       </div>
       <div class="footer">
@@ -672,46 +730,46 @@
 <script>
 (function () {
   const baseMeals = [
-    { day: "Mon", icon: "🍗", photo: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=240&h=240&q=80", dish: "Lemon Garlic Chicken Thighs + Rice", time: "~35 min", uses: "Uses on hand: chicken thighs, rice", tags: [] },
-    { day: "Tue", icon: "🫘", photo: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=240&h=240&q=80", dish: "Onion & White Bean Skillet", time: "~25 min", uses: "Uses on hand: onions, pantry beans", tags: [] },
-    { day: "Wed", icon: "🥕", photo: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=240&h=240&q=80", dish: "Sheet-Pan Veggies + Sausage", time: "~40 min", uses: "Oven · under $9", tags: [] },
-    { day: "Thu", icon: "🍚", photo: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=240&h=240&q=80", dish: "Chicken Fried Rice Remix", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: ["egg"] },
-    { day: "Fri", icon: "🍝", photo: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=240&h=240&q=80", dish: "Tomato Pasta with Spinach", time: "~25 min", uses: "Stovetop · under $7", tags: ["gluten", "dairy"] },
-    { day: "Sat", icon: "🌮", photo: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=240&h=240&q=80", dish: "Black Bean Tacos + Slaw", time: "~30 min", uses: "Uses on hand: onions", tags: ["gluten"] },
-    { day: "Sun", icon: "🥔", photo: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=240&h=240&q=80", dish: "Slow-Roast Chicken + Potatoes", time: "~55 min", uses: "Oven · batch for leftovers", tags: [] }
+    { day: "Mon", icon: "🍗", photo: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=320&h=320&q=80", dish: "Lemon Garlic Chicken Thighs + Rice", time: "~35 min", onHand: "chicken thighs, rice", cookIn: "Oven · sheet pan", tags: [] },
+    { day: "Tue", icon: "🫘", photo: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=320&h=320&q=80", dish: "Onion & White Bean Skillet", time: "~25 min", onHand: "onions, pantry beans", cookIn: "Stovetop · skillet", tags: [] },
+    { day: "Wed", icon: "🥕", photo: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=320&h=320&q=80", dish: "Sheet-Pan Veggies + Sausage", time: "~40 min", onHand: "", cookIn: "Oven · sheet pan", tags: [] },
+    { day: "Thu", icon: "🍚", photo: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=320&h=320&q=80", dish: "Chicken Fried Rice Remix", time: "~20 min", onHand: "leftover chicken, rice", cookIn: "Stovetop · wok / skillet", tags: ["egg"] },
+    { day: "Fri", icon: "🍝", photo: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=320&h=320&q=80", dish: "Tomato Pasta with Spinach", time: "~25 min", onHand: "", cookIn: "Stovetop · pot", tags: ["gluten", "dairy"] },
+    { day: "Sat", icon: "🌮", photo: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=320&h=320&q=80", dish: "Black Bean Tacos + Slaw", time: "~30 min", onHand: "onions", cookIn: "Stovetop · skillet", tags: ["gluten"] },
+    { day: "Sun", icon: "🥔", photo: "https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=320&h=320&q=80", dish: "Slow-Roast Chicken + Potatoes", time: "~55 min", onHand: "", cookIn: "Oven · roasting pan", tags: [] }
   ];
 
   const altMeals = {
-    egg: { day: "Thu", icon: "🍚", photo: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=240&h=240&q=80", dish: "Chicken Rice Bowl (No Egg)", time: "~20 min", uses: "Uses on hand: leftover chicken, rice", tags: [] },
+    egg: { day: "Thu", icon: "🍚", photo: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=320&h=320&q=80", dish: "Chicken Rice Bowl (No Egg)", time: "~20 min", onHand: "leftover chicken, rice", cookIn: "Stovetop · skillet", tags: [] },
     gluten: {
-      Fri: { day: "Fri", icon: "🥗", photo: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=240&h=240&q=80", dish: "Tomato Quinoa with Spinach", time: "~25 min", uses: "Stovetop · gluten-free · under $8", tags: [] },
-      Sat: { day: "Sat", icon: "🥬", photo: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=240&h=240&q=80", dish: "Black Bean Lettuce Wraps + Slaw", time: "~25 min", uses: "Uses on hand: onions · no tortillas", tags: [] }
+      Fri: { day: "Fri", icon: "🥗", photo: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=320&h=320&q=80", dish: "Tomato Quinoa with Spinach", time: "~25 min", onHand: "", cookIn: "Stovetop · pot", tags: [] },
+      Sat: { day: "Sat", icon: "🥬", photo: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=320&h=320&q=80", dish: "Black Bean Lettuce Wraps + Slaw", time: "~25 min", onHand: "onions", cookIn: "Stovetop · skillet", tags: [] }
     },
-    dairy: { day: "Fri", icon: "🍝", photo: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=240&h=240&q=80", dish: "Tomato Pasta with Spinach (No Cheese)", time: "~25 min", uses: "Stovetop · dairy-free · under $7", tags: ["gluten"] }
+    dairy: { day: "Fri", icon: "🍝", photo: "https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=320&h=320&q=80", dish: "Tomato Pasta with Spinach (No Cheese)", time: "~25 min", onHand: "", cookIn: "Stovetop · pot", tags: ["gluten"] }
   };
 
   const baseShopping = {
     Produce: [
-      { name: "Baby Spinach", qty: "1 bag", emoji: "🥬", est: 2.5 },
-      { name: "Cabbage (For Slaw)", qty: "½ head", emoji: "🥬", est: 1.8 },
-      { name: "Tomatoes / Canned Crushed", qty: "1 can", emoji: "🍅", est: 1.5 },
-      { name: "Lemons", qty: "2", emoji: "🍋", est: 1.2 },
-      { name: "Garlic", qty: "1 head", emoji: "🧄", est: 0.8 },
-      { name: "Potatoes", qty: "2 lb", emoji: "🥔", est: 3.0 }
+      { name: "Baby Spinach", qty: "1 bag", emoji: "🥬", photo: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=120&h=120&q=80", est: 2.5 },
+      { name: "Cabbage (For Slaw)", qty: "½ head", emoji: "🥬", photo: "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?auto=format&fit=crop&w=120&h=120&q=80", est: 1.8 },
+      { name: "Tomatoes / Canned Crushed", qty: "1 can", emoji: "🍅", photo: "https://images.unsplash.com/photo-1546097659-ff0d4e0c0c0b?auto=format&fit=crop&w=120&h=120&q=80", est: 1.5 },
+      { name: "Lemons", qty: "2", emoji: "🍋", photo: "https://images.unsplash.com/photo-1590502593749-c2066417772a?auto=format&fit=crop&w=120&h=120&q=80", est: 1.2 },
+      { name: "Garlic", qty: "1 head", emoji: "🧄", photo: "https://images.unsplash.com/photo-1540148426944-6d3abb2c8d3c?auto=format&fit=crop&w=120&h=120&q=80", est: 0.8 },
+      { name: "Potatoes", qty: "2 lb", emoji: "🥔", photo: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=120&h=120&q=80", est: 3.0 }
     ],
     Protein: [
-      { name: "Chicken Sausage", qty: "1 pack", emoji: "🌭", est: 6.5 },
-      { name: "Extra Chicken Thighs (Backup)", qty: "1 lb", emoji: "🍗", est: 5.5 }
+      { name: "Chicken Sausage", qty: "1 pack", emoji: "🌭", photo: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=120&h=120&q=80", est: 6.5 },
+      { name: "Extra Chicken Thighs (Backup)", qty: "1 lb", emoji: "🍗", photo: "https://images.unsplash.com/photo-1598103442097-8b74394b95c6?auto=format&fit=crop&w=120&h=120&q=80", est: 5.5 }
     ],
     Dairy: [
-      { name: "Optional: Grated Cheese", qty: "small bag — skip if dairy-free", emoji: "🧀", est: 3.0 }
+      { name: "Optional: Grated Cheese", qty: "small bag — skip if dairy-free", emoji: "🧀", photo: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=120&h=120&q=80", est: 3.0 }
     ],
     Pantry: [
-      { name: "Black Beans", qty: "2 cans", emoji: "🫘", est: 2.4 },
-      { name: "White Beans", qty: "1 can", emoji: "🥫", est: 1.2 },
-      { name: "Pasta (Spaghetti)", qty: "1 box", emoji: "🍝", est: 1.8 },
-      { name: "Tortillas", qty: "1 pack", emoji: "🫓", est: 3.2 },
-      { name: "Olive Oil / Spices Top-Up", qty: "as needed", emoji: "🫒", est: 4.0 }
+      { name: "Black Beans", qty: "2 cans", emoji: "🫘", photo: "https://images.unsplash.com/photo-1584270354949-c26b0d5b4a0c?auto=format&fit=crop&w=120&h=120&q=80", est: 2.4 },
+      { name: "White Beans", qty: "1 can", emoji: "🥫", photo: "https://images.unsplash.com/photo-1584270354949-c26b0d5b4a0c?auto=format&fit=crop&w=120&h=120&q=80", est: 1.2 },
+      { name: "Pasta (Spaghetti)", qty: "1 box", emoji: "🍝", photo: "https://images.unsplash.com/photo-1551462147-378704057600?auto=format&fit=crop&w=120&h=120&q=80", est: 1.8 },
+      { name: "Tortillas", qty: "1 pack", emoji: "🫓", photo: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=120&h=120&q=80", est: 3.2 },
+      { name: "Olive Oil / Spices Top-Up", qty: "as needed", emoji: "🫒", photo: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=120&h=120&q=80", est: 4.0 }
     ]
   };
   const groupEmoji = { Produce: "🥦", Protein: "🥩", Dairy: "🥛", Pantry: "🫙" };
@@ -864,6 +922,8 @@
       const media = m.photo
         ? `<img src="${m.photo}" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode('${m.icon || "🍋"}'))" />`
         : (m.icon || "🍋");
+      const onHand = m.onHand ? `<div class="uses">Uses on hand: ${m.onHand}</div>` : "";
+      const cook = m.cookIn ? `<div class="cook">Cook in: ${m.cookIn}</div>` : "";
       return `
       <div class="day">
         <div class="day-row">
@@ -874,7 +934,8 @@
               <span class="dish">${m.dish}</span>
               <span class="time">${m.time}</span>
             </div>
-            <div class="uses">${m.uses}</div>
+            ${onHand}
+            ${cook}
           </div>
         </div>
       </div>`;
@@ -900,41 +961,76 @@
       ${over ? '<div class="budget-alert">Over budget — trim the list or raise Cap</div>' : '<div class="budget-note">Stub estimate · fridge/pantry already counted</div>'}`;
 
     const root = document.getElementById("shopGroups");
+    const toolbar = document.getElementById("shopToolbar");
     const entries = Object.entries(currentShopping).filter(([, items]) => items.length);
+    const totalItems = entries.reduce((n, [, items]) => n + items.length, 0);
     if (!entries.length) {
+      toolbar.innerHTML = "";
       root.innerHTML = '<p style="color:var(--muted);font-size:14px;line-height:1.4">Nothing to buy — fridge/pantry covers this stub list.</p>';
       return;
     }
+    toolbar.innerHTML = `<button type="button" class="select-all" id="selectAllBtn">Select All</button><span class="shop-count" id="shopCount">0 / ${totalItems} checked</span>`;
     root.innerHTML = entries.map(([group, items]) => `
       <div class="group">
         <div class="group-title">${groupEmoji[group] || "🛒"} ${group}</div>
-        ${items.map((it, idx) => `
+        ${items.map((it, idx) => {
+          const thumb = it.photo
+            ? `<div class="item-thumb"><img src="${it.photo}" alt="" loading="lazy" onerror="this.parentNode.textContent='${it.emoji || "🛒"}'" /></div>`
+            : `<div class="item-thumb">${it.emoji || "🛒"}</div>`;
+          return `
           <div class="item">
             <div class="check" data-g="${group}" data-i="${idx}" role="checkbox" aria-checked="false" tabindex="0"></div>
-            <div class="item-emoji" aria-hidden="true">${it.emoji || "🛒"}</div>
+            ${thumb}
             <div class="item-body">
               <div class="item-name">${it.name}</div>
               <div class="item-qty">${it.qty}</div>
             </div>
             <div class="item-est">$${Number(it.est || 0).toFixed(2)}</div>
-          </div>
-        `).join("")}
+          </div>`;
+        }).join("")}
       </div>
     `).join("");
 
-    root.querySelectorAll(".check").forEach(c => {
+    function refreshCount() {
+      const on = root.querySelectorAll(".check.on").length;
+      const all = root.querySelectorAll(".check").length;
+      const el = document.getElementById("shopCount");
+      if (el) el.textContent = on + " / " + all + " checked";
+      const btn = document.getElementById("selectAllBtn");
+      if (btn) btn.textContent = on === all && all ? "Clear All" : "Select All";
+    }
+    function wireCheck(c) {
       const toggle = () => {
         c.classList.toggle("on");
         c.textContent = c.classList.contains("on") ? "✓" : "";
         c.setAttribute("aria-checked", c.classList.contains("on") ? "true" : "false");
         const name = c.parentElement.querySelector(".item-name");
-        name.classList.toggle("done", c.classList.contains("on"));
+        if (name) name.classList.toggle("done", c.classList.contains("on"));
+        refreshCount();
       };
       c.addEventListener("click", toggle);
       c.addEventListener("keydown", e => {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
       });
-    });
+    }
+    root.querySelectorAll(".check").forEach(wireCheck);
+    const selectBtn = document.getElementById("selectAllBtn");
+    if (selectBtn) {
+      selectBtn.onclick = () => {
+        const checks = [...root.querySelectorAll(".check")];
+        const allOn = checks.every(c => c.classList.contains("on"));
+        checks.forEach(c => {
+          const wantOn = !allOn;
+          c.classList.toggle("on", wantOn);
+          c.textContent = wantOn ? "✓" : "";
+          c.setAttribute("aria-checked", wantOn ? "true" : "false");
+          const name = c.parentElement.querySelector(".item-name");
+          if (name) name.classList.toggle("done", wantOn);
+        });
+        refreshCount();
+      };
+    }
+    refreshCount();
   }
 
   function listText() {
