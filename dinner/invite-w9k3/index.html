@@ -7,6 +7,9 @@
 <meta name="description" content="Plan a week of dinners from your budget, allergies, and what's already in your fridge. Prototype for feedback." />
 <meta name="theme-color" content="#FFFFFF" />
 <title>Week of Dinners — prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <style>
   :root {
     /* Scheme A / option 1 — dark green uses + white thumbs; higher chip sat */
@@ -32,7 +35,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
     background: #E8EEF0;
     color: var(--ink);
     min-height: 100%;
@@ -110,6 +113,19 @@
     color: var(--muted);
     line-height: 1.45;
     margin-bottom: 18px;
+  }
+
+  .label, .group-title, .pill, .chip, .nav h1, .day-name, .proto-note {
+    font-family: "Fredoka", "Nunito", sans-serif;
+  }
+  .label {
+    letter-spacing: 0.06em;
+  }
+  .chip {
+    font-weight: 600;
+  }
+  .pill {
+    font-weight: 600;
   }
   .field { margin-bottom: 18px; }
   .label {
@@ -251,7 +267,7 @@
     border-radius: 999px;
     background: var(--mint);
     color: var(--leaf);
-    border: 1px solid #E4F0E8;
+    border: 1px solid #D7E8DA;
   }
 
   .day-row {
@@ -260,16 +276,16 @@
     gap: 12px;
   }
   .thumb {
-    width: 96px;
-    height: 96px;
-    border-radius: 16px;
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 40px;
+    font-size: 36px;
     line-height: 1;
-    background: var(--thumb-bg);
+    background: #FFFFFF;
     border: 1px solid #E4F0E8;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(61, 107, 30, 0.08);
@@ -369,16 +385,98 @@
     margin-top: 2px;
   }
   .budget-stub {
-    background: var(--soft);
-    border: 1px dashed var(--line);
-    border-radius: 12px;
-    padding: 12px 14px;
+    background: var(--mint);
+    border: 1px solid #D7E8DA;
+    border-radius: 16px;
+    padding: 14px 14px 12px;
     font-size: 13px;
-    color: var(--muted);
-    margin-bottom: 14px;
+    color: var(--leaf);
+    margin-bottom: 16px;
     line-height: 1.4;
   }
-  .budget-stub strong { color: var(--ink); font-weight: 650; }
+  .budget-stub strong { color: var(--ink); font-weight: 700; }
+  .budget-card-title {
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--leaf);
+    margin-bottom: 10px;
+  }
+  .budget-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .budget-cell {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align: center;
+    border: 1px solid #E4F0E8;
+  }
+  .budget-cell .k {
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .budget-cell .v {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .budget-cell .v.ok { color: var(--leaf); }
+  .budget-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: #E4F0E8;
+    overflow: hidden;
+  }
+  .budget-bar > span {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #96DC28, #3D6B1E);
+  }
+  .budget-note {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .item-emoji {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--mint);
+    border: 1px solid #D7E8DA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .item-qty {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--mint);
+    border: 1px solid #D7E8DA;
+    color: var(--leaf);
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+  }
+  .group-title {
+    font-family: "Fredoka", "Nunito", sans-serif;
+    font-weight: 700;
+  }
   .toast {
     position: absolute;
     left: 50%;
@@ -430,7 +528,7 @@
   .day, .group, .item { background: #FFFFFF; }
   .thumb {
     background: #FFFFFF !important;
-    border: 1px solid #E8D9C8 !important;
+    border: 1px solid #E4F0E8 !important;
   }
 
 </style>
@@ -553,28 +651,29 @@
 
   const baseShopping = {
     Produce: [
-      { name: "Baby spinach", qty: "1 bag" },
-      { name: "Cabbage (for slaw)", qty: "½ head" },
-      { name: "Tomatoes / canned crushed", qty: "1 can" },
-      { name: "Lemons", qty: "2" },
-      { name: "Garlic", qty: "1 head" },
-      { name: "Potatoes", qty: "2 lb" }
+      { name: "Baby Spinach", qty: "1 bag", emoji: "🥬" },
+      { name: "Cabbage (For Slaw)", qty: "½ head", emoji: "🥬" },
+      { name: "Tomatoes / Canned Crushed", qty: "1 can", emoji: "🍅" },
+      { name: "Lemons", qty: "2", emoji: "🍋" },
+      { name: "Garlic", qty: "1 head", emoji: "🧄" },
+      { name: "Potatoes", qty: "2 lb", emoji: "🥔" }
     ],
     Protein: [
-      { name: "Chicken sausage", qty: "1 pack" },
-      { name: "Extra chicken thighs (backup)", qty: "1 lb" }
+      { name: "Chicken Sausage", qty: "1 pack", emoji: "🌭" },
+      { name: "Extra Chicken Thighs (Backup)", qty: "1 lb", emoji: "🍗" }
     ],
     Dairy: [
-      { name: "Optional: grated cheese", qty: "small bag — skip if dairy-free" }
+      { name: "Optional: Grated Cheese", qty: "small bag — skip if dairy-free", emoji: "🧀" }
     ],
     Pantry: [
-      { name: "Black beans", qty: "2 cans" },
-      { name: "White beans", qty: "1 can" },
-      { name: "Pasta (spaghetti)", qty: "1 box" },
-      { name: "Tortillas", qty: "1 pack" },
-      { name: "Olive oil / spices top-up", qty: "as needed" }
+      { name: "Black Beans", qty: "2 cans", emoji: "🫘" },
+      { name: "White Beans", qty: "1 can", emoji: "🥫" },
+      { name: "Pasta (Spaghetti)", qty: "1 box", emoji: "🍝" },
+      { name: "Tortillas", qty: "1 pack", emoji: "🫓" },
+      { name: "Olive Oil / Spices Top-Up", qty: "as needed", emoji: "🫒" }
     ]
   };
+  const groupEmoji = { Produce: "🥦", Protein: "🥩", Dairy: "🥛", Pantry: "🫙" };
 
   let currentShopping = JSON.parse(JSON.stringify(baseShopping));
 
@@ -733,8 +832,16 @@
     const budget = Number(document.getElementById("budget").value || 80);
     const est = 62;
     const rem = Math.max(0, budget - est);
-    document.getElementById("budgetStub").innerHTML =
-      `Est. new spend <strong>~$${est}</strong> · Remaining vs $${budget} cap: <strong>$${rem}</strong> (stub)`;
+    const pct = Math.min(100, Math.round((est / Math.max(budget, 1)) * 100));
+    document.getElementById("budgetStub").innerHTML = `
+      <div class="budget-card-title">💰 Weekly Budget</div>
+      <div class="budget-grid">
+        <div class="budget-cell"><div class="k">Cap</div><div class="v">$${budget}</div></div>
+        <div class="budget-cell"><div class="k">Est. Spend</div><div class="v">~$${est}</div></div>
+        <div class="budget-cell"><div class="k">Left</div><div class="v ok">$${rem}</div></div>
+      </div>
+      <div class="budget-bar" aria-hidden="true"><span style="width:${pct}%"></span></div>
+      <div class="budget-note">Stub estimate · fridge/pantry already counted</div>`;
 
     const root = document.getElementById("shopGroups");
     const entries = Object.entries(currentShopping).filter(([, items]) => items.length);
@@ -744,10 +851,11 @@
     }
     root.innerHTML = entries.map(([group, items]) => `
       <div class="group">
-        <div class="group-title">${group}</div>
+        <div class="group-title">${groupEmoji[group] || "🛒"} ${group}</div>
         ${items.map((it, idx) => `
           <div class="item">
             <div class="check" data-g="${group}" data-i="${idx}" role="checkbox" aria-checked="false" tabindex="0"></div>
+            <div class="item-emoji" aria-hidden="true">${it.emoji || "🛒"}</div>
             <div class="item-body">
               <div class="item-name">${it.name}</div>
               <div class="item-qty">${it.qty}</div>
